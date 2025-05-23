@@ -1,6 +1,6 @@
-TAN - Seminario Integrador
+# TAN - Seminario Integrador
 
-Estructuracion del Proyecto
+## Estructuracion del Proyecto
 
 TAN - Seminario Integrador/
 └── backend/
