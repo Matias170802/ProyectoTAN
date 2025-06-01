@@ -1,6 +1,6 @@
 package com.tan.seminario.backend.Repository;
 
-import com.tan.seminario.backend.Entidades.Rol;
+import com.tan.seminario.backend.Entity.Rol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

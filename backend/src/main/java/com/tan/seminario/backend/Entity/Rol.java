@@ -1,4 +1,4 @@
-package com.tan.seminario.backend.Entidades;
+package com.tan.seminario.backend.Entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -13,16 +13,19 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+/*Lombok*/
 @Entity
-@Table(name = "roles")
+@Table(name = "Rol")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+/*Lombok*/
+
 public class Rol {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idRol;
 
     @Column(unique = true)
     private String codRol;

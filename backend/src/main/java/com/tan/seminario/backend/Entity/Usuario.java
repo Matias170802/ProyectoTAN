@@ -1,4 +1,4 @@
-package com.tan.seminario.backend.Entidades;
+package com.tan.seminario.backend.Entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

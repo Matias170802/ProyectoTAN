@@ -1,4 +1,4 @@
-package com.tan.seminario.backend.Controllers;
+package com.tan.seminario.backend.Controller;
 
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.DTOs.LoginDTO;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.DTOs.RegistroDTO;

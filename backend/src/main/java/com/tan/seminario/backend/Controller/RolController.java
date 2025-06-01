@@ -1,6 +1,6 @@
-package com.tan.seminario.backend.Controllers;
+package com.tan.seminario.backend.Controller;
 
-import com.tan.seminario.backend.Entidades.Rol;
+import com.tan.seminario.backend.Entity.Rol;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.RolService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

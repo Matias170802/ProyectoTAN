@@ -2,7 +2,7 @@ package com.tan.seminario.backend.CasosDeUsos.Seguridad;
 
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.DTOs.LoginDTO;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.DTOs.RegistroDTO;
-import com.tan.seminario.backend.Entidades.Usuario;
+import com.tan.seminario.backend.Entity.Usuario;
 import com.tan.seminario.backend.Repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

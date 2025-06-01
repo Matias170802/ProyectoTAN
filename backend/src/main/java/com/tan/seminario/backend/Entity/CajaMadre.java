@@ -1,4 +1,4 @@
-package com.tan.seminario.backend.Entidades;
+package com.tan.seminario.backend.Entity;
 
 
 import jakarta.persistence.Entity;
@@ -15,27 +15,26 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/*Lombok*/
 @Entity
 @Table(name = "CajaMadre")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+/*Lombok*/
+
 public class CajaMadre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long nroCajaMadre;
 
     @Column (unique = true)
-    private String nombre;
+    private String nombreCajaMadre;
 
     private BigDecimal balanceTotalARS;
     private BigDecimal balanceTotalUSD;
-
     private LocalDateTime fechaHoraAltaCajaMadre;
-    
     private LocalDateTime fechaHoraBajaCajaMadre;
-
-
 
 }

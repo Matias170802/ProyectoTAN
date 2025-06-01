@@ -3,7 +3,7 @@ package com.tan.seminario.backend.CasosDeUsos.Seguridad;
 import java.util.List;
 import java.util.Optional;
 
-import com.tan.seminario.backend.Entidades.Rol;
+import com.tan.seminario.backend.Entity.Rol;
 import com.tan.seminario.backend.Repository.RolRepository;
 import org.springframework.stereotype.Service;
 

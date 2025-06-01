@@ -1,6 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Seguridad;
 
-import com.tan.seminario.backend.Entidades.Usuario;
+import com.tan.seminario.backend.Entity.Usuario;
 import com.tan.seminario.backend.Repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
