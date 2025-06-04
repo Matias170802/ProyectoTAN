@@ -20,6 +20,9 @@ import java.time.LocalDateTime;
 public class Tarea {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idTarea;
+
+    @Column (unique = true)
     private Long nroTarea;
 
     private String nombreTarea;

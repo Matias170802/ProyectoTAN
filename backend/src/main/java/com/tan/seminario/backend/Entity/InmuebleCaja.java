@@ -21,6 +21,9 @@ import java.time.LocalDateTime;
 public class InmuebleCaja {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idInmuebleCaja;
+
+    @Column (unique = true)
     private Long nroInmuebleCaja;
 
     @Column (unique = true)

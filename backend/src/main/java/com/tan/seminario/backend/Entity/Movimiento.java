@@ -21,6 +21,9 @@ public class Movimiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idMovimiento;
+
+    @Column (unique = true)
     private Long nroMovimiento;
 
     private String descripcionMovimiento;
