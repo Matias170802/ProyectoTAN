@@ -24,4 +24,12 @@ public class TipoTareaTipoMovimiento {
 
     private LocalDateTime fechaHoraAltaTipoTareaTipoMovimiento;
     private LocalDateTime fechaHoraBajaTipoTareaTipoMovimiento;
+
+    @ManyToOne
+    @JoinColumn(name = "idTipoTarea", nullable = false)
+    private TipoTarea tipoTarea;
+
+    @ManyToOne
+    @JoinColumn(name = "idTipoMovimiento", nullable = false)
+    private TipoMovimiento tipoMovimiento;
 }

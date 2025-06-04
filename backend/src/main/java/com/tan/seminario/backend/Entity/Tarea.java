@@ -30,4 +30,20 @@ public class Tarea {
     private LocalDateTime fechaHoraAsignacionTarea;
     private LocalDateTime fechaHoraInicioTarea;
     private LocalDateTime fechaHoraFinTarea;
+
+    @ManyToOne
+    @JoinColumn(name = "idTipoTarea", nullable = false)
+    private TipoTarea tipoTarea;
+
+    @ManyToOne
+    @JoinColumn(name = "idEstadoTarea", nullable = false)
+    private EstadoTarea estadoTarea;
+
+    @ManyToOne
+    @JoinColumn(name = "idEmpleado", nullable = false)
+    private Empleado empleado;
+
+    @ManyToOne
+    @JoinColumn(name = "idReserva", nullable = false)
+    private Reserva reserva;
 }

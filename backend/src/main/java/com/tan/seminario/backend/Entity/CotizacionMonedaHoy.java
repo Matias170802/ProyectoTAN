@@ -26,4 +26,8 @@ public class CotizacionMonedaHoy {
     private Long montoCompra;
     private Long montoVenta;
     private LocalDateTime fechaCotizacionMoneda;
+
+    @ManyToOne
+    @JoinColumn(name= "idMoneda", nullable = false)
+    private Moneda moneda;
 }

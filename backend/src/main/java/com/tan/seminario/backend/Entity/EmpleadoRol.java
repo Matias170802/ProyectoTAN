@@ -24,4 +24,12 @@ public class EmpleadoRol {
 
     private LocalDateTime fechaHoraAltaEmpleadoRol;
     private LocalDateTime fechaHoraBajaEmpleadoRol;
+
+    @ManyToOne
+    @JoinColumn(name = "idEmpleado", nullable = false)
+    private Empleado empleado;
+
+    @ManyToOne
+    @JoinColumn(name = "idRol", nullable = false)
+    private Rol rol;
 }

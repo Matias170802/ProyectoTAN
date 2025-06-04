@@ -33,4 +33,8 @@ public class InmuebleCaja {
     private BigDecimal balanceTotalUSD;
     private LocalDateTime fechaHoraAltaInmuebleCaja;
     private LocalDateTime fechaHoraBajaInmuebleCaja;
+
+    @OneToOne
+    @JoinColumn(name = "idInmueble", nullable = false)
+    private Inmueble inmueble;
 }
