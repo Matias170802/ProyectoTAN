@@ -14,13 +14,23 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idUsuario;
 
     private String username;
     private String password; // Encriptada
+    private String jwt; // token JWT actual
+
+    @OneToOne
+    @JoinColumn(name = "idEmpleado")
+    private Empleado empleado;
+
+    @OneToOne
+    @JoinColumn(name = "idCliente")
+    private Cliente cliente;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -29,6 +39,4 @@ public class Usuario {
             inverseJoinColumns = @JoinColumn(name = "rol_id")
     )
     private Set<Rol> roles;
-
-    private String jwt; // token JWT actual
 }

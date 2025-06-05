@@ -38,4 +38,8 @@ public class Inmueble {
     private Double m2Inmueble;
     private Double precioPorNocheUSD;
 
+    @ManyToOne
+    @JoinColumn(name = "idCliente", nullable = false)
+    private Cliente cliente;
+
 }

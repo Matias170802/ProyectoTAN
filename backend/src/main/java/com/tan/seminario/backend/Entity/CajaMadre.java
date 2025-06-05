@@ -27,6 +27,9 @@ import java.time.LocalDateTime;
 public class CajaMadre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idCajaMadre;
+
+    @Column (unique = true)
     private Long nroCajaMadre;
 
     @Column (unique = true)

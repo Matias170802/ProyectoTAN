@@ -21,6 +21,9 @@ import java.time.LocalDateTime;
 public class EmpleadoCaja {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idEmpleadoCaja;
+
+    @Column (unique = true)
     private Long nroEmpleadoCaja;
 
     @Column(unique = true)
@@ -30,4 +33,8 @@ public class EmpleadoCaja {
     private BigDecimal balanceTotalUSD;
     private LocalDateTime fechaHoraAltaEmpleadoCaja;
     private LocalDateTime fechaHoraBajaEmpleadoCaja;
+
+    @OneToOne
+    @JoinColumn(name = "idEmpleado", nullable = false)
+    private Empleado empleado;
 }

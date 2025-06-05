@@ -20,6 +20,9 @@ import java.time.LocalDateTime;
 public class Tarea {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idTarea;
+
+    @Column (unique = true)
     private Long nroTarea;
 
     private String nombreTarea;
@@ -27,4 +30,20 @@ public class Tarea {
     private LocalDateTime fechaHoraAsignacionTarea;
     private LocalDateTime fechaHoraInicioTarea;
     private LocalDateTime fechaHoraFinTarea;
+
+    @ManyToOne
+    @JoinColumn(name = "idTipoTarea", nullable = false)
+    private TipoTarea tipoTarea;
+
+    @ManyToOne
+    @JoinColumn(name = "idEstadoTarea", nullable = false)
+    private EstadoTarea estadoTarea;
+
+    @ManyToOne
+    @JoinColumn(name = "idEmpleado", nullable = false)
+    private Empleado empleado;
+
+    @ManyToOne
+    @JoinColumn(name = "idReserva", nullable = false)
+    private Reserva reserva;
 }
