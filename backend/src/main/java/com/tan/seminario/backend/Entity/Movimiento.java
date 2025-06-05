@@ -17,10 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class Movimiento {
+public class Movimiento  extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long nroMovimiento;
 
     private String descripcionMovimiento;

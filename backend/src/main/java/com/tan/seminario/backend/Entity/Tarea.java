@@ -17,9 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class Tarea {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class Tarea  extends Base {
+
     private Long nroTarea;
 
     private String nombreTarea;

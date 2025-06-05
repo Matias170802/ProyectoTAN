@@ -17,9 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class Reserva {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class Reserva  extends Base {
+
     private Long idReserva;
 
     @Column(unique = true)
