@@ -22,9 +22,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class Rol {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class Rol  extends Base{
+
     private Long idRol;
 
     @Column(unique = true)

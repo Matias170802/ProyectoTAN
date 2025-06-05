@@ -1,5 +1,5 @@
 package com.tan.seminario.backend.CasosDeUsos.Seguridad;
-/*
+
 import java.util.List;
 import java.util.Optional;
 
@@ -45,5 +45,5 @@ public class RolService {
     public void eliminarRol(Long id) {
         rolRepository.deleteById(id);
     }
-}*/
+}
 

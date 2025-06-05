@@ -24,12 +24,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class CajaMadre {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCajaMadre;
+public class CajaMadre extends Base {
 
-    @Column (unique = true)
     private Long nroCajaMadre;
 
     @Column (unique = true)

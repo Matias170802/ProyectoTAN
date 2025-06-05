@@ -1,8 +1,8 @@
 package com.tan.seminario.backend.Controller;
-/*
+
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.DTOs.LoginDTO;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.DTOs.RegistroDTO;
-import com.tan.seminario.backend.CasosDeUsos.Seguridad.UsuarioService;
+import com.tan.seminario.backend.Services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,4 +26,4 @@ public class UsuarioController {
     public ResponseEntity<String> login(@RequestBody LoginDTO dto) {
         return ResponseEntity.ok(usuarioService.login(dto));
     }
-}*/
+}
