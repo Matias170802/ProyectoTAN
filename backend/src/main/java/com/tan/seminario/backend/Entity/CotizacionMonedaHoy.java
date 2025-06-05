@@ -17,10 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class CotizacionMonedaHoy {
+public class CotizacionMonedaHoy extends Base{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCotizacionMonedaHoy;
 
     private Long montoCompra;

@@ -16,10 +16,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class Cliente {
+public class Cliente extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCliente;
 
     @Column (unique = true)

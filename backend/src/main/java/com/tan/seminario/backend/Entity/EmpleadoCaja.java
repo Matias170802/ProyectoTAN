@@ -33,8 +33,4 @@ public class EmpleadoCaja {
     private BigDecimal balanceTotalUSD;
     private LocalDateTime fechaHoraAltaEmpleadoCaja;
     private LocalDateTime fechaHoraBajaEmpleadoCaja;
-
-    @OneToOne
-    @JoinColumn(name = "idEmpleado", nullable = false)
-    private Empleado empleado;
 }
