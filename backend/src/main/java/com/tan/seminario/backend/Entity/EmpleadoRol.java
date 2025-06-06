@@ -17,9 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class EmpleadoRol {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class EmpleadoRol  extends Base{
+
     private Long idEmpleadoRol;
 
     private LocalDateTime fechaHoraAltaEmpleadoRol;

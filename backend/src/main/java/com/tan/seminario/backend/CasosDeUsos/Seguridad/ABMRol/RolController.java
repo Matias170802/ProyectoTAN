@@ -1,7 +1,7 @@
 package com.tan.seminario.backend.Controller;
 
 import com.tan.seminario.backend.Entity.Rol;
-import com.tan.seminario.backend.CasosDeUsos.Seguridad.RolService;
+import com.tan.seminario.backend.Services.RolService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,13 +10,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/roles")
 public class RolController {
-
+    //Utilizamos el Service de Rol
     private final RolService rolService;
 
     public RolController(RolService rolService) {
         this.rolService = rolService;
     }
 
+    // METODOS DEL CONTROLADOR
     @PostMapping
     public ResponseEntity<Rol> crearRol(@RequestBody Rol rol) {
         return ResponseEntity.ok(rolService.crearRol(rol));

@@ -17,10 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class Tarea {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idTarea;
+public class Tarea  extends Base {
 
     @Column (unique = true)
     private Long nroTarea;

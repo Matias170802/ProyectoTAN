@@ -1,10 +1,6 @@
 package com.tan.seminario.backend.Entity;
 
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -23,16 +19,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 /*Lombok*/
+public class CajaMadre extends Base {
 
-public class CajaMadre {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCajaMadre;
-
-    @Column (unique = true)
     private Long nroCajaMadre;
 
-    @Column (unique = true)
+    @Column(unique = true)
     private String nombreCajaMadre;
 
     private BigDecimal balanceTotalARS;
