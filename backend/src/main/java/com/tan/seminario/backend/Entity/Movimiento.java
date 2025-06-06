@@ -19,9 +19,42 @@ import java.time.LocalDateTime;
 
 public class Movimiento  extends Base {
 
+    @Column (unique = true)
     private Long nroMovimiento;
 
     private String descripcionMovimiento;
     private Double montoMovimiento;
     private LocalDateTime fechaMovimiento;
+
+    @ManyToOne
+    @JoinColumn(name = "idTipoMovimiento", nullable = false)
+    private TipoMovimiento tipoMovimiento;
+
+    @ManyToOne
+    @JoinColumn(name = "idCategoriaMovimiento", nullable = false)
+    private CategoriaMovimiento categoriaMovimiento;
+
+    @ManyToOne
+    @JoinColumn(name = "idMoneda", nullable = false)
+    private Moneda moneda;
+
+    @ManyToOne
+    @JoinColumn(name = "idCajaMadre", nullable = false)
+    private CajaMadre cajaMadre;
+
+    @ManyToOne
+    @JoinColumn(name = "idInmuebleCaja", nullable = false)
+    private InmuebleCaja inmuebleCaja;
+
+    @ManyToOne
+    @JoinColumn(name = "idEmpleadoCaja", nullable = false)
+    private EmpleadoCaja empleadoCaja;
+
+    @ManyToOne
+    @JoinColumn(name = "idReserva", nullable = false)
+    private Reserva reserva;
+
+    @ManyToOne
+    @JoinColumn(name = "idTarea", nullable = false)
+    private Tarea tarea;
 }

@@ -29,6 +29,14 @@ public class Reserva  extends Base {
     private Integer totalDias;
     private Double totalMonto;
     private Double totalMontoCheckIn;
-    private Double totalMontoSeña;
+    private Double totalMontoSenia;
+
+    @ManyToOne
+    @JoinColumn(name = "idInmueble", nullable = false)
+    private Inmueble inmueble;
+
+    @ManyToOne
+    @JoinColumn(name = "idEstadoReserva", nullable = false)
+    private EstadoReserva estadoReserva;
 
 }

@@ -18,15 +18,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
+
 public class InmuebleCaja  extends Base{
 
-    private Long nroInmuebleCaja;
-
     @Column (unique = true)
+    private Long nroInmuebleCaja;
+   
     private String nombreInmuebleCaja;
-
     private BigDecimal balanceTotalARS;
     private BigDecimal balanceTotalUSD;
     private LocalDateTime fechaHoraAltaInmuebleCaja;
     private LocalDateTime fechaHoraBajaInmuebleCaja;
+
+    @OneToOne
+    @JoinColumn(name = "idInmueble", nullable = false)
+    private Inmueble inmueble;
 }

@@ -1,31 +1,22 @@
 package com.tan.seminario.backend.Entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
-
+/*Lombok*/
 @Entity
-@Table(name = "usuarios")
+@Table(name = "Usuario")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class Usuario  extends Base {
+@AllArgsConstructor
+public class Usuario extends Base {
 
     private String username;
     private String password; // Encriptada
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "usuario_roles",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "rol_id")
-    )
-    private Set<Rol> roles;
-
-    private String jwt; // token JWT actual
 }

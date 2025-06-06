@@ -1,13 +1,14 @@
 package com.tan.seminario.backend.Entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /*Lombok*/
 @Entity
@@ -16,17 +17,13 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-/*Lombok*/
-
-public class EmpleadoCaja  extends Base {
-
-    private Long nroEmpleadoCaja;
+public class EmpleadoCaja extends Base {
 
     @Column(unique = true)
+    private Long nroEmpleadoCaja;
+  
     private String nombreEmpleadoCaja;
+    private BigDecimal balanceARS;
+    private BigDecimal balanceUSD;
 
-    private BigDecimal balanceTotalARS;
-    private BigDecimal balanceTotalUSD;
-    private LocalDateTime fechaHoraAltaEmpleadoCaja;
-    private LocalDateTime fechaHoraBajaEmpleadoCaja;
 }
