@@ -19,8 +19,6 @@ import java.time.LocalDateTime;
 
 public class Empleado  extends Base {
 
-    private Long idEmpleado;
-
     @Column(unique = true)
     private String dniEmpleado;
 
