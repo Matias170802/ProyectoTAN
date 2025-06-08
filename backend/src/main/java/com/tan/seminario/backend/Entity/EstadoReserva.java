@@ -19,8 +19,6 @@ import java.time.LocalDateTime;
 
 public class EstadoReserva  extends Base {
 
-    private Long idEstadoReserva;
-
     @Column (unique = true)
     private String codEstadoReserva;
 
