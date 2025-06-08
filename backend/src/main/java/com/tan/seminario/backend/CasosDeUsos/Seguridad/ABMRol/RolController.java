@@ -1,7 +1,9 @@
-package com.tan.seminario.backend.Controller;
+package com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMRol;
 
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMRol.DTOs.DTOCrearRolRequest;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMRol.DTOs.DTOModificarRolRequest;
 import com.tan.seminario.backend.Entity.Rol;
-import com.tan.seminario.backend.Services.RolService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,39 +12,41 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/roles")
 public class RolController {
-    //Utilizamos el Service de Rol
-    private final RolService rolService;
 
-    public RolController(RolService rolService) {
-        this.rolService = rolService;
+    private final ExpertoABMRol experto;
+
+    public RolController(ExpertoABMRol experto) {
+        this.experto = experto;
     }
 
     // METODOS DEL CONTROLADOR
+    // ALTA ROL
     @PostMapping
-    public ResponseEntity<Rol> crearRol(@RequestBody Rol rol) {
-        return ResponseEntity.ok(rolService.crearRol(rol));
+    public ResponseEntity<Rol> crearRol(@RequestBody DTOCrearRolRequest dto) {
+        Rol rol = experto.crearRol(dto);
+        return new ResponseEntity<>(rol, HttpStatus.CREATED); // Status 201 es Created
     }
 
+    // BAJA ROL
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> bajaRol(@PathVariable Long id) {
+        experto.bajaRol(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // MODIFICAR ROL
+    @PutMapping
+    public ResponseEntity<Void> modificarRol(@RequestBody DTOModificarRolRequest request) {
+        experto.modificarRol(request);
+        return ResponseEntity.ok().build(); // Devuelve 200 OK sin cuerpo
+    }
+    // DUDA => Deberia devolver Void o Debe Devolver la lista con los Roles? Lo mismo para la Alta
+
+
+    // LISTAR ROLES
     @GetMapping
     public ResponseEntity<List<Rol>> listarRoles() {
-        return ResponseEntity.ok(rolService.listarRoles());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Rol> obtenerRol(@PathVariable Long id) {
-        return rolService.obtenerRolPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Rol> actualizarRol(@PathVariable Long id, @RequestBody Rol rol) {
-        return ResponseEntity.ok(rolService.actualizarRol(id, rol));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarRol(@PathVariable Long id) {
-        rolService.eliminarRol(id);
-        return ResponseEntity.noContent().build();
+        List<Rol> rolesActivos = experto.listarRolesActivos();
+        return ResponseEntity.ok(rolesActivos);
     }
 }
