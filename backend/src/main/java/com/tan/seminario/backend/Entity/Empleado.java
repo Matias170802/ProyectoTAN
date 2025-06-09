@@ -1,12 +1,11 @@
 package com.tan.seminario.backend.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /*Lombok*/
 @Entity
@@ -15,6 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 /*Lombok*/
 
 public class Empleado  extends Base {
@@ -32,5 +32,7 @@ public class Empleado  extends Base {
     private LocalDateTime fechaHoraAltaEmpleado;
     private LocalDateTime fechaUltimoCobroSalario;
 
-}
+    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL)
+    private List<EmpleadoRol> empleadosRoles = new ArrayList<>();
 
+}
