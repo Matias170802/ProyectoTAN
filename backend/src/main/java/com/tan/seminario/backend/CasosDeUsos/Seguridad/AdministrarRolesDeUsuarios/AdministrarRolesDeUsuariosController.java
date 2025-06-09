@@ -1,7 +1,7 @@
 package com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios;
 
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesDelEmpleado;
-import com.tan.seminario.backend.Entity.EmpleadoRol;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesParaAsignar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/seguridad")
+@RequestMapping("/api/administrador")
 public class AdministrarRolesDeUsuariosController {
 
     @Autowired
@@ -27,4 +27,16 @@ public class AdministrarRolesDeUsuariosController {
                     .body(List.of());
         }
     }
+
+    @GetMapping("/administrar-roles")
+    public ResponseEntity<List<DTORolesParaAsignar>> rolesDisponiblesParaAsignar() {
+        try {
+            List<DTORolesParaAsignar> rolesParaAsignar = experto.rolesDisponiblesParaAsignar();
+            return ResponseEntity.ok(rolesParaAsignar);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(List.of());
+        }
+    }
+
 }

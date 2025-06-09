@@ -1,7 +1,6 @@
 package com.tan.seminario.backend.Controller;
 
 import com.tan.seminario.backend.Entity.Rol;
-import com.tan.seminario.backend.Services.RolService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
