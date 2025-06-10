@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class EmpleadoRol  extends Base{
+public class EmpleadoRol  extends Base {
 
     private Long idEmpleadoRol;
 

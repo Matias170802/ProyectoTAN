@@ -44,19 +44,14 @@ public class ExpertoABMRol {
 
     // Dar de Baja un Rol
     @Transactional
-    // Debe enviar el ID o el CodRol ????
-    public void bajaRol(Long id) {
+    public void bajaRol(String codRol) {
         // Verificar que el Rol exista
-        Optional<Rol> rolFetched = rolRepository.findById(id);
-        if (rolFetched.isEmpty()) {
-            throw new IllegalArgumentException("El rol no existe");
-        }
-        // Verificar que el Rol no este dado de baja
-        if (rolFetched.get().getFechaHoraBajaRol() != null) {
+        Rol rol = rolRepository.findByCodRol(codRol)
+                .orElseThrow(() -> new IllegalArgumentException("El rol no existe"));
+
+        if (rol.getFechaHoraBajaRol() != null) {
             throw new IllegalArgumentException("El rol ya está dado de baja");
         }
-        // Dar de Baja el Rol
-        Rol rol = rolFetched.get();
         //Seteo la hora de baja y guarda el cambio
         rol.setFechaHoraBajaRol(LocalDateTime.now());
         rolRepository.save(rol);

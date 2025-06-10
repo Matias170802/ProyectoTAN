@@ -20,18 +20,12 @@ public class RolController {
     }
 
     // METODOS DEL CONTROLADOR
-    // ALTA ROL
-    @PostMapping
-    public ResponseEntity<Rol> crearRol(@RequestBody DTOCrearRolRequest dto) {
-        Rol rol = experto.crearRol(dto);
-        return new ResponseEntity<>(rol, HttpStatus.CREATED); // Status 201 es Created
-    }
 
-    // BAJA ROL
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> bajaRol(@PathVariable Long id) {
-        experto.bajaRol(id);
-        return ResponseEntity.noContent().build();
+    // ALTA ROL - Envio el Nombre y el codigo en DTOCrearRolRequest
+    @PostMapping
+    public ResponseEntity<Void> crearRol(@RequestBody DTOCrearRolRequest dto) {
+        Rol rolCreado = experto.crearRol(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).build(); // Status 201 es Created
     }
 
     // MODIFICAR ROL
@@ -40,13 +34,18 @@ public class RolController {
         experto.modificarRol(request);
         return ResponseEntity.ok().build(); // Devuelve 200 OK sin cuerpo
     }
-    // DUDA => Deberia devolver Void o Debe Devolver la lista con los Roles? Lo mismo para la Alta
-
 
     // LISTAR ROLES
     @GetMapping
     public ResponseEntity<List<Rol>> listarRoles() {
         List<Rol> rolesActivos = experto.listarRolesActivos();
-        return ResponseEntity.ok(rolesActivos);
+        return ResponseEntity.ok(rolesActivos); // Devuelve 200 OK con la lista de roles
+    }
+
+    // BAJA ROL - Envio el codRol
+    @PutMapping("/{codRol}")
+    public ResponseEntity<Void> bajaRol(@PathVariable String codRol) {
+        experto.bajaRol(codRol);
+        return ResponseEntity.noContent().build(); // 204 No Content
     }
 }

@@ -17,21 +17,32 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class Empleado  extends Base {
+public class Empleado extends Base {
 
     private Long idEmpleado;
 
-    @Column(unique = true)
+    @Column (unique = true, nullable = false)
     private String dniEmpleado;
 
-    @Column (unique = true)
+    @Column (unique = true, nullable = false)
     private String codEmpleado;
 
+    @Column
     private String nombreEmpleado;
+
+    @Column
     private String nroTelefonoEmpleado;
+
+    @Column
     private Long salarioEmpleado;
+
+    @Column
     private LocalDateTime fechaHoraBajaEmpleado;
+
+    @Column (unique = true, nullable = false)
     private LocalDateTime fechaHoraAltaEmpleado;
+
+    @Column
     private LocalDateTime fechaUltimoCobroSalario;
 
 }

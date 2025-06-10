@@ -56,10 +56,20 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.springframework.boot:spring-boot-starter-security:3.1.2'
+	implementation("org.springframework.security:spring-security-core:6.4.4")
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Dependencias de JWT
+	implementation group: 'com.auth0', name: 'java-jwt', version: '2.0.1'
+	implementation 'org.springframework.security:spring-security-jwt:1.1.1.RELEASE'
+	testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '6.1.5'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 }
 
 tasks.named('test') {
