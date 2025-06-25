@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class CotizacionMonedaHoy extends Base{
+public class CotizacionMonedaHoy extends Base {
 
     private Long idCotizacionMonedaHoy;
 

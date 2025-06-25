@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /*Lombok*/
 @Entity
@@ -18,15 +19,22 @@ import java.time.LocalDateTime;
 
 public class Cliente extends Base {
 
-    private Long idCliente;
+    @Column (unique = true)
+    private String codCliente;
 
     @Column (unique = true)
     private String dniCliente;
 
-    @Column (unique = true)
-    private String codCliente;
-
+    @Column
     private String nombreCliente;
+
+    @Column
     private LocalDateTime fechaHoraBajaCliente;
+
+    @Column
     private LocalDateTime fechaHoraAltaCliente;
+
+    // AGREGO ROL DE CLIENTE * Unico Rol del Cliente
+    @ManyToOne
+    private Rol rolCliente;
 }

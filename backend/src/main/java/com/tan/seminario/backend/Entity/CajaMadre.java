@@ -26,9 +26,16 @@ public class CajaMadre extends Base {
     @Column(unique = true)
     private String nombreCajaMadre;
 
+    @Column
     private BigDecimal balanceTotalARS;
+
+    @Column
     private BigDecimal balanceTotalUSD;
+
+    @Column
     private LocalDateTime fechaHoraAltaCajaMadre;
+
+    @Column
     private LocalDateTime fechaHoraBajaCajaMadre;
 
 }
