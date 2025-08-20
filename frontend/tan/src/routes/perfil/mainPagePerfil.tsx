@@ -4,12 +4,12 @@ import type React from "react"
 
 import { useState } from "react"
 import { Camera, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TopNavigation } from "@/components/dashboard/top-navigation"
+import { Button } from "@/generalComponents/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/generalComponents/ui/card"
+import { Input } from "@/generalComponents/ui/input"
+import { Label } from "@/generalComponents/ui/label"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/generalComponents/ui/tabs"
+import { TopNavigation } from "@/componentes/dashboard/top-navigation"
 
 export default function ProfileView() {
     const [profileImage, setProfileImage] = useState<string | null>(null)

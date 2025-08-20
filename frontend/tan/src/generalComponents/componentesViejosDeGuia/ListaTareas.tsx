@@ -1,9 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/componentes/ui/card"
-import { Button } from "@/componentes/ui/button"
-import { Badge } from "@/componentes/ui/badge"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/generalComponents/ui/card"
+import { Button } from "@/generalComponents/ui/button"
+import { Badge } from "@/generalComponents/ui/badge"
 import { CheckCircle, Info } from "lucide-react"
 import ModalFinalizarTarea from "./ModalFinalizarTarea"
 import ModalDetallesTarea from "./ModalDetallesTarea"

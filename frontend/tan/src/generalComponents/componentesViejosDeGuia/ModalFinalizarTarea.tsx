@@ -1,6 +1,6 @@
 "use client"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/componentes/ui/dialog"
-import { Button } from "@/componentes/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/generalComponents/ui/dialog"
+import { Button } from "@/generalComponents/ui/button"
 import { PlusCircle, CheckCircle } from "lucide-react"
 
 export default function ModalFinalizarTarea({ task, onClose, onAddTransaction, onFinishTask, transactions, setTransactions}) {

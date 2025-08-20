@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Link } from 'react-router-dom'
-import { Button } from "@/componentes/ui/button"
+import { Button } from "@/generalComponents/ui/button"
 import { Wallet, Bell, User, PlusCircle, Home, Calendar, DollarSign } from "lucide-react"
 
 // Simulamos un usuario administrador financiero, se deberia verificar el rol para saber que mostrarle en la barra superior

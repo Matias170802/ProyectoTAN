@@ -1,9 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import ListaTarea from "@/componentes/ListaTareas"
-import BarraSuperior from "@/componentes/BarraSuperior"
-import FormularioAgregarIngresoEgreso from "@/componentes/FormularioAgregarIngresoEgreso"
+import 'App.css'
+import ListaTarea from "@/generalComponents/componentesViejosDeGuia/ListaTareas"
+import BarraSuperior from "@/generalComponents/componentesViejosDeGuia/BarraSuperior"
+import FormularioAgregarIngresoEgreso from "@/generalComponents/componentesViejosDeGuia/FormularioAgregarIngresoEgreso"
 
 export default function Inicio() {
   //para mostrar el formulario de agregar ingreso/egreso

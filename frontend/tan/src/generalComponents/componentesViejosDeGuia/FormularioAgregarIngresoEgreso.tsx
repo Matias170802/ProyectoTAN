@@ -1,12 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/componentes/ui/button"
-import { Input } from "@/componentes/ui/input"
-import { Label } from "@/componentes/ui/label"
-import { Textarea } from "@/componentes/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/componentes/ui/select"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/card"
+import { Button } from "@/generalComponents/ui/button"
+import { Input } from "@/generalComponents/ui/input"
+import { Label } from "@/generalComponents/ui/label"
+import { Textarea } from "@/generalComponents/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/generalComponents/ui/select"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/generalComponents/ui/card"
 import { ArrowLeft, PlusCircle } from "lucide-react"
 
 // Datos de ejemplo
