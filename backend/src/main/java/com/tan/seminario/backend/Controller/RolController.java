@@ -1,5 +1,5 @@
 package com.tan.seminario.backend.Controller;
-
+/*
 import com.tan.seminario.backend.Entity.Rol;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.RolService;
 import org.springframework.http.ResponseEntity;
@@ -44,4 +44,4 @@ public class RolController {
         rolService.eliminarRol(id);
         return ResponseEntity.noContent().build();
     }
-}
+}*/

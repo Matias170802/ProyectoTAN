@@ -1,5 +1,5 @@
 package com.tan.seminario.backend.Controller;
-
+/*
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.DTOs.LoginDTO;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.DTOs.RegistroDTO;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.UsuarioService;
@@ -26,4 +26,4 @@ public class UsuarioController {
     public ResponseEntity<String> login(@RequestBody LoginDTO dto) {
         return ResponseEntity.ok(usuarioService.login(dto));
     }
-}
+}*/

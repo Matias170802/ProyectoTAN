@@ -1,5 +1,5 @@
 package com.tan.seminario.backend.CasosDeUsos.Seguridad;
-
+/*
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.DTOs.LoginDTO;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.DTOs.RegistroDTO;
 import com.tan.seminario.backend.Entity.Usuario;
@@ -46,4 +46,4 @@ public class UsuarioService {
         return "Credenciales inválidas";
     }
 
-}
+}*/
