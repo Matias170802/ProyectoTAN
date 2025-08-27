@@ -1,5 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios;
 
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesAsignados;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesDelEmpleado;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesParaAsignar;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,9 @@ public class AdministrarRolesDeUsuariosController {
 
 
     @GetMapping("/empleado/{codEmpleado}")
-    public ResponseEntity<List<DTORolesDelEmpleado>> obtenerRolesDelEmpleado(@PathVariable String codEmpleado) {
+    public ResponseEntity<List<DTORolesDelEmpleado>> obtenerRolesEmpleado(@PathVariable String codEmpleado) {
         try {
-            List<DTORolesDelEmpleado> roles = experto.obtenerRolesDelEmpleado(codEmpleado);
+            List<DTORolesDelEmpleado> roles = experto.obtenerRolesEmpleado(codEmpleado);
             return ResponseEntity.ok(roles);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -36,6 +37,17 @@ public class AdministrarRolesDeUsuariosController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(List.of());
+        }
+    }
+
+    @PostMapping("/asignar")
+    public ResponseEntity<String> asignarRol(@RequestBody List<DTORolesAsignados> rolesAsignados) {
+        try {
+            experto.asignarRol(rolesAsignados);
+            return ResponseEntity.ok("Roles asignados correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
         }
     }
 

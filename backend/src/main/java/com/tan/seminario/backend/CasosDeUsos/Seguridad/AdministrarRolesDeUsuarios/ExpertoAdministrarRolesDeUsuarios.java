@@ -1,5 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios;
 
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesAsignados;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesDelEmpleado;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesParaAsignar;
 import com.tan.seminario.backend.Entity.Empleado;
@@ -12,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import java.util.stream.Collectors;
 
 @Service
 @Scope("request") // Esto es para que se cree una sola memoria para todos los usuarios, no haya problemas de concurrencia ni nada por el estilo
@@ -24,11 +27,14 @@ public class ExpertoAdministrarRolesDeUsuarios {
 
     @Autowired
     private EmpleadoRepository empleadoRepository;
+    
+    @Autowired
+    private EmpleadoRolRepository empleadoRolRepository;
 
     @Autowired
     private RolRepository rolRepository;
 
-    public List<DTORolesDelEmpleado> obtenerRolesDelEmpleado(String codEmpleado) throws Exception {
+    public List<DTORolesDelEmpleado> obtenerRolesEmpleado(String codEmpleado) throws Exception {
         // Primero verificamos si existe el empleado
         List<Empleado> empleados = empleadoRepository.findByCodEmpleado(codEmpleado);
         if (empleados.isEmpty()) {
@@ -37,6 +43,7 @@ public class ExpertoAdministrarRolesDeUsuarios {
         //Revisamos que no tenga fechaHoraBajaEmpleado distinto de vació
         Empleado empleado = empleados.get(0);
         //Recordamos al Empleado
+        memoria.setEmpleado(empleado);
 
         if (empleado.getFechaHoraBajaEmpleado() != null) {
             throw new Exception("El empleado esta dado de baja");
@@ -88,5 +95,42 @@ public class ExpertoAdministrarRolesDeUsuarios {
         }
 
         return dtoRolesParaAsignar;
+    }
+    public void asignarRol(List<DTORolesAsignados> rolesAsignados) throws Exception {
+        if (rolesAsignados == null || rolesAsignados.isEmpty()) {
+            throw new Exception("La lista de roles a asignar no puede estar vacía");
+        }
+
+        // Obtenemos el empleado 
+        Empleado empleado = memoria.getEmpleado();
+        
+        // Procesamos cada rol a asignar
+        for (DTORolesAsignados rolAsignado : rolesAsignados) {
+            // Verificamos que el rol exista
+            List<Rol> roles = rolRepository.findAll().stream()
+                    .filter(rol -> rol.getCodRol().equals(rolAsignado.getCodRol()))
+                    .toList();
+            if (roles.isEmpty()) {
+                throw new Exception("Rol no encontrado con código: " + rolAsignado.getCodRol());
+            }
+
+            Rol rol = roles.get(0);
+
+            if (rol.getFechaHoraBajaRol() != null) {
+                throw new Exception("El rol " + rol.getCodRol() + " está dado de baja");
+            }
+
+
+
+            // Creamos la nueva asignación
+            EmpleadoRol empleadoRol = new EmpleadoRol();
+            empleadoRol.setEmpleado(empleado);
+            empleadoRol.setRol(rol);
+            empleadoRol.setFechaHoraAltaEmpleadoRol(LocalDateTime.now());
+
+            empleadoRolRepository.save(empleadoRol);
+        }
+
+
     }
 }
