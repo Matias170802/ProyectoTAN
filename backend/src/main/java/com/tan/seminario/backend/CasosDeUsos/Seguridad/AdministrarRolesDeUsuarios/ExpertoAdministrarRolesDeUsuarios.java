@@ -34,7 +34,7 @@ public class ExpertoAdministrarRolesDeUsuarios {
         if (empleados.isEmpty()) {
             throw new Exception("Empleado no encontrado con código: " + codEmpleado);
         }
-        //Revisamos que no tenga fechaHoraBajaEmpleado distinto de vació
+        //Revisamos que no tenga fechaHoraBajaEmpleado distinto de vacío
         Empleado empleado = empleados.get(0);
         //Recordamos al Empleado
 
