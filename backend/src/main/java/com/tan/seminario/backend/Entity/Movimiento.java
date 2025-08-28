@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 
 public class Movimiento  extends Base {
 
+    @Column (unique = true)
     private Long nroMovimiento;
 
     private String descripcionMovimiento;

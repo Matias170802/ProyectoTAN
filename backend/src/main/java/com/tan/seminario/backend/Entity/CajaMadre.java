@@ -23,13 +23,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 /*Lombok*/
+public class CajaMadre extends Base {
 
-public class CajaMadre {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCajaMadre;
-
-    @Column (unique = true)
     private Long nroCajaMadre;
 
     @Column (unique = true)

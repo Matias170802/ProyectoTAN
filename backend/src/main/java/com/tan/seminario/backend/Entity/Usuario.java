@@ -6,15 +6,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
-
+/*Lombok*/
 @Entity
-@Table(name = "usuarios")
+@Table(name = "Usuario")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Usuario  extends Base {
+
+public class Usuario extends Base {
 
     private String username;
     private String password; // Encriptada
@@ -34,6 +34,5 @@ public class Usuario  extends Base {
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "rol_id")
     )
-    private Set<Rol> roles;
-
+    private set<Rol> roles;
 }

@@ -18,9 +18,9 @@ public class AdministrarRolesDeUsuariosController {
 
 
     @GetMapping("/empleado/{codEmpleado}")
-    public ResponseEntity<List<DTORolesDelEmpleado>> obtenerRolesDelEmpleado(@PathVariable String codEmpleado) {
+    public ResponseEntity<List<DTORolesDelEmpleado>> obtenerRolesEmpleado(@PathVariable String codEmpleado) {
         try {
-            List<DTORolesDelEmpleado> roles = experto.obtenerRolesDelEmpleado(codEmpleado);
+            List<DTORolesDelEmpleado> roles = experto.obtenerRolesEmpleado(codEmpleado);
             return ResponseEntity.ok(roles);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -39,4 +39,26 @@ public class AdministrarRolesDeUsuariosController {
         }
     }
 
+    @PostMapping("/asignar")
+    public ResponseEntity<String> asignarRol(@RequestBody List<DTORolesAsignados> rolesAsignados) {
+        try {
+            experto.asignarRol(rolesAsignados);
+            return ResponseEntity.ok("Roles asignados correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/desasignar")
+    // Uso el mismo DTO que asignar ya que tiene los mismos datos, basicamente el front entrega el mismo DTO
+    public ResponseEntity<String> desasignarRol(@RequestBody List<DTORolesAsignados> rolesDesasignados) {
+        try {
+            experto.desasignarRol(rolesDesasignados);
+            return ResponseEntity.ok("Roles desasignados correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
 }

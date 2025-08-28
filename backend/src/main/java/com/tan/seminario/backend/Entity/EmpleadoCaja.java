@@ -1,6 +1,8 @@
 package com.tan.seminario.backend.Entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,19 +20,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class EmpleadoCaja {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idEmpleadoCaja;
+public class EmpleadoCaja  extends Base {
 
-    @Column (unique = true)
+    @Column(unique = true)
     private Long nroEmpleadoCaja;
 
     @Column(unique = true)
     private String nombreEmpleadoCaja;
+    private BigDecimal balanceARS;
+    private BigDecimal balanceUSD;
 
-    private BigDecimal balanceTotalARS;
-    private BigDecimal balanceTotalUSD;
-    private LocalDateTime fechaHoraAltaEmpleadoCaja;
-    private LocalDateTime fechaHoraBajaEmpleadoCaja;
+    @OneToOne
+    @JoinColumn(name = "idEmpleado", nullable = false)
+    private Empleado empleado;
 }
