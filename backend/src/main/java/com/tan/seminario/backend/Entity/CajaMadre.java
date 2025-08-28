@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 /*Lombok*/
-
 public class CajaMadre extends Base {
 
     private Long nroCajaMadre;
