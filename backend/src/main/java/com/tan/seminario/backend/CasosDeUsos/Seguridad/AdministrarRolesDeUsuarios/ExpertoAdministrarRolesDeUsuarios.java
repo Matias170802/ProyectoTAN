@@ -130,7 +130,33 @@ public class ExpertoAdministrarRolesDeUsuarios {
 
             empleadoRolRepository.save(empleadoRol);
         }
-
-
     }
+    
+    public void desasignarRol(List<DTORolesAsignados> rolesDesasignados) throws Exception {
+    if (rolesDesasignados == null || rolesDesasignados.isEmpty()) {
+        throw new Exception("La lista de roles a desasignar no puede estar vacía");
+    }
+
+    // Obtenemos el empleado 
+    Empleado empleado = memoria.getEmpleado();
+    
+    // Procesamos cada rol a desasignar
+    for (DTORolesAsignados rolDesasignado : rolesDesasignados) {
+        // Buscamos el EmpleadoRol activo que corresponde
+        List<EmpleadoRol> empleadosRoles = empleado.getEmpleadosRoles().stream()
+                .filter(er -> er.getRol().getCodRol().equals(rolDesasignado.getCodRol()) 
+                        && er.getFechaHoraBajaEmpleadoRol() == null)
+                .toList();
+
+        if (empleadosRoles.isEmpty()) {
+            throw new Exception("No se encontró una asignación activa del rol: " + rolDesasignado.getCodRol());
+        }
+
+        // Establecemos la fecha de baja
+        EmpleadoRol empleadoRol = empleadosRoles.get(0);
+        empleadoRol.setFechaHoraBajaEmpleadoRol(LocalDateTime.now());
+        
+        empleadoRolRepository.save(empleadoRol);
+    }
+}
 }

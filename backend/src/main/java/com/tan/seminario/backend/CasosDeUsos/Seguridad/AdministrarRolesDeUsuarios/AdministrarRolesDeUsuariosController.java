@@ -51,4 +51,15 @@ public class AdministrarRolesDeUsuariosController {
         }
     }
 
+    @PostMapping("/desasignar")
+    // Uso el mismo DTO que asignar ya que tiene los mismos datos, basicamente el front entrega el mismo DTO
+    public ResponseEntity<String> desasignarRol(@RequestBody List<DTORolesAsignados> rolesDesasignados) {
+        try {
+            experto.desasignarRol(rolesDesasignados);
+            return ResponseEntity.ok("Roles desasignados correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
 }
