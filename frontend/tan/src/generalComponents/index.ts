@@ -1,0 +1,1 @@
+//*indice para importar los componentes de una forma más facil
