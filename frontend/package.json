@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@types/react": "^19.1.12",
+    "react": "^19.1.1"
+  }
+}
