@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface EmpleadoRepository extends BaseRepository<Empleado, Long> {
     List<Empleado> findByCodEmpleado(String codEmpleado);
+    List<Empleado> findByNombreEmpleadoContainingIgnoreCase(String nombreEmpleado);
 }

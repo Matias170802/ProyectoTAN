@@ -1,5 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios;
 
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesAsignados;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesDelEmpleado;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesParaAsignar;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,21 @@ public class AdministrarRolesDeUsuariosController {
     @Autowired
     private ExpertoAdministrarRolesDeUsuarios experto;
 
-
-    @GetMapping("/empleado/{codEmpleado}")
-    public ResponseEntity<List<DTORolesDelEmpleado>> obtenerRolesEmpleado(@PathVariable String codEmpleado) {
+    @GetMapping("/empleados")
+    public ResponseEntity<List<DTOEmpleadoRoles>> obtenerRoles() {
         try {
-            List<DTORolesDelEmpleado> roles = experto.obtenerRolesEmpleado(codEmpleado);
+            List<DTOEmpleadoRoles> empleadoRoles = experto.obtenerEmpleadoRoles();
+            return ResponseEntity.ok(empleadoRoles);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(List.of());
+        }
+    }
+
+    @GetMapping("/empleado")
+    public ResponseEntity<List<DTORolesDelEmpleado>> obtenerRolesEmpleadoPorNombre(@RequestParam String nombre) {
+        try {
+            List<DTORolesDelEmpleado> roles = experto.obtenerRolesEmpleadoPorNombre(nombre);
             return ResponseEntity.ok(roles);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

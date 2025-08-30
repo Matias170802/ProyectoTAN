@@ -1,6 +1,6 @@
 "use client"
-import 'App.css'
-import BarraSuperior from './generalComponents/componentesViejosDeGuia/BarraSuperior'
+import './App.css'
+import Navbar from './generalComponents/Navbar/Navbar'
 import { AppProvider } from './context/AppContext'
 
 
@@ -8,7 +8,7 @@ import { AppProvider } from './context/AppContext'
 function AppContent() {
   return (
     <main className="min-h-screen bg-gray-100">
-      <BarraSuperior/>
+  <Navbar/>
     </main>
   )
 }

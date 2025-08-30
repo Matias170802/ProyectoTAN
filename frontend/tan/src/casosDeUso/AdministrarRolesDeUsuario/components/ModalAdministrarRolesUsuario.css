@@ -1,0 +1,62 @@
+.modal-roles__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.modal-roles__container {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.16);
+  padding: 64px 80px 48px 80px;
+  min-width: 650px;
+  max-width: 98vw;
+  text-align: left;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-roles__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.modal-roles__desc {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 24px;
+}
+
+.modal-roles__content {
+  width: 100%;
+  min-height: 220px;
+  margin-bottom: 24px;
+}
+
+.modal-roles__close {
+  position: absolute;
+  right: 24px;
+  bottom: 18px;
+  background: #222;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.modal-roles__close:hover {
+  background: #444;
+}

@@ -34,42 +34,62 @@ public class ExpertoAdministrarRolesDeUsuarios {
     @Autowired
     private RolRepository rolRepository;
 
-    public List<DTORolesDelEmpleado> obtenerRolesEmpleado(String codEmpleado) throws Exception {
-        // Primero verificamos si existe el empleado
-        List<Empleado> empleados = empleadoRepository.findByCodEmpleado(codEmpleado);
+    public List<DTOEmpleadoRoles> obtenerEmpleadoRoles() throws Exception {
+        // Buscar empleados activos
+        List<Empleado> empleados = empleadoRepository.filter(empleado -> empleado.getFechaHoraBajaEmpleado() == null);
+        List<DTOEmpleadoRoles> listaDTO = new ArrayList<>();
+
         if (empleados.isEmpty()) {
-            throw new Exception("Empleado no encontrado con código: " + codEmpleado);
-        }
-        //Revisamos que no tenga fechaHoraBajaEmpleado distinto de vació
-        Empleado empleado = empleados.get(0);
-        //Recordamos al Empleado
-        memoria.setEmpleado(empleado);
-
-        if (empleado.getFechaHoraBajaEmpleado() != null) {
-            throw new Exception("El empleado esta dado de baja");
+            throw new Exception("No hay empleados activos");
         }
 
-        // Buscamos EmpleadoRol activos
-        List<EmpleadoRol> empleadoRol = empleado.getEmpleadosRoles();
+        for (Empleado empleado : empleados) {
+            List<EmpleadoRol> empleadoRol = empleado.getEmpleadosRoles();
+            empleadoRol.removeIf(empleadoRolValido -> empleadoRolValido.getFechaHoraBajaEmpleadoRol() != null);
 
+            List<Rol> roles = empleadoRol.stream()
+                    .map(EmpleadoRol::getRol)
+                    .filter(rol -> rol.getFechaHoraBajaRol() == null)
+                    .collect(Collectors.toList());
+
+            List<String> codRoles = roles.stream().map(Rol::getCodRol).collect(Collectors.toList());
+            List<String> nombreRoles = roles.stream().map(Rol::getNombreRol).collect(Collectors.toList());
+
+            DTOEmpleadoRoles dto = new DTOEmpleadoRoles(
+                empleado.getCodEmpleado(),
+                empleado.getNombreEmpleado(),
+                codRoles,
+                nombreRoles
+            );
+            listaDTO.add(dto);
+        }
+        return listaDTO;
+    }
+
+//Corregir 
+    public List<DTORolesDelEmpleado> obtenerRolesEmpleadoPorNombre(String nombre) throws Exception {
+        List<Empleado> empleados = empleadoRepository.findByNombreEmpleadoContainingIgnoreCase(nombre);
+        if (empleados.isEmpty()) {
+            throw new Exception("Empleado no encontrado con nombre: " + nombre);
+        }
+
+        List<EmpleadoRol> empleadoRol = empleados.get(0).getEmpleadosRoles();
         empleadoRol.removeIf(empleadoRolValido -> empleadoRolValido.getFechaHoraBajaEmpleadoRol() != null);
 
-        // Buscamos el nombre y codigo del Rol y lo agregamos al DTO
         List<DTORolesDelEmpleado> dtoRolesDelEmpleados = new ArrayList<>();
         for (EmpleadoRol a : empleadoRol) {
             Rol rol = a.getRol();
             DTORolesDelEmpleado dtoRol = new DTORolesDelEmpleado(rol.getNombreRol(), rol.getCodRol());
             dtoRolesDelEmpleados.add(dtoRol);
             memoria.agregarRol(rol);
-
         }
-            if (dtoRolesDelEmpleados.isEmpty()) {
-                throw new Exception("El empleado no tiene roles activos");
-            }
-
+        if (dtoRolesDelEmpleados.isEmpty()) {
+            throw new Exception("El empleado no tiene roles activos");
+        }
         return dtoRolesDelEmpleados;
-
     }
+
+
     public List<DTORolesParaAsignar> rolesDisponiblesParaAsignar () {
         //Buscamos todos los roles posibles para asignarle al empleado, Tienen que ser los roles disponibles que no tenga asignados
         //Me traigo los roles que tiene asignados el empleado para filtrar y que no los pueda asignar
