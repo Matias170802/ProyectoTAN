@@ -12,5 +12,7 @@ import java.util.Optional;
 public interface RolRepository extends BaseRepository<Rol, Long>{
     // Verificar si el Rol existe
     List<Rol> findByNombre(String nombre);
+
+    Rol findByCodRol(String codRol);
 }
 

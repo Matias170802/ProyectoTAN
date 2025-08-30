@@ -1,7 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios;
 
-import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesAsignados;
-import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesDelEmpleado;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTOEmpleadoRoles;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesParaAsignar;
 import com.tan.seminario.backend.Entity.Empleado;
 import com.tan.seminario.backend.Entity.EmpleadoRol;
@@ -9,6 +8,7 @@ import com.tan.seminario.backend.Entity.Rol;
 import com.tan.seminario.backend.Repository.EmpleadoRepository;
 import com.tan.seminario.backend.Repository.EmpleadoRolRepository;
 import com.tan.seminario.backend.Repository.RolRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import java.util.stream.Collectors;
 
 @Service
 @Scope("request") // Esto es para que se cree una sola memoria para todos los usuarios, no haya problemas de concurrencia ni nada por el estilo
@@ -36,7 +34,7 @@ public class ExpertoAdministrarRolesDeUsuarios {
 
     public List<DTOEmpleadoRoles> obtenerEmpleadoRoles() throws Exception {
         // Buscar empleados activos
-        List<Empleado> empleados = empleadoRepository.filter(empleado -> empleado.getFechaHoraBajaEmpleado() == null);
+        List<Empleado> empleados = empleadoRepository.findByFechaHoraBajaEmpleadoIsNull();
         List<DTOEmpleadoRoles> listaDTO = new ArrayList<>();
 
         if (empleados.isEmpty()) {
@@ -50,10 +48,11 @@ public class ExpertoAdministrarRolesDeUsuarios {
             List<Rol> roles = empleadoRol.stream()
                     .map(EmpleadoRol::getRol)
                     .filter(rol -> rol.getFechaHoraBajaRol() == null)
-                    .collect(Collectors.toList());
+                    .distinct()
+                    .toList();
 
-            List<String> codRoles = roles.stream().map(Rol::getCodRol).collect(Collectors.toList());
-            List<String> nombreRoles = roles.stream().map(Rol::getNombreRol).collect(Collectors.toList());
+            List<String> codRoles = roles.stream().map(Rol::getCodRol).toList();
+            List<String> nombreRoles = roles.stream().map(Rol::getNombreRol).toList();
 
             DTOEmpleadoRoles dto = new DTOEmpleadoRoles(
                 empleado.getCodEmpleado(),
@@ -63,37 +62,23 @@ public class ExpertoAdministrarRolesDeUsuarios {
             );
             listaDTO.add(dto);
         }
+
+        //Ordenamos listaDTO alfabeticamente por nombre del empleado
+        listaDTO.sort((a, b) -> a.getNombreEmpleado().compareToIgnoreCase(b.getNombreEmpleado()));
+
         return listaDTO;
     }
 
-//Corregir 
-    public List<DTORolesDelEmpleado> obtenerRolesEmpleadoPorNombre(String nombre) throws Exception {
-        List<Empleado> empleados = empleadoRepository.findByNombreEmpleadoContainingIgnoreCase(nombre);
-        if (empleados.isEmpty()) {
-            throw new Exception("Empleado no encontrado con nombre: " + nombre);
-        }
-
-        List<EmpleadoRol> empleadoRol = empleados.get(0).getEmpleadosRoles();
-        empleadoRol.removeIf(empleadoRolValido -> empleadoRolValido.getFechaHoraBajaEmpleadoRol() != null);
-
-        List<DTORolesDelEmpleado> dtoRolesDelEmpleados = new ArrayList<>();
-        for (EmpleadoRol a : empleadoRol) {
-            Rol rol = a.getRol();
-            DTORolesDelEmpleado dtoRol = new DTORolesDelEmpleado(rol.getNombreRol(), rol.getCodRol());
-            dtoRolesDelEmpleados.add(dtoRol);
-            memoria.agregarRol(rol);
-        }
-        if (dtoRolesDelEmpleados.isEmpty()) {
-            throw new Exception("El empleado no tiene roles activos");
-        }
-        return dtoRolesDelEmpleados;
-    }
-
-
-    public List<DTORolesParaAsignar> rolesDisponiblesParaAsignar () {
+    public List<DTORolesParaAsignar> rolesDisponiblesParaAsignar (String codEmpleado) throws Exception {
         //Buscamos todos los roles posibles para asignarle al empleado, Tienen que ser los roles disponibles que no tenga asignados
-        //Me traigo los roles que tiene asignados el empleado para filtrar y que no los pueda asignar
-        List<Rol> rolesDelEmpleado = memoria.getRolesDelEmpleado();
+        // Buscamos al empleado del codEmpleado
+        List<Empleado> empleado = empleadoRepository.findByCodEmpleado(codEmpleado);
+        if (empleado.get(0).getFechaHoraBajaEmpleado() != null) {
+            throw new Exception("El empleado esta dado de baja");
+        }
+
+        List<EmpleadoRol> rolesDelEmpleado = empleado.get(0).getEmpleadosRoles();
+
 
         //Tengo que Buscar todos lso roles existentes con fecha horaBaja =! de vacio
         List<Rol> rolesDisponibles = rolRepository.findAll();
@@ -101,12 +86,14 @@ public class ExpertoAdministrarRolesDeUsuarios {
         rolesDisponibles.removeIf(rol -> rol.getFechaHoraBajaRol() != null);
 
         // Eliminar roles que ya tiene el empleado
-        rolesDisponibles.removeIf(rolDisponible ->
-                rolesDelEmpleado.stream()
-                        .anyMatch(rolEmpleado ->
-                                rolEmpleado.getCodRol().equals(rolDisponible.getCodRol())
-                        )
-        );
+        for (Rol rol : rolesDisponibles) {
+            for (EmpleadoRol empleadoRol : rolesDelEmpleado) {
+                if (rol.getCodRol().equals(empleadoRol.getRol().getCodRol())) {
+                    rolesDisponibles.remove(rol);
+                    break;
+                }
+            }
+        }
 
         List<DTORolesParaAsignar> dtoRolesParaAsignar = new ArrayList<>();
         for (Rol rolDisponible : rolesDisponibles) {
@@ -116,67 +103,78 @@ public class ExpertoAdministrarRolesDeUsuarios {
 
         return dtoRolesParaAsignar;
     }
-    public void asignarRol(List<DTORolesAsignados> rolesAsignados) throws Exception {
+
+    public List<DTORolesParaAsignar> rolesAsignados (String codEmpleado) throws Exception {
+
+        // Buscamos al empleado del codEmpleado
+        List<Empleado> empleado = empleadoRepository.findByCodEmpleado(codEmpleado);
+        if (empleado.get(0).getFechaHoraBajaEmpleado() != null) {
+            throw new Exception("El empleado esta dado de baja");
+        }
+        List<EmpleadoRol> rolesDelEmpleado = empleado.get(0).getEmpleadosRoles();
+
+        List<DTORolesParaAsignar> dtoRolesParaAsignar = new ArrayList<>();
+        for (EmpleadoRol empleadoRol : rolesDelEmpleado) {
+            DTORolesParaAsignar dtoRolAsignar = new DTORolesParaAsignar(empleadoRol.getRol().getCodRol(), empleadoRol.getRol().getNombreRol());
+            dtoRolesParaAsignar.add(dtoRolAsignar);
+        }
+
+        return dtoRolesParaAsignar;
+    }
+
+    @Transactional
+    public void asignarRol(List<DTOEmpleadoRoles> rolesAsignados) throws Exception {
         if (rolesAsignados == null || rolesAsignados.isEmpty()) {
             throw new Exception("La lista de roles a asignar no puede estar vacía");
         }
+        //obtener el Empleado
+        String codEmpleado = rolesAsignados.get(0).getCodEmpleado();
+        List<Empleado> empleado = empleadoRepository.findByCodEmpleado(codEmpleado);
 
-        // Obtenemos el empleado
-        Empleado empleado = memoria.getEmpleado();
-
-        // Procesamos cada rol a asignar
-        for (DTORolesAsignados rolAsignado : rolesAsignados) {
-            // Verificamos que el rol exista
-            List<Rol> roles = rolRepository.findAll().stream()
-                    .filter(rol -> rol.getCodRol().equals(rolAsignado.getCodRol()))
-                    .toList();
-            if (roles.isEmpty()) {
-                throw new Exception("Rol no encontrado con código: " + rolAsignado.getCodRol());
+        for (DTOEmpleadoRoles dtoEmpleadoRoles : rolesAsignados) {
+            List<String> codigosRoles = dtoEmpleadoRoles.getCodRol();
+            for (String codRol : codigosRoles) {
+                Rol rol = rolRepository.findByCodRol(codRol);
+                EmpleadoRol empleadoRol = new EmpleadoRol();
+                empleadoRol.setRol(rol);
+                empleadoRol.setEmpleado(empleado.get(0));
+                empleadoRol.setFechaHoraAltaEmpleadoRol(LocalDateTime.now());
+                empleadoRol.setFechaHoraBajaEmpleadoRol(null);
+                empleadoRolRepository.save(empleadoRol);
             }
-
-            Rol rol = roles.get(0);
-
-            if (rol.getFechaHoraBajaRol() != null) {
-                throw new Exception("El rol " + rol.getCodRol() + " está dado de baja");
-            }
-
-
-
-            // Creamos la nueva asignación
-            EmpleadoRol empleadoRol = new EmpleadoRol();
-            empleadoRol.setEmpleado(empleado);
-            empleadoRol.setRol(rol);
-            empleadoRol.setFechaHoraAltaEmpleadoRol(LocalDateTime.now());
-
-            empleadoRolRepository.save(empleadoRol);
         }
     }
 
-    public void desasignarRol(List<DTORolesAsignados> rolesDesasignados) throws Exception {
-    if (rolesDesasignados == null || rolesDesasignados.isEmpty()) {
+    @Transactional
+    public void desasignarRol(List<DTOEmpleadoRoles> rolesDesasignados) throws Exception {
+        if (rolesDesasignados == null || rolesDesasignados.isEmpty()) {
         throw new Exception("La lista de roles a desasignar no puede estar vacía");
     }
 
-    // Obtenemos el empleado
-    Empleado empleado = memoria.getEmpleado();
+        // Obtenemos el empleado
+        List<Empleado> empleado = empleadoRepository.findByCodEmpleado(rolesDesasignados.get(0).getCodEmpleado());
+        List<EmpleadoRol> empleadoRol = empleado.get(0).getEmpleadosRoles();
+        empleadoRol.removeIf(empleadoRolValido -> empleadoRolValido.getFechaHoraBajaEmpleadoRol() != null);
 
-    // Procesamos cada rol a desasignar
-    for (DTORolesAsignados rolDesasignado : rolesDesasignados) {
-        // Buscamos el EmpleadoRol activo que corresponde
-        List<EmpleadoRol> empleadosRoles = empleado.getEmpleadosRoles().stream()
-                .filter(er -> er.getRol().getCodRol().equals(rolDesasignado.getCodRol())
-                        && er.getFechaHoraBajaEmpleadoRol() == null)
-                .toList();
-
-        if (empleadosRoles.isEmpty()) {
-            throw new Exception("No se encontró una asignación activa del rol: " + rolDesasignado.getCodRol());
+        List<String> codigosRolEmpleado = new ArrayList<>();
+        for (EmpleadoRol empleadoRolValido : empleadoRol) {
+            String codRolEmpleado = empleadoRolValido.getRol().getCodRol();
+            codigosRolEmpleado.add(codRolEmpleado);
         }
 
-        // Establecemos la fecha de baja
-        EmpleadoRol empleadoRol = empleadosRoles.get(0);
-        empleadoRol.setFechaHoraBajaEmpleadoRol(LocalDateTime.now());
 
-        empleadoRolRepository.save(empleadoRol);
+        // Procesamos cada rol a desasignar
+        List<String> codigosRolesDTO = new ArrayList<>();
+        for (DTOEmpleadoRoles dtoEmpleadoRoles : rolesDesasignados) {
+            String codRol = dtoEmpleadoRoles.getCodRol();
+            codigosRolesDTO.add(codRol);
+        }
+
+        for (EmpleadoRol er : empleadoRol) {
+            if (codigosRolEmpleado.contains(codigosRolesDTO)){
+                er.setFechaHoraBajaEmpleadoRol(LocalDateTime.now());
+                empleadoRolRepository.save(er);
+            }
+        }
     }
-}
 }

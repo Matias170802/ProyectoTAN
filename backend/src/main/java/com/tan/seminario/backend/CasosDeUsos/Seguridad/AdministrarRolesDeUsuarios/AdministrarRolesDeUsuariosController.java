@@ -1,7 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios;
 
-import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesAsignados;
-import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesDelEmpleado;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTOEmpleadoRoles;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.AdministrarRolesDeUsuarios.DTOAdministrarRolesDeUsuarios.DTORolesParaAsignar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,21 +27,11 @@ public class AdministrarRolesDeUsuariosController {
         }
     }
 
-    @GetMapping("/empleado")
-    public ResponseEntity<List<DTORolesDelEmpleado>> obtenerRolesEmpleadoPorNombre(@RequestParam String nombre) {
-        try {
-            List<DTORolesDelEmpleado> roles = experto.obtenerRolesEmpleadoPorNombre(nombre);
-            return ResponseEntity.ok(roles);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(List.of());
-        }
-    }
 
-    @GetMapping("/administrar-roles")
-    public ResponseEntity<List<DTORolesParaAsignar>> rolesDisponiblesParaAsignar() {
+    @GetMapping("/roles-a-asignar-empleado/{codEmpleado}")
+    public ResponseEntity<List<DTORolesParaAsignar>> rolesDisponiblesParaAsignar(@PathVariable("codEmpleado") String codEmpleado) {
         try {
-            List<DTORolesParaAsignar> rolesParaAsignar = experto.rolesDisponiblesParaAsignar();
+            List<DTORolesParaAsignar> rolesParaAsignar = experto.rolesDisponiblesParaAsignar(codEmpleado);
             return ResponseEntity.ok(rolesParaAsignar);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -50,8 +39,19 @@ public class AdministrarRolesDeUsuariosController {
         }
     }
 
+    @GetMapping("/roles-asignados-empleado/{codEmpleado}")
+    public ResponseEntity<List<DTORolesParaAsignar>> rolesAsignados(@PathVariable("codEmpleado") String codEmpleado) {
+        try {
+            List<DTORolesParaAsignar> rolesAsignadosdelEmpleado = experto.rolesAsignados(codEmpleado);
+            return ResponseEntity.ok(rolesAsignadosdelEmpleado);
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(List.of());
+        }
+    }
+
     @PostMapping("/asignar")
-    public ResponseEntity<String> asignarRol(@RequestBody List<DTORolesAsignados> rolesAsignados) {
+    public ResponseEntity<String> asignarRol(@RequestBody List<DTOEmpleadoRoles> rolesAsignados) {
         try {
             experto.asignarRol(rolesAsignados);
             return ResponseEntity.ok("Roles asignados correctamente");
@@ -63,7 +63,7 @@ public class AdministrarRolesDeUsuariosController {
 
     @PostMapping("/desasignar")
     // Uso el mismo DTO que asignar ya que tiene los mismos datos, basicamente el front entrega el mismo DTO
-    public ResponseEntity<String> desasignarRol(@RequestBody List<DTORolesAsignados> rolesDesasignados) {
+    public ResponseEntity<String> desasignarRol(@RequestBody List<DTOEmpleadoRoles> rolesDesasignados) {
         try {
             experto.desasignarRol(rolesDesasignados);
             return ResponseEntity.ok("Roles desasignados correctamente");
