@@ -6,5 +6,5 @@ import java.util.List;
 
 
 public interface EmpleadoRolRepository extends BaseRepository<EmpleadoRol, Long> {
-    List<EmpleadoRol> findByFechaHoraBajaEmpleadoRolNull  (String codEmpleado);
+    List<EmpleadoRol> findByFechaHoraBajaEmpleadoRolNull  ();
 }

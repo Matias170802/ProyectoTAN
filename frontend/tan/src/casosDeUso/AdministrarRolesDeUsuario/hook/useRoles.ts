@@ -1,6 +1,6 @@
 // Hook para manejar la lógica de roles de usuario
 import { useState, useEffect } from 'react';
-import { getRolesEmpleado, getRolesDisponibles, asignarRoles, desasignarRoles, getEmpleadosConRoles } from '../serviceAdministrarRolesDeUsuario';
+import { asignarRoles, desasignarRoles, getEmpleadosConRoles, getRolesAsignadosEmpleado, getRolesDisponiblesParaAsignar } from '../serviceAdministrarRolesDeUsuario';
 
 export const useRoles = () => {
   const [empleados, setEmpleados] = useState<any[]>([]);
@@ -15,6 +15,7 @@ export const useRoles = () => {
       setLoading(true);
       try {
         const empleadosData = await getEmpleadosConRoles();
+        empleadosData.sort((a: any, b: any) => a.nombreEmpleado.localeCompare(b.nombreEmpleado));
         setEmpleados(empleadosData);
         setError(null);
       } catch (err: any) {
@@ -32,8 +33,8 @@ export const useRoles = () => {
       setLoading(true);
       try {
         const [rolesEmp, rolesDisp] = await Promise.all([
-          getRolesEmpleado(selectedEmpleado.codEmpleado),
-          getRolesDisponibles()
+          getRolesAsignadosEmpleado(selectedEmpleado.codEmpleado),
+          getRolesDisponiblesParaAsignar(selectedEmpleado.codEmpleado)
         ]);
         setRolesEmpleado(rolesEmp);
         setRolesDisponibles(rolesDisp);
@@ -54,14 +55,14 @@ export const useRoles = () => {
   const handleAsignarRoles = async (roles: any[]) => {
     if (!selectedEmpleado) return;
     await asignarRoles(roles);
-    const updated = await getRolesEmpleado(selectedEmpleado.codEmpleado);
+    const updated = await getRolesAsignadosEmpleado(selectedEmpleado.codEmpleado);
     setRolesEmpleado(updated);
   };
 
   const handleDesasignarRoles = async (roles: any[]) => {
     if (!selectedEmpleado) return;
     await desasignarRoles(roles);
-    const updated = await getRolesEmpleado(selectedEmpleado.codEmpleado);
+    const updated = await getRolesAsignadosEmpleado(selectedEmpleado.codEmpleado);
     setRolesEmpleado(updated);
   };
 

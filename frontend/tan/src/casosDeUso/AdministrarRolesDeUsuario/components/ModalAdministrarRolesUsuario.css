@@ -1,3 +1,72 @@
+.modal-roles__list {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.modal-roles__item {
+  list-style: none;
+  margin-bottom: 16px;
+  padding: 16px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-roles__nombre {
+  font-weight: bold;
+  font-size: 1.15em;
+  color: #3a2e6c;
+}
+
+.modal-roles__codigo {
+  color: #888;
+  font-size: 0.95em;
+  margin-bottom: 2px;
+}
+
+.modal-roles__roles {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-roles__roles-label {
+  color: #b48be4;
+  font-weight: 500;
+}
+
+.modal-roles__chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.modal-roles__chip {
+  display: inline-flex;
+  align-items: center;
+  background: #f3eaff;
+  color: #6c3ab4;
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-size: 0.95em;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  margin-right: 2px;
+}
+
+.modal-roles__chip-icon {
+  margin-right: 6px;
+  font-size: 1.1em;
+}
+
+.modal-roles__chip-empty {
+  margin-left: 8px;
+  color: #aaa;
+}
 .modal-roles__overlay {
   position: fixed;
   top: 0;

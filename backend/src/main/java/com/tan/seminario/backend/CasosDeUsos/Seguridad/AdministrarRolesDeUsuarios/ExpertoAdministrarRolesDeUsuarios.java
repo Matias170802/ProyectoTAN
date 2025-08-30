@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Scope("request") // Esto es para que se cree una sola memoria para todos los usuarios, no haya problemas de concurrencia ni nada por el estilo
 public class ExpertoAdministrarRolesDeUsuarios {
 
 

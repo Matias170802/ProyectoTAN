@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 /*Lombok*/
 @Entity
 @Table(name = "Usuario")
@@ -34,5 +36,5 @@ public class Usuario extends Base {
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "rol_id")
     )
-    private set<Rol> roles;
+    private List<Rol> roles;
 }

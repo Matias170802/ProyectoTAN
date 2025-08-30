@@ -17,7 +17,7 @@ public class AdministrarRolesDeUsuariosController {
     private ExpertoAdministrarRolesDeUsuarios experto;
 
     @GetMapping("/empleados")
-    public ResponseEntity<List<DTOEmpleadoRoles>> obtenerRoles() {
+    public ResponseEntity<List<DTOEmpleadoRoles>> obtenerEmpleadoRoles() {
         try {
             List<DTOEmpleadoRoles> empleadoRoles = experto.obtenerEmpleadoRoles();
             return ResponseEntity.ok(empleadoRoles);

@@ -21,15 +21,10 @@ const ModalAdministrarRolesUsuario: React.FC<ModalAdministrarRolesUsuarioProps> 
     handleDesasignarRoles
   } = useRoles();
 
-  const [search, setSearch] = useState("");
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [selectedRolesToRemove, setSelectedRolesToRemove] = useState<string[]>([]);
 
   if (!open) return null;
-
-  // Filtrar empleados por nombre o email
-  const empleadosFiltrados = empleados.filter((emp: any) =>
-    emp.nombreEmpleado.toLowerCase().includes(search.toLowerCase()) ||
-    emp.codEmpleado.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
     <div className="modal-roles__overlay">
@@ -37,13 +32,6 @@ const ModalAdministrarRolesUsuario: React.FC<ModalAdministrarRolesUsuarioProps> 
         <h2 className="modal-roles__title">Administración de Roles de Usuarios</h2>
         <p className="modal-roles__desc">Gestiona los roles y permisos de los usuarios del sistema.</p>
         <div className="modal-roles__content">
-          <input
-            type="text"
-            placeholder="Buscar empleado por nombre o código..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{ marginBottom: 16, padding: 8, borderRadius: 6, border: '1px solid #ccc', width: '100%' }}
-          />
           {loading ? (
             <div>Cargando empleados...</div>
           ) : error ? (
@@ -52,50 +40,114 @@ const ModalAdministrarRolesUsuario: React.FC<ModalAdministrarRolesUsuarioProps> 
             <>
               <div style={{ marginBottom: 24 }}>
                 <strong>Empleados:</strong>
-                <ul style={{ maxHeight: 180, overflowY: 'auto', padding: 0 }}>
-                  {empleadosFiltrados.map((emp: any) => (
+                <ul className="modal-roles__list">
+                  {empleados.map((emp: any) => (
                     <li
                       key={emp.codEmpleado}
-                      style={{
-                        listStyle: 'none',
-                        marginBottom: 8,
-                        padding: 8,
-                        borderRadius: 8,
-                        background: selectedEmpleado?.codEmpleado === emp.codEmpleado ? '#eaeaea' : '#f7f7f7',
-                        cursor: 'pointer',
-                        fontWeight: selectedEmpleado?.codEmpleado === emp.codEmpleado ? 'bold' : 'normal'
-                      }}
+                      className={`modal-roles__item${selectedEmpleado?.codEmpleado === emp.codEmpleado ? ' modal-roles__item--selected' : ''}`}
                       onClick={() => handleSelectEmpleado(emp)}
+                      style={{ cursor: 'pointer' }}
                     >
-                      {emp.nombreEmpleado} <span style={{ color: '#888', fontSize: '0.95em' }}>({emp.codEmpleado})</span>
-                      {emp.nombreRol && emp.nombreRol.length > 0 && (
-                        <span style={{ marginLeft: 12, color: '#b48be4', fontSize: '0.95em' }}>
-                          Roles: {emp.nombreRol.join(', ')}
-                        </span>
-                      )}
+                      <div className="modal-roles__nombre">{emp.nombreEmpleado}</div>
+                      <div className="modal-roles__codigo">Código: {emp.codEmpleado}</div>
+                      <div className="modal-roles__roles">
+                        <span className="modal-roles__roles-label">Roles:</span>
+                        {emp.nombreRol && emp.nombreRol.length > 0 ? (
+                          <div className="modal-roles__chip-list">
+                            {emp.nombreRol.map((rol: string, idx: number) => (
+                              <span key={idx} className="modal-roles__chip">
+                                <span className="modal-roles__chip-icon">
+                                  {rol === 'Administrador' ? '🛡️' : rol === 'Finanzas' ? '💰' : rol === 'Usuario' ? '👤' : '🔑'}
+                                </span>
+                                {rol}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="modal-roles__chip-empty">Sin roles</span>
+                        )}
+                      </div>
                     </li>
                   ))}
                 </ul>
               </div>
+
               {selectedEmpleado && (
-                <>
-                  <div>
-                    <strong>Roles asignados:</strong>
-                    <ul>
-                      {rolesEmpleado.map((rol: any, idx: number) => (
-                        <li key={idx}>{rol.nombre}</li>
-                      ))}
-                    </ul>
+                <div style={{ marginTop: 24 }}>
+                  <strong>Editar roles de {selectedEmpleado.nombreEmpleado}:</strong>
+                  <div style={{ marginTop: 12 }}>
+                    <div style={{ marginBottom: 8 }}>
+                      <span style={{ fontWeight: 500 }}>Roles asignados:</span>
+                      <div className="modal-roles__chip-list">
+                        {rolesEmpleado.map((rol: any, idx: number) => (
+                          <label key={idx} style={{ marginRight: 8, cursor: 'pointer' }}>
+                            <input
+                              type="checkbox"
+                              checked={selectedRolesToRemove.includes(rol.codRol)}
+                              onChange={e => {
+                                if (e.target.checked) {
+                                  setSelectedRolesToRemove([...selectedRolesToRemove, rol.codRol]);
+                                } else {
+                                  setSelectedRolesToRemove(selectedRolesToRemove.filter(r => r !== rol.codRol));
+                                }
+                              }}
+                              style={{ marginRight: 4 }}
+                            />
+                            <span className="modal-roles__chip">
+                              <span className="modal-roles__chip-icon">
+                                {rol.nombreRol === 'Administrador' ? '🛡️' : rol.nombreRol === 'Finanzas' ? '💰' : rol.nombreRol === 'Usuario' ? '👤' : '🔑'}
+                              </span>
+                              {rol.nombreRol}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                      <button
+                        style={{ marginTop: 8, background: '#e57373', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 16px', cursor: 'pointer', fontWeight: 500 }}
+                        disabled={selectedRolesToRemove.length === 0}
+                        onClick={async () => {
+                          await handleDesasignarRoles(selectedRolesToRemove.map(codRol => ({ codRol, codEmpleado: selectedEmpleado.codEmpleado })));
+                          setSelectedRolesToRemove([]);
+                        }}
+                      >Quitar roles seleccionados</button>
+                    </div>
+                    <div style={{ marginBottom: 8 }}>
+                      <span style={{ fontWeight: 500 }}>Roles disponibles para asignar:</span>
+                      <div className="modal-roles__chip-list">
+                        {rolesDisponibles.map((rol: any, idx: number) => (
+                          <label key={idx} style={{ marginRight: 8, cursor: 'pointer' }}>
+                            <input
+                              type="checkbox"
+                              checked={selectedRoles.includes(rol.codRol)}
+                              onChange={e => {
+                                if (e.target.checked) {
+                                  setSelectedRoles([...selectedRoles, rol.codRol]);
+                                } else {
+                                  setSelectedRoles(selectedRoles.filter(r => r !== rol.codRol));
+                                }
+                              }}
+                              style={{ marginRight: 4 }}
+                            />
+                            <span className="modal-roles__chip">
+                              <span className="modal-roles__chip-icon">
+                                {rol.nombreRol === 'Administrador' ? '🛡️' : rol.nombreRol === 'Finanzas' ? '💰' : rol.nombreRol === 'Usuario' ? '👤' : '🔑'}
+                              </span>
+                              {rol.nombreRol}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                      <button
+                        style={{ marginTop: 8, background: '#64b5f6', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 16px', cursor: 'pointer', fontWeight: 500 }}
+                        disabled={selectedRoles.length === 0}
+                        onClick={async () => {
+                          await handleAsignarRoles(selectedRoles.map(codRol => ({ codRol, codEmpleado: selectedEmpleado.codEmpleado })));
+                          setSelectedRoles([]);
+                        }}
+                      >Asignar roles seleccionados</button>
+                    </div>
                   </div>
-                  <div style={{ marginTop: 16 }}>
-                    <strong>Roles disponibles para asignar:</strong>
-                    <ul>
-                      {rolesDisponibles.map((rol: any, idx: number) => (
-                        <li key={idx}>{rol.nombre}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </>
+                </div>
               )}
             </>
           )}
