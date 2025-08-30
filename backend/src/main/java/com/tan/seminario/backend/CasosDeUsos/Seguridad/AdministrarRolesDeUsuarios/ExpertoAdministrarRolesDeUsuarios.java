@@ -21,7 +21,6 @@ import java.util.List;
 @Scope("request") // Esto es para que se cree una sola memoria para todos los usuarios, no haya problemas de concurrencia ni nada por el estilo
 public class ExpertoAdministrarRolesDeUsuarios {
 
-    MemoriaAdministrarRolesDeUsuario memoria = new MemoriaAdministrarRolesDeUsuario();
 
     @Autowired
     private EmpleadoRepository empleadoRepository;
@@ -166,12 +165,16 @@ public class ExpertoAdministrarRolesDeUsuarios {
         // Procesamos cada rol a desasignar
         List<String> codigosRolesDTO = new ArrayList<>();
         for (DTOEmpleadoRoles dtoEmpleadoRoles : rolesDesasignados) {
-            String codRol = dtoEmpleadoRoles.getCodRol();
-            codigosRolesDTO.add(codRol);
+            List<String> codigosRoles = dtoEmpleadoRoles.getCodRol();
+            for (String codRol : codigosRoles) {
+                codigosRolesDTO.add(codRol);
+            }
+
         }
 
         for (EmpleadoRol er : empleadoRol) {
-            if (codigosRolEmpleado.contains(codigosRolesDTO)){
+            String codRolEmpleado = er.getRol().getCodRol();
+            if (codigosRolEmpleado.contains(codRolEmpleado)){
                 er.setFechaHoraBajaEmpleadoRol(LocalDateTime.now());
                 empleadoRolRepository.save(er);
             }
