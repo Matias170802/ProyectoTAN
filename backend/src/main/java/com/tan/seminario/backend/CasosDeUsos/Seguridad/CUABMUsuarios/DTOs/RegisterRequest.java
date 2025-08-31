@@ -1,4 +1,4 @@
-package com.tan.seminario.backend.CasosDeUsos.Seguridad.DTOs;
+package com.tan.seminario.backend.CasosDeUsos.Seguridad.CUABMUsuarios.DTOs;
 
 import lombok.Getter;
 import lombok.Setter;
