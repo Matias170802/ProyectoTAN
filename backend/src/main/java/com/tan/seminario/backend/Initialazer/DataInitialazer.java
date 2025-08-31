@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 public class DataInitialazer {
@@ -19,9 +21,17 @@ public class DataInitialazer {
     private final MonedaRepository monedaRepository;
     private final CategoriaMovimientoRepository categoriaMovimientoRepository;
     private final RolRepository rolRepository;
+    private final EmpleadoRepository empleadoRepository;
 
     // Constructor correcto para la inyección de dependencia
-    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository) {
+    public DataInitialazer(EstadoReservaRepository estadoReservaRepository,
+                           TipoMovimientoRepository tipoMovimientoRepository,
+                           TipoTareaRepository tipoTareaRepository,
+                           EstadoTareaRepository estadoTareaRepository,
+                           MonedaRepository monedaRepository,
+                           CategoriaMovimientoRepository categoriaMovimientoRepository,
+                           RolRepository rolRepository,
+                           EmpleadoRepository empleadoRepository) {
         this.estadoReservaRepository = estadoReservaRepository;
         this.tipoMovimientoRepository = tipoMovimientoRepository;
         this.tipoTareaRepository = tipoTareaRepository;
@@ -29,6 +39,7 @@ public class DataInitialazer {
         this.monedaRepository = monedaRepository;
         this.categoriaMovimientoRepository = categoriaMovimientoRepository;
         this.rolRepository = rolRepository;
+        this.empleadoRepository = empleadoRepository;
     }
 
     @PostConstruct
@@ -124,18 +135,37 @@ public class DataInitialazer {
         //inicializacion de datos roles
         if (rolRepository.count() == 0) {
 
-            Rol rol1 = new Rol(null, "ROL001", "Administrador Financiero", LocalDateTime.now(), null);
-            Rol rol2 = new Rol(null, "ROL002", "Gerencia", LocalDateTime.now(), null);
-            Rol rol3 = new Rol(null, "ROL003", "Empleado", LocalDateTime.now(), null);
-            Rol rol4 = new Rol(null, "ROL004", "Administrador de Reservas", LocalDateTime.now(), null);
-            Rol rol5 = new Rol(null, "ROL005", "Administrador del Sistema", LocalDateTime.now(), null);
+            Rol rolAdminFinanciero = new Rol(null, "ROL001", "Administrador Financiero", LocalDateTime.now(), null);
+            Rol rolGerencia = new Rol(null, "ROL002", "Gerencia", LocalDateTime.now(), null);
+            Rol rolEmpleado = new Rol(null, "ROL003", "Empleado", LocalDateTime.now(), null);
+            Rol rolAdminReservas = new Rol(null, "ROL004", "Administrador de Reservas", LocalDateTime.now(), null);
+            Rol rolAdminSistemas = new Rol(null, "ROL005", "Administrador del Sistema", LocalDateTime.now(), null);
 
-            rolRepository.saveAll(Arrays.asList(rol1, rol2, rol3, rol4, rol5));
+            rolRepository.saveAll(Arrays.asList(rolAdminFinanciero, rolGerencia, rolEmpleado, rolAdminReservas, rolAdminSistemas));
             System.out.println("Datos iniciales de Rol insertados correctamente.");
         } else {
             System.out.println("La base de datos ya contiene datos de Rol, no se inicializaron nuevos datos.");
         }
         //inicializacion de datos roles
-    }
 
+        // Creo un empleado de prueba
+        Rol rolEmpleado = rolRepository.findByCodRol("ROL003")
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+        Set<Rol> rolesEmpleado = new HashSet<>();
+        rolesEmpleado.add(rolEmpleado);
+
+        Empleado empleado = new Empleado(
+                null,
+                "12345678",
+                "EMP-Prueba",
+                "Juan Perez",
+                "1234567890",
+                50000L,
+                null,
+                LocalDateTime.now(),
+                null, // fechaUltimoCobroSalario
+                rolesEmpleado
+        );
+        empleadoRepository.save(empleado);
+    }
 }

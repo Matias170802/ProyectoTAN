@@ -7,16 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
-/*Lombok*/
 @Entity
 @Table(name = "Empleado")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-/*Lombok*/
-
 public class Empleado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,5 +33,12 @@ public class Empleado {
     private LocalDateTime fechaHoraAltaEmpleado;
     private LocalDateTime fechaUltimoCobroSalario;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "empleado_roles",
+            joinColumns = @JoinColumn(name = "empleado_id"),
+            inverseJoinColumns = @JoinColumn(name = "rol_id")
+    )
+    private Set<Rol> roles;
 }
 
