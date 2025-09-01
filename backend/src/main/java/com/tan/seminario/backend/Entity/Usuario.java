@@ -17,6 +17,7 @@ public class Usuario extends Base {
 
     private String name;
     private String password; // Encriptada - hashed
+    private Boolean activo;
 
     @Column(name = "email", unique = true)
     private String email;

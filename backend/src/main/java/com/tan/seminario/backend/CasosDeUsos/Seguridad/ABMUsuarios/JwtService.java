@@ -1,4 +1,4 @@
-package com.tan.seminario.backend.CasosDeUsos.Seguridad.CUABMUsuarios;
+package com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios;
 
 import com.tan.seminario.backend.Entity.Usuario;
 import io.jsonwebtoken.Claims;

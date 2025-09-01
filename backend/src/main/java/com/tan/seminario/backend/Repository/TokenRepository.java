@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TokenRepository extends JpaRepository<Token, Long> {
-    List<Token> findAllValidIsFalseOrRevokedIsFalseByUsuario_IdUsuario(Long usuarioIdUsuario);
+    List<Token> findAllValidIsFalseOrRevokedIsFalseByUsuario_Id(Long usuarioIdUsuario);
 
     Optional<Token> findByToken(String jwtToken);
 }

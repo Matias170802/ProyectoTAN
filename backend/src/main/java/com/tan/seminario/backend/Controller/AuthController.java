@@ -1,10 +1,10 @@
 package com.tan.seminario.backend.Controller;
 
-import com.tan.seminario.backend.CasosDeUsos.Seguridad.CUABMUsuarios.AuthService;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.AuthService;
 
-import com.tan.seminario.backend.CasosDeUsos.Seguridad.CUABMUsuarios.DTOs.LoginRequest;
-import com.tan.seminario.backend.CasosDeUsos.Seguridad.CUABMUsuarios.DTOs.RegisterRequest;
-import com.tan.seminario.backend.CasosDeUsos.Seguridad.CUABMUsuarios.DTOs.TokenResponse;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.LoginRequest;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.RegisterRequest;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.TokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;

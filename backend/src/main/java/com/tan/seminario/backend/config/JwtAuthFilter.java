@@ -1,6 +1,6 @@
 package com.tan.seminario.backend.config;
 
-import com.tan.seminario.backend.CasosDeUsos.Seguridad.JwtService;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.JwtService;
 import com.tan.seminario.backend.Entity.Token;
 import com.tan.seminario.backend.Entity.Usuario;
 import com.tan.seminario.backend.Repository.TokenRepository;
@@ -19,8 +19,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -32,7 +30,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     private final TokenRepository tokenRepository;
-    private final UsuarioRepository userRepository;
     private final UsuarioRepository usuarioRepository;
 
     @Override
@@ -41,8 +38,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        // Cada vez que se hace una peticion, se va a ejecutar este codigo
-        // Queremos que cada peticion que no sea publica (Auth) sea validada segun sus permisos
+        // Cada vez que se hace una peticion, se va a ejecutar este código
+        // Queremos que cada peticion que no sea pública (Auth) sea validada según sus permisos
         // Si la peticion se hace al recurso /auth, entonces no se valida y se pasa al siguiente filtro
         if (request.getServletPath().contains("/auth")) {
             filterChain.doFilter(request, response);
@@ -64,7 +61,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         final Token token = tokenRepository.findByToken(jwtToken)
                 .orElse(null);
-        //Si el token es null, esta expirado o revocado, entonces no se valida la peticion
+        //Si el token es null, está expirado o revocado, entonces no se valida la peticion
         if (token == null || token.isExpired() || token.isRevoked()) {
             filterChain.doFilter(request, response);
             return;
