@@ -6,5 +6,6 @@ export interface Rol {
 export interface EmpleadoConRoles {
     dni: string;
     nombre: string;
-    roles: Rol[];
+    codRoles: String[];
+    nombreRoles: String[];
 }

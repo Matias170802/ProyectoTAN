@@ -4,6 +4,8 @@ const API_URL = '/api/administrador';
 
 export const getEmpleadosConRoles = async () => {
   const res = await axios.get(`${API_URL}/empleados`);
+  console.log("Empleados data URL");
+  console.log(res.data);
   return res.data;
 };
 

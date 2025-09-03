@@ -15,6 +15,8 @@ export const useRoles = () => {
       setLoading(true);
       try {
         const empleadosData = await getEmpleadosConRoles();
+        console.log("Empleados data fetched:");
+        console.log(empleadosData);
         empleadosData.sort((a: any, b: any) => a.nombreEmpleado.localeCompare(b.nombreEmpleado));
         setEmpleados(empleadosData);
         setError(null);

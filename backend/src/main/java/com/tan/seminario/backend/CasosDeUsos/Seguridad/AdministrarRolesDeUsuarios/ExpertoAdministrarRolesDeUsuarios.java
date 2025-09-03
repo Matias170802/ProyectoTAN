@@ -36,7 +36,7 @@ public class ExpertoAdministrarRolesDeUsuarios {
         List<DTOEmpleadoRoles> listaDTO = new ArrayList<>();
 
         if (empleados.isEmpty()) {
-            return listaDTO---------------------;
+            return listaDTO;
         }
 
         for (Empleado empleado : empleados) {
@@ -61,8 +61,8 @@ public class ExpertoAdministrarRolesDeUsuarios {
             listaDTO.add(dto);
         }
 
-        //Ordenamos listaDTO alfabeticamente por nombre del empleado
-        listaDTO.sort((a, b) -> a.getNombreEmpleado().compareToIgnoreCase(b.getNombreEmpleado()));
+//        //Ordenamos listaDTO alfabeticamente por nombre del empleado
+//        listaDTO.sort((a, b) -> a.getNombreEmpleado().compareToIgnoreCase(b.getNombreEmpleado()));
 
         return listaDTO;
     }
