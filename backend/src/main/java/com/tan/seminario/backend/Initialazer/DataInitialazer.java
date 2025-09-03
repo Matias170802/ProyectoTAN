@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class DataInitialazer {
@@ -19,9 +20,11 @@ public class DataInitialazer {
     private final MonedaRepository monedaRepository;
     private final CategoriaMovimientoRepository categoriaMovimientoRepository;
     private final RolRepository rolRepository;
+    private final EmpleadoRepository empleadoRepository;
+    private final EmpleadoRolRepository empleadoRolRepository;
 
     // Constructor correcto para la inyección de dependencia
-    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository) {
+    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository, EmpleadoRepository empleadoRepository, EmpleadoRolRepository empleadoRolRepository) {
         this.estadoReservaRepository = estadoReservaRepository;
         this.tipoMovimientoRepository = tipoMovimientoRepository;
         this.tipoTareaRepository = tipoTareaRepository;
@@ -29,6 +32,8 @@ public class DataInitialazer {
         this.monedaRepository = monedaRepository;
         this.categoriaMovimientoRepository = categoriaMovimientoRepository;
         this.rolRepository = rolRepository;
+        this.empleadoRepository = empleadoRepository;
+        this.empleadoRolRepository = empleadoRolRepository;
     }
 
     @PostConstruct
@@ -136,6 +141,25 @@ public class DataInitialazer {
             System.out.println("La base de datos ya contiene datos de Rol, no se inicializaron nuevos datos.");
         }
         //inicializacion de datos roles
+
+        //Iniciacion de Empleado maestro
+        if (empleadoRepository.count() == 0) {
+            Empleado empleadoAdministrador = new Empleado("44310665","Empl001","Matias","2615199115", 200L,null,LocalDateTime.now(),null,null);
+            Empleado empleadoPrueba1 = new Empleado("44000000","Empl002","Mauri","2615199115", 200L,null,LocalDateTime.now(),null,null);
+            empleadoRepository.saveAll(Arrays.asList(empleadoAdministrador,empleadoPrueba1));
+            System.out.println("Datos iniciales de Empleado insertados correctamente.");
+        }
+
+        //Iniciacion de relaciones de empleado con rol
+        if (empleadoRolRepository.count() == 0) {
+            List<Empleado> empleado = empleadoRepository.findByCodEmpleado("Empl001");
+            Empleado empleado1 = empleado.get(0);
+            List<Rol> rol = rolRepository.findByNombreRol("Gerencia");
+            Rol rol1 = rol.get(0);
+            EmpleadoRol empleadoRol1 = new EmpleadoRol(LocalDateTime.now(), (LocalDateTime) null,empleado1,rol1);
+            empleadoRolRepository.save(empleadoRol1);
+            System.out.println("Datos iniciales de EmpleadoRol insertados correctamente.");
+        }
     }
 
 }

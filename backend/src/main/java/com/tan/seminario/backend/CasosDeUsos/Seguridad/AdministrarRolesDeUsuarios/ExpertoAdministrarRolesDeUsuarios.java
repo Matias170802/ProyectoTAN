@@ -36,7 +36,7 @@ public class ExpertoAdministrarRolesDeUsuarios {
         List<DTOEmpleadoRoles> listaDTO = new ArrayList<>();
 
         if (empleados.isEmpty()) {
-            throw new Exception("No hay empleados activos");
+            return listaDTO---------------------;
         }
 
         for (Empleado empleado : empleados) {
