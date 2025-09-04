@@ -1,4 +1,6 @@
 import {type Props} from './ModalTypes'
+import {Button} from '../index'
+import './Modal.css'
 
 const Modal = ({isOpen, onClose, children, title, showCloseButton}: Props) => {
 
