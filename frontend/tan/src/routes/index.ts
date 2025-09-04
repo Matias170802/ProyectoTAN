@@ -1,0 +1,6 @@
+export {default as MainPageAdministrador} from './administrador/mainPageAdministrador'
+export {default as MainPageCliente} from './cliente/mainPageCliente'
+export {default as MainPageFinanzas} from './finanzas/mainPageFinanzas'
+export {default as MainPageMiCaja} from './miCaja/mainPageMiCaja'
+export {default as MainPagePerfil} from './perfil/mainPagePerfil'
+export {default as MainPageReservas} from './reservas/mainPageReservas'

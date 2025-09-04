@@ -1,5 +1,5 @@
 "use client"
-import './App.css'
+import './Inicio.css'
 import {Modal, Button} from './generalComponents/index'
 import { AppProvider } from './context/AppContext'
 import { useState } from 'react'
