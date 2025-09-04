@@ -61,7 +61,7 @@ public class AdministrarRolesDeUsuariosController {
         }
     }
 
-    @PostMapping("/desasignar")
+    @PatchMapping("/desasignar") // Hacemos un Update
     // Uso el mismo DTO que asignar ya que tiene los mismos datos, basicamente el front entrega el mismo DTO
     public ResponseEntity<String> desasignarRol(@RequestBody List<DTOEmpleadoRoles> rolesDesasignados) {
         try {

@@ -129,11 +129,11 @@ public class DataInitialazer {
         //inicializacion de datos roles
         if (rolRepository.count() == 0) {
 
-            Rol rol1 = new Rol( "ROL001", "Administrador Financiero", LocalDateTime.now(), null);
-            Rol rol2 = new Rol( "ROL002", "Gerencia", LocalDateTime.now(), null);
-            Rol rol3 = new Rol( "ROL003", "Empleado", LocalDateTime.now(), null);
-            Rol rol4 = new Rol( "ROL004", "Administrador de Reservas", LocalDateTime.now(), null);
-            Rol rol5 = new Rol( "ROL005", "Administrador del Sistema", LocalDateTime.now(), null);
+            Rol rol1 = new Rol( "ROL001", "Administrador Financiero", null, LocalDateTime.now());
+            Rol rol2 = new Rol( "ROL002", "Gerencia", null, LocalDateTime.now());
+            Rol rol3 = new Rol( "ROL003", "Empleado", null, LocalDateTime.now());
+            Rol rol4 = new Rol( "ROL004", "Administrador de Reservas", null, LocalDateTime.now());
+            Rol rol5 = new Rol( "ROL005", "Administrador del Sistema", null, LocalDateTime.now());
 
             rolRepository.saveAll(Arrays.asList(rol1, rol2, rol3, rol4, rol5));
             System.out.println("Datos iniciales de Rol insertados correctamente.");
