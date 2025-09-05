@@ -1,23 +1,20 @@
 package com.tan.seminario.backend.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 /*Lombok*/
+@Builder
 @Entity
 @Table(name = "Empleado")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 /*Lombok*/
 
 public class Empleado  extends Base {
