@@ -161,5 +161,4 @@ public class DataInitialazer {
             System.out.println("Datos iniciales de EmpleadoRol insertados correctamente.");
         }
     }
-
 }
