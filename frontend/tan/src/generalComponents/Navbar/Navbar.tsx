@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ModalPanelAdministracion from "../ModalPanelAdministracion/ModalPanelAdministracion";
+import ModalPanelAdministracion from "../../routes/administrador/ModalPanelAdministracion";
 import ModalAdministrarRolesUsuario from "../../casosDeUso/AdministrarRolesDeUsuario/components/ModalAdministrarRolesUsuario";
 import "./Navbar.css";
 

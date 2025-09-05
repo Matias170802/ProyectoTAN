@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Builder
+
 @Entity
 @Table(name = "Usuario")
 @Getter
@@ -52,5 +52,5 @@ public class Usuario extends Base {
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "rol_id")
     )
-    private Set<Rol> roles;
+    private List<Rol> roles;
 }

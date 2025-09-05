@@ -132,9 +132,9 @@ public class ExpertoAdministrarRolesDeUsuarios {
         for (DTOEmpleadoRoles dtoEmpleadoRoles : rolesAsignados) {
             List<String> codigosRoles = dtoEmpleadoRoles.getCodRol();
             for (String codRol : codigosRoles) {
-                Rol rol = rolRepository.findByCodRol(codRol);
+                List<Rol> rol = rolRepository.findByCodRol(codRol);
                 EmpleadoRol empleadoRol = new EmpleadoRol();
-                empleadoRol.setRol(rol);
+                empleadoRol.setRol(rol.get(0));
                 empleadoRol.setEmpleado(empleado.get(0));
                 empleadoRol.setFechaHoraAltaEmpleadoRol(LocalDateTime.now());
                 empleadoRol.setFechaHoraBajaEmpleadoRol(null);

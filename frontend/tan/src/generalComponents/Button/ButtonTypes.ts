@@ -1,5 +1,5 @@
 export interface Props {
-    label?: string;
+    label?: React.ReactNode;
     onClick?: () => void;
     className?: string;
     type?: "button" | "submit" | "reset"; 

@@ -10,5 +10,6 @@ public interface EmpleadoRepository  extends JpaRepository<Empleado, Long> {
     @Override
     Optional<Empleado> findById(Long aLong);
 
-    Optional<Empleado> findByCodEmpleado(String codEmpleado);
+    List<Empleado> findByCodEmpleado(String codEmpleado);
+    List<Empleado> findByFechaHoraBajaEmpleadoIsNull();
 }
