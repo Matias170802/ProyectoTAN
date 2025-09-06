@@ -144,21 +144,13 @@ public class DataInitialazer {
 
         //Iniciacion de Empleado maestro
         if (empleadoRepository.count() == 0) {
-            Empleado empleadoAdministrador = new Empleado("44310665","Empl001","Matias","2615199115", 200L,null,LocalDateTime.now(),null,null);
-            Empleado empleadoPrueba1 = new Empleado("44000000","Empl002","Mauri","2615199115", 200L,null,LocalDateTime.now(),null,null);
-            empleadoRepository.saveAll(Arrays.asList(empleadoAdministrador,empleadoPrueba1));
+            Empleado empleado1 = new Empleado("44310665","Empl001","Matias","2615199115", 200L,null,LocalDateTime.now(),null,null);
+            Empleado empleado2 = new Empleado("44000000","Empl002","Mauri","2615199115", 200L,null,LocalDateTime.now(),null,null);
+            Empleado empleado3 = new Empleado("44555555", "Empl003", "Clara", "2615000000", 200L, null, LocalDateTime.now(), null, null);
+            Empleado empleado4 = new Empleado("44666666", "Empl004", "Juan", "2615111111", 200L, null, LocalDateTime.now(), null, null);
+            Empleado empleado5 = new Empleado("44777777", "Empl005", "Lucia", "2615222222", 200L, null, LocalDateTime.now(), null, null);
+            empleadoRepository.saveAll(Arrays.asList(empleado1,empleado2,empleado3,empleado4,empleado5));
             System.out.println("Datos iniciales de Empleado insertados correctamente.");
-        }
-
-        //Iniciacion de relaciones de empleado con rol
-        if (empleadoRolRepository.count() == 0) {
-            List<Empleado> empleado = empleadoRepository.findByCodEmpleado("Empl001");
-            Empleado empleado1 = empleado.get(0);
-            List<Rol> rol = rolRepository.findByNombreRol("Gerencia");
-            Rol rol1 = rol.get(0);
-            EmpleadoRol empleadoRol1 = new EmpleadoRol(LocalDateTime.now(), (LocalDateTime) null,empleado1,rol1);
-            empleadoRolRepository.save(empleadoRol1);
-            System.out.println("Datos iniciales de EmpleadoRol insertados correctamente.");
         }
     }
 }

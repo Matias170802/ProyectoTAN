@@ -83,13 +83,16 @@ public class ExpertoAdministrarRolesDeUsuarios {
 
         rolesDisponibles.removeIf(rol -> rol.getFechaHoraBajaRol() != null);
 
-        // Eliminar roles que ya tiene el empleado
+        // Eliminar roles que ya tiene el empleado (sin modificar la lista mientras se recorre)
+        List<String> codigosRolesEmpleado = new ArrayList<>();
+        for (EmpleadoRol empleadoRol : rolesDelEmpleado) {
+            codigosRolesEmpleado.add(empleadoRol.getRol().getCodRol());
+        }
+
+        List<Rol> rolesDisponiblesFiltrados = new ArrayList<>();
         for (Rol rol : rolesDisponibles) {
-            for (EmpleadoRol empleadoRol : rolesDelEmpleado) {
-                if (rol.getCodRol().equals(empleadoRol.getRol().getCodRol())) {
-                    rolesDisponibles.remove(rol);
-                    break;
-                }
+            if (!codigosRolesEmpleado.contains(rol.getCodRol())) {
+                rolesDisponiblesFiltrados.add(rol);
             }
         }
 
@@ -110,6 +113,7 @@ public class ExpertoAdministrarRolesDeUsuarios {
             throw new Exception("El empleado esta dado de baja");
         }
         List<EmpleadoRol> rolesDelEmpleado = empleado.get(0).getEmpleadosRoles();
+        rolesDelEmpleado.removeIf(empleadoRolValido -> empleadoRolValido.getFechaHoraBajaEmpleadoRol() != null);
 
         List<DTORolesParaAsignar> dtoRolesParaAsignar = new ArrayList<>();
         for (EmpleadoRol empleadoRol : rolesDelEmpleado) {
@@ -173,7 +177,7 @@ public class ExpertoAdministrarRolesDeUsuarios {
 
         for (EmpleadoRol er : empleadoRol) {
             String codRolEmpleado = er.getRol().getCodRol();
-            if (codigosRolEmpleado.contains(codRolEmpleado)){
+            if (codigosRolesDTO.contains(codRolEmpleado)){
                 er.setFechaHoraBajaEmpleadoRol(LocalDateTime.now());
                 empleadoRolRepository.save(er);
             }

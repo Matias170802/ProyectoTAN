@@ -25,6 +25,6 @@ export const asignarRoles = async (rolesAsignados: any[]) => {
 };
 
 export const desasignarRoles = async (rolesDesasignados: any[]) => {
-  const res = await axios.post(`${API_URL}/desasignar`, rolesDesasignados);
+  const res = await axios.patch(`${API_URL}/desasignar`, rolesDesasignados);
   return res.data;
 };

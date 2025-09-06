@@ -1,11 +1,12 @@
 export interface Rol {
     id: number;
-    nombre: string;
+    codRol: string;
+    nombreRol: string;
 }
 
 export interface EmpleadoConRoles {
-    dni: string;
-    nombre: string;
-    codRoles: String[];
-    nombreRoles: String[];
+    codEmpleado: string;
+    nombreEmpleado: string;
+    codRol: string[];
+    nombreRol: string[];
 }

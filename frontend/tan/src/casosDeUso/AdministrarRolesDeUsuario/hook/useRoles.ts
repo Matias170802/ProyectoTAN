@@ -59,6 +59,10 @@ export const useRoles = () => {
     await asignarRoles(roles);
     const updated = await getRolesAsignadosEmpleado(selectedEmpleado.codEmpleado);
     setRolesEmpleado(updated);
+    // Refrescar lista de empleados
+    const empleadosData = await getEmpleadosConRoles();
+    empleadosData.sort((a: any, b: any) => a.nombreEmpleado.localeCompare(b.nombreEmpleado));
+    setEmpleados(empleadosData);
   };
 
   const handleDesasignarRoles = async (roles: any[]) => {
@@ -66,6 +70,10 @@ export const useRoles = () => {
     await desasignarRoles(roles);
     const updated = await getRolesAsignadosEmpleado(selectedEmpleado.codEmpleado);
     setRolesEmpleado(updated);
+    // Refrescar lista de empleados
+    const empleadosData = await getEmpleadosConRoles();
+    empleadosData.sort((a: any, b: any) => a.nombreEmpleado.localeCompare(b.nombreEmpleado));
+    setEmpleados(empleadosData);
   };
 
   return {
