@@ -34,6 +34,7 @@
 	border-radius: 6px;
 	transition: background 0.2s;
 	white-space: nowrap;
+	text-decoration: none;
 }
 .navbar__item:last-child {
 	margin-right: 0;

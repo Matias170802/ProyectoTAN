@@ -3,7 +3,7 @@ import { useRoles } from '../hook/useRoles';
 import "./ModalAdministrarRolesUsuario.css";
 
 interface ModalAdministrarRolesUsuarioProps {
-  open: boolean;
+  open?: boolean;
   onClose: () => void;
 }
 
