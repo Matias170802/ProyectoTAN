@@ -1,4 +1,4 @@
-const MainPageAdministrador = () => {
+const MainPageAdministrador: React.FC = () => {
 
     return (
         <div>
