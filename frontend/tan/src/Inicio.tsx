@@ -1,14 +1,27 @@
 "use client"
 import './Inicio.css'
-// import {Modal} from './generalComponents/index'
+import {Modal, Button, Navbar} from './generalComponents/index'
 import { AppProvider } from './context/AppContext'
-// import { useState } from 'react'
+import { useState } from 'react'
 
 
 //*Componente principal de la aplicacion
 function AppContent() {
+  
+  const [openModal, setOpenModal] = useState(false);
   return (
     <main className="min-h-screen bg-gray-100">
+      <Button label="Abrir modal" onClick={() => setOpenModal(true)} /> 
+      
+      {openModal && (
+        <Modal
+        isOpen={true}
+        onClose={() => setOpenModal(false)}
+        children={<div>Contenido del modal
+          
+        </div>}
+        ></Modal>
+      )}
     </main>
   )
 }
