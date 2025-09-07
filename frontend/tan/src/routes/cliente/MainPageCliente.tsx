@@ -1,4 +1,4 @@
-const MainPageCliente = () => {
+const MainPageCliente: React.FC = () => {
 
     return(
         <div>

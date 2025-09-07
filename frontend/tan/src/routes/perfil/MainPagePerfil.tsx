@@ -1,4 +1,4 @@
-const MainPagePerfil = () => {
+const MainPagePerfil: React.FC = () => {
 
     return(
         <div>

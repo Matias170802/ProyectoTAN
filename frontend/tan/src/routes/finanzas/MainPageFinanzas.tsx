@@ -1,4 +1,4 @@
-const MainPageFinanzas = () => {
+const MainPageFinanzas: React.FC = () => {
 
     return(
         <div>
