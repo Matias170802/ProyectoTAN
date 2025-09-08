@@ -16,7 +16,7 @@ const Modal: React.FC<Props> = ({isOpen, onClose, children, title, showCloseButt
                         {showCloseButton && (
                             <Button 
                                 onClick={onClose} 
-                                className='cerrarOpcion'
+                                id='cerrarOpcion'
                                 icon="close"
                             />
                         )}
