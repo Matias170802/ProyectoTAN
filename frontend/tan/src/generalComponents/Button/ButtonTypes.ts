@@ -1,7 +1,7 @@
 export interface Props {
     label?: string;
     onClick?: () => void;
-    className?: string;
+    id?: string;
     type?: "button" | "submit" | "reset"; 
     disabled?: boolean;
     icon?: string;
