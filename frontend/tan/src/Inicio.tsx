@@ -9,7 +9,6 @@ import { AppProvider } from './context/AppContext'
 function AppContent() {
   return (
     <main className="min-h-screen bg-gray-100">
-      {/* Contenido principal aquí */}
     </main>
   )
 }

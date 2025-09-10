@@ -1,12 +1,12 @@
 import {type Props} from './ButtonTypes'
 import './Button.css';
 
-const Button = ({label, onClick, className, type, disabled, icon, form} : Props) => {
+const Button: React.FC<Props> = ({label, onClick, id, type, disabled, icon, form}) => {
 
     return (
         <button 
         onClick={onClick} 
-        className={`${className || ''} ${icon ? 'button-with-icon' : ''}`} 
+        id={id} 
         type={type} 
         disabled={disabled}
         form={form}

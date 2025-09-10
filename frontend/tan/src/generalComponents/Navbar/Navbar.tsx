@@ -1,69 +1,26 @@
-import React, { useState } from "react";
-import ModalPanelAdministracion from "../../routes/administrador/ModalPanelAdministracion";
-import { useNavigate } from "react-router-dom";
-import "./Navbar.css";
+import { Link } from "react-router-dom";
+import './Navbar.css'
+import {Button} from '../index'
 
 
+//TODO: Agregar Link para ingreso/egreso
 const Navbar: React.FC = () => {
-	const [openAdminModal, setOpenAdminModal] = useState(false);
-	const navigate = useNavigate();
-
-	const handleOpenAdmin = () => setOpenAdminModal(true);
-	const handleCloseAdmin = () => setOpenAdminModal(false);
-	const handleAdministrarRoles = () => {
-		setOpenAdminModal(false);
-		navigate("/admin/roles");
-	};
-
-	const goToInicio = () => navigate("/");
-	const goToReservas = () => navigate("/reservas");
-	const goToFinanzas = () => navigate("/finanzas");
-	const goToMiCaja = () => navigate("/mi-caja");
-	const goToNotificaciones = () => navigate("/notificaciones");
-	const goToPerfil = () => navigate("/perfil");
-	const goToAgregarIngresoEgreso = () => navigate("/agregar-ingreso-egreso");
-
-	return (
-		<>
-			<nav className="navbar">
-				<div className="navbar__left">
-					<span className="navbar__title">Gestión de Propiedades</span>
-					<button className="navbar__item" onClick={goToInicio}>
-						<span className="navbar__icon">🏠</span> Inicio
-					</button>
-					<button className="navbar__item" onClick={goToReservas}>
-						<span className="navbar__icon">📅</span> Reservas
-					</button>
-					<button className="navbar__item" onClick={goToFinanzas}>
-						<span className="navbar__icon">💲</span> Finanzas
-					</button>
-					<button className="navbar__item" onClick={handleOpenAdmin}>
-						<span className="navbar__icon">⚙️</span> Administración
-					</button>
-					<button className="navbar__item" onClick={goToMiCaja}>
-						<span className="navbar__icon">💳</span> Mi Caja
-					</button>
-				</div>
-				<div className="navbar__right">
-					<button className="navbar__item navbar__notifications" onClick={goToNotificaciones}>
-						<span className="navbar__icon">🔔</span>
-						Notificaciones
-					</button>
-					<button className="navbar__item" onClick={goToPerfil}>
-						<span className="navbar__icon">👤</span> Mi Perfil
-					</button>
-					<button className="navbar__item navbar__add" onClick={goToAgregarIngresoEgreso}>
-						<span className="navbar__icon">➕</span> Agregar Ingreso/Egreso
-					</button>
-				</div>
-			</nav>
-			<ModalPanelAdministracion
-				open={openAdminModal}
-				onClose={handleCloseAdmin}
-				onAdministrarRoles={handleAdministrarRoles}
-			/>
-		</>
-	);
-};
+    return (
+    
+        <nav>
+            <p>Gestion de Propiedades</p>
+            <ul>
+                <li><Link to="/"><Button label="🏠Inicio"/></Link></li>
+                <li><Link to="/reservas"><Button label="📅Reservas"/></Link></li>
+                <li><Link to="/finanzas"><Button label="💲Finanzas"/></Link></li>
+                <li><Link to="/admin"><Button label="⚙Administracion"/></Link></li>
+                <li><Link to="/micaja"><Button label="💳Mi Caja"/></Link></li>
+                <li><Link to="/perfil"><Button label="👤Mi Perfil"/></Link></li>
+                
+            </ul>
+        </nav>
+    
+    );
+}
 
 export default Navbar;
