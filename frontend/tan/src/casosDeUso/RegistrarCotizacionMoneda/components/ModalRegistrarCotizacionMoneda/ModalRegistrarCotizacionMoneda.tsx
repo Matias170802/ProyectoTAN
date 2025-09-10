@@ -29,9 +29,9 @@ const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title
 
             <div id='buttonsContainer'>
                 <Button label='Cancelar' onClick={onClose} id='botonCancelarRegistrarCotizacionMoneda'/>
-                <Button label='Registrar Cotización' onClick={() => {}} id='botonRegistrarCotizacionMoneda'/>
+                <Button label='Registrar Cotización' onClick={() => {}} id='botonAceptarRegistrarCotizacionMoneda'/>
             </div>
-            
+
         </Modal>
     )
 }

@@ -67,12 +67,12 @@ select:focus {
     margin-top: 15px;
 }
 
-#botonRegistrarCotizacionMoneda {
+#botonAceptarRegistrarCotizacionMoneda {
     background-color: black;
     color: white;
 }
 
-#botonRegistrarCotizacionMoneda:hover {
+#botonAceptarRegistrarCotizacionMoneda:hover {
     background-color: rgb(187, 187, 187);
     color: white;
 }
