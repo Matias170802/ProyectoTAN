@@ -4,10 +4,12 @@ import './index.css'
 import Inicio from './Inicio.tsx'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {MainPageAdministrador, MainPageCliente, MainPageFinanzas, MainPageMiCaja, MainPagePerfil, MainPageReservas} from './routes/index.ts'
+import { Navbar } from './generalComponents/index.ts';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
+      <Navbar/>
       <Routes>
         <Route path="/" element={<Inicio/>}/>
         <Route path="/admin" element={<MainPageAdministrador/>}/>

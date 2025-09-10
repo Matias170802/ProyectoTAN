@@ -1,6 +1,6 @@
 "use client"
 import './Inicio.css'
-import {Modal, Button, Navbar} from './generalComponents/index'
+import {Modal, Button} from './generalComponents/index'
 import { AppProvider } from './context/AppContext'
 import { useState } from 'react'
 
@@ -12,7 +12,6 @@ function AppContent() {
   return (
     <main className="min-h-screen bg-gray-100">
       
-      <Navbar/>
       <Button label="Abrir modal" onClick={() => setOpenModal(true)} /> 
       
       {openModal && (

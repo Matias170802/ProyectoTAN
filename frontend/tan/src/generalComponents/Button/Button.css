@@ -4,6 +4,11 @@ button {
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 140px;
+    
 }
 
 button:hover {

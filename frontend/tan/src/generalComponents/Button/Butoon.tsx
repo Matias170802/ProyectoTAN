@@ -6,7 +6,7 @@ const Button: React.FC<Props> = ({label, onClick, id, type, disabled, icon, form
     return (
         <button 
         onClick={onClick} 
-        className={`${id || ''} ${icon ? 'button-with-icon' : ''}`} 
+        id={id} 
         type={type} 
         disabled={disabled}
         form={form}
