@@ -75,7 +75,6 @@ const inmueblesPosibles = [
 
 const MainPageReservas = () => {
     const [reservas, setReservas] = useState<Reserva[]>([]);
-    const [tab, setTab] = useState("gestion");
     const [filtroEstado, setFiltroEstado] = useState("Todos");
     const [filtroInmueble, setFiltroInmueble] = useState("Todos");
 
