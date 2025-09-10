@@ -1,0 +1,1 @@
+export {default as ModalRegistrarCotizacionMoneda} from './ModalRegistrarCotizacionMoneda/ModalRegistrarCotizacionMoneda';

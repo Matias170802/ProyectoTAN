@@ -1,0 +1,78 @@
+label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #222;
+    margin-bottom: 6px;
+}
+
+select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid #bcbcbc;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 18px;
+    background: #fff;
+    color: #222;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+select:focus {
+    border-color: #888;
+}
+
+#contenedorMontos {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+#montoCompra,
+#montoVenta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#montoCompra label,
+#montoVenta label {
+    margin-bottom: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #222;
+}
+
+#montoCompra input,
+#montoVenta input {
+    padding: 0.8rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fafafa;
+    color: #222;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+#montoCompra input:focus,
+#montoVenta input:focus {
+    border-color: #888;
+}
+
+#buttonsContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+#botonRegistrarCotizacionMoneda {
+    background-color: black;
+    color: white;
+}
+
+#botonRegistrarCotizacionMoneda:hover {
+    background-color: rgb(187, 187, 187);
+    color: white;
+}
