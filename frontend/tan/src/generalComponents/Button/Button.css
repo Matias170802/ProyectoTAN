@@ -1,14 +1,22 @@
 button {
-    background-color: #000000;
-    color: white;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     cursor: pointer;
-    box-shadow: 0 1px 1rem 0px #8f8e8e;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 140px;
+    
 }
 
 button:hover {
-    background-color: #8f8e8e;
+    background-color: #e6dddd;
     box-shadow: none;
     border: white 1px solid;
+}
+
+button:focus {
+    outline: none;
 }

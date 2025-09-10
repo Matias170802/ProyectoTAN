@@ -17,11 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class EstadoReserva {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idEstadoReserva;
+public class EstadoReserva  extends Base {
 
     @Column (unique = true)
     private String codEstadoReserva;

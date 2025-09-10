@@ -17,11 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class Inmueble {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idInmueble;
+public class Inmueble  extends Base {
 
     @Column(unique = true)
     private String codInmueble;

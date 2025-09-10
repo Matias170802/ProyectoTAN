@@ -1,63 +1,90 @@
-import { useState } from "react";
-import type { Rol, EmpleadoConRoles } from "../types";
-import { obtenerRolesEmpleado, desasignarRol, asignarRoles, obtenerRolesDisponibles } from "../serviceAdministrarRolesDeUsuario";
-
-// DTO para asignar/desasignar roles
-interface DTORolesAsignados {
-    codEmpleado: string;
-    idRol: number;
-}
+// Hook para manejar la lógica de roles de usuario
+import { useState, useEffect } from 'react';
+import { asignarRoles, desasignarRoles, getEmpleadosConRoles, getRolesAsignadosEmpleado, getRolesDisponiblesParaAsignar } from '../serviceAdministrarRolesDeUsuario';
 
 export const useRoles = () => {
-    const [empleado, setEmpleado] = useState<EmpleadoConRoles | null>(null);
-    const [rolesDisponibles, setRolesDisponibles] = useState<Rol[]>([]);
+  const [empleados, setEmpleados] = useState<any[]>([]);
+  const [selectedEmpleado, setSelectedEmpleado] = useState<any | null>(null);
+  const [rolesEmpleado, setRolesEmpleado] = useState<any[]>([]);
+  const [rolesDisponibles, setRolesDisponibles] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    // Buscar roles del empleado por codEmpleado
-    const buscarRolesEmpleado = async (codEmpleado: string) => {
-        const datos = await obtenerRolesEmpleado(codEmpleado);
-        setEmpleado(datos);
+  useEffect(() => {
+    const fetchEmpleados = async () => {
+      setLoading(true);
+      try {
+        const empleadosData = await getEmpleadosConRoles();
+        console.log("Empleados data fetched:");
+        console.log(empleadosData);
+        empleadosData.sort((a: any, b: any) => a.nombreEmpleado.localeCompare(b.nombreEmpleado));
+        setEmpleados(empleadosData);
+        setError(null);
+      } catch (err: any) {
+        setError(err.message || 'Error al cargar empleados');
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchEmpleados();
+  }, []);
 
-    // Obtener roles disponibles para asignar
-    const fetchRolesDisponibles = async () => {
-        const roles = await obtenerRolesDisponibles();
-        setRolesDisponibles(roles);
+  useEffect(() => {
+    const fetchRoles = async () => {
+      if (!selectedEmpleado) return;
+      setLoading(true);
+      try {
+        const [rolesEmp, rolesDisp] = await Promise.all([
+          getRolesAsignadosEmpleado(selectedEmpleado.codEmpleado),
+          getRolesDisponiblesParaAsignar(selectedEmpleado.codEmpleado)
+        ]);
+        setRolesEmpleado(rolesEmp);
+        setRolesDisponibles(rolesDisp);
+        setError(null);
+      } catch (err: any) {
+        setError(err.message || 'Error al cargar roles');
+      } finally {
+        setLoading(false);
+      }
     };
+    if (selectedEmpleado) fetchRoles();
+  }, [selectedEmpleado]);
 
-    // Quitar un rol (envía DTO al backend)
-    const quitarRol = async (rolId: number) => {
-        if (!empleado) return;
-        const dto: DTORolesAsignados = {
-            codEmpleado: empleado.dni, // Asume que dni es el código, ajusta si tienes codEmpleado
-            idRol: rolId,
-        };
-        await desasignarRol([dto]);
-        setEmpleado({
-            ...empleado,
-            roles: empleado.roles.filter((r: Rol) => r.id !== rolId),
-        });
-    };
+  const handleSelectEmpleado = (empleado: any) => {
+    setSelectedEmpleado(empleado);
+  };
 
-    // Agregar roles (envía lista de DTOs al backend)
-    const agregarRoles = async (nuevosRoles: Rol[]) => {
-        if (!empleado) return;
-        const dtos: DTORolesAsignados[] = nuevosRoles.map((rol) => ({
-            codEmpleado: empleado.dni, // Asume que dni es el código, ajusta si tienes codEmpleado
-            idRol: rol.id,
-        }));
-        await asignarRoles(dtos);
-        setEmpleado({
-            ...empleado,
-            roles: [...empleado.roles, ...nuevosRoles],
-        });
-    };
+  const handleAsignarRoles = async (roles: any[]) => {
+    if (!selectedEmpleado) return;
+    await asignarRoles(roles);
+    const updated = await getRolesAsignadosEmpleado(selectedEmpleado.codEmpleado);
+    setRolesEmpleado(updated);
+    // Refrescar lista de empleados
+    const empleadosData = await getEmpleadosConRoles();
+    empleadosData.sort((a: any, b: any) => a.nombreEmpleado.localeCompare(b.nombreEmpleado));
+    setEmpleados(empleadosData);
+  };
 
-    return {
-        empleado,
-        rolesDisponibles,
-        buscarRolesEmpleado,
-        fetchRolesDisponibles,
-        quitarRol,
-        agregarRoles,
-    };
+  const handleDesasignarRoles = async (roles: any[]) => {
+    if (!selectedEmpleado) return;
+    await desasignarRoles(roles);
+    const updated = await getRolesAsignadosEmpleado(selectedEmpleado.codEmpleado);
+    setRolesEmpleado(updated);
+    // Refrescar lista de empleados
+    const empleadosData = await getEmpleadosConRoles();
+    empleadosData.sort((a: any, b: any) => a.nombreEmpleado.localeCompare(b.nombreEmpleado));
+    setEmpleados(empleadosData);
+  };
+
+  return {
+    empleados,
+    selectedEmpleado,
+    handleSelectEmpleado,
+    rolesEmpleado,
+    rolesDisponibles,
+    loading,
+    error,
+    handleAsignarRoles,
+    handleDesasignarRoles
+  };
 };

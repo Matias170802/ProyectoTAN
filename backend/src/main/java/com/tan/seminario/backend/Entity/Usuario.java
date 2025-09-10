@@ -1,22 +1,22 @@
 package com.tan.seminario.backend.Entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
-import java.util.Set;
 
-@Builder
+
 @Entity
-@Table(name = "usuarios")
+@Table(name = "Usuario")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Usuario {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idUsuario;
+
+public class Usuario extends Base {
 
     private String name;
     private String password; // Encriptada - hashed
@@ -52,5 +52,5 @@ public class Usuario {
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "rol_id")
     )
-    private Set<Rol> roles;
+    private List<Rol> roles;
 }

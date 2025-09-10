@@ -1,22 +1,30 @@
-//se importa con type ya que son tipos de typescript y no son funciones
-import type { EmpleadoConRoles, Rol } from "./types";
+import axios from 'axios';
 
-export const obtenerRolesEmpleado = async (dni: string): Promise<EmpleadoConRoles> => {
-    // Reemplazá con llamada real a tu API
-    return {
-        dni,
-        nombre: "Juan Pérez",
-        roles: [
-        { id: 1, nombre: "Administrador" },
-        { id: 2, nombre: "Supervisor" },
-        ],
-    };
+const API_URL = '/api/administrador';
+
+export const getEmpleadosConRoles = async () => {
+  const res = await axios.get(`${API_URL}/empleados`);
+  console.log("Empleados data URL");
+  console.log(res.data);
+  return res.data;
 };
 
-export const desasignarRol = async (dni: string, rolId: number): Promise<void> => {
-  // Simula una llamada DELETE
+export const getRolesAsignadosEmpleado = async (codEmpleado: string) => {
+  const res = await axios.get(`${API_URL}/roles-asignados-empleado/${codEmpleado}`);
+  return res.data;
 };
 
-export const asignarRoles = async (dni: string, roles: Rol[]): Promise<void> => {
-  // Simula una llamada POST
+export const getRolesDisponiblesParaAsignar = async (codEmpleado: string) => {
+  const res = await axios.get(`${API_URL}/roles-a-asignar-empleado/${codEmpleado}`);
+  return res.data;
+};
+
+export const asignarRoles = async (rolesAsignados: any[]) => {
+  const res = await axios.post(`${API_URL}/asignar`, rolesAsignados);
+  return res.data;
+};
+
+export const desasignarRoles = async (rolesDesasignados: any[]) => {
+  const res = await axios.patch(`${API_URL}/desasignar`, rolesDesasignados);
+  return res.data;
 };

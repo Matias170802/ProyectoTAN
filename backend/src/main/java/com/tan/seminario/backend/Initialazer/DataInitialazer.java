@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Component
 public class DataInitialazer {
@@ -22,16 +21,10 @@ public class DataInitialazer {
     private final CategoriaMovimientoRepository categoriaMovimientoRepository;
     private final RolRepository rolRepository;
     private final EmpleadoRepository empleadoRepository;
+    private final EmpleadoRolRepository empleadoRolRepository;
 
     // Constructor correcto para la inyección de dependencia
-    public DataInitialazer(EstadoReservaRepository estadoReservaRepository,
-                           TipoMovimientoRepository tipoMovimientoRepository,
-                           TipoTareaRepository tipoTareaRepository,
-                           EstadoTareaRepository estadoTareaRepository,
-                           MonedaRepository monedaRepository,
-                           CategoriaMovimientoRepository categoriaMovimientoRepository,
-                           RolRepository rolRepository,
-                           EmpleadoRepository empleadoRepository) {
+    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository, EmpleadoRepository empleadoRepository, EmpleadoRolRepository empleadoRolRepository) {
         this.estadoReservaRepository = estadoReservaRepository;
         this.tipoMovimientoRepository = tipoMovimientoRepository;
         this.tipoTareaRepository = tipoTareaRepository;
@@ -40,6 +33,7 @@ public class DataInitialazer {
         this.categoriaMovimientoRepository = categoriaMovimientoRepository;
         this.rolRepository = rolRepository;
         this.empleadoRepository = empleadoRepository;
+        this.empleadoRolRepository = empleadoRolRepository;
     }
 
     @PostConstruct
@@ -48,11 +42,11 @@ public class DataInitialazer {
         //inicializacion de datos estado reserva
         if (estadoReservaRepository.count() == 0) {
             // Crear datos iniciales para EstadoReserva
-            EstadoReserva estado1 = new EstadoReserva(null, "EST001", "Señada", null, LocalDateTime.now());
-            EstadoReserva estado2 = new EstadoReserva(null, "EST002", "Cancelado", null, LocalDateTime.now());
-            EstadoReserva estado3 = new EstadoReserva(null, "EST003", "Finalizado", null, LocalDateTime.now());
-            EstadoReserva estado4 = new EstadoReserva(null, "EST004", "Preparada", null, LocalDateTime.now());
-            EstadoReserva estado5 = new EstadoReserva(null, "EST005", "En Curso", null, LocalDateTime.now());
+            EstadoReserva estado1 = new EstadoReserva("EST001", "Señada", null, LocalDateTime.now());
+            EstadoReserva estado2 = new EstadoReserva("EST002", "Cancelado", null, LocalDateTime.now());
+            EstadoReserva estado3 = new EstadoReserva("EST003", "Finalizado", null, LocalDateTime.now());
+            EstadoReserva estado4 = new EstadoReserva("EST004", "Preparada", null, LocalDateTime.now());
+            EstadoReserva estado5 = new EstadoReserva("EST005", "En Curso", null, LocalDateTime.now());
 
             // Guardar estados en la base de datos
             estadoReservaRepository.saveAll(Arrays.asList(estado1, estado2, estado3, estado4, estado5));
@@ -65,8 +59,8 @@ public class DataInitialazer {
 
         //inicializacion de datos tipo movimiento
         if (tipoMovimientoRepository.count() == 0) {
-            TipoMovimiento tipo1 = new TipoMovimiento(null, "TI001", "Ingreso", null, LocalDateTime.now());
-            TipoMovimiento tipo2 = new TipoMovimiento(null, "TI002", "Egreso", null, LocalDateTime.now());
+            TipoMovimiento tipo1 = new TipoMovimiento("TI001", "Ingreso", null, LocalDateTime.now());
+            TipoMovimiento tipo2 = new TipoMovimiento("TI002", "Egreso", null, LocalDateTime.now());
 
             tipoMovimientoRepository.saveAll(Arrays.asList(tipo1, tipo2));
             System.out.println("Datos iniciales de TipoMovimiento insertados correctamente.");
@@ -77,10 +71,10 @@ public class DataInitialazer {
 
         //inicializacion de datos Tipo tarea
         if (tipoTareaRepository.count() == 0) {
-            TipoTarea tipoTarea1 = new TipoTarea(null, "TT001", "Check-In", LocalDateTime.now(), null);
-            TipoTarea tipoTarea2 = new TipoTarea(null, "TT002", "Check-Out", LocalDateTime.now(), null);
-            TipoTarea tipoTarea3 = new TipoTarea(null, "TT003", "Pago Sueldos", LocalDateTime.now(), null);
-            TipoTarea tipoTarea4 = new TipoTarea(null, "TT004", "Cobro de Inmuebles", LocalDateTime.now(), null);
+            TipoTarea tipoTarea1 = new TipoTarea( "TT001", "Check-In", LocalDateTime.now(), null);
+            TipoTarea tipoTarea2 = new TipoTarea( "TT002", "Check-Out", LocalDateTime.now(), null);
+            TipoTarea tipoTarea3 = new TipoTarea( "TT003", "Pago Sueldos", LocalDateTime.now(), null);
+            TipoTarea tipoTarea4 = new TipoTarea( "TT004", "Cobro de Inmuebles", LocalDateTime.now(), null);
 
             tipoTareaRepository.saveAll(Arrays.asList(tipoTarea1, tipoTarea2, tipoTarea3, tipoTarea4));
             System.out.println("Datos iniciales de TipoTarea insertados correctamente.");
@@ -92,9 +86,9 @@ public class DataInitialazer {
         //inicializacion de datos estado tarea
 
         if (estadoTareaRepository.count() == 0) {
-            EstadoTarea estadoTarea1 = new EstadoTarea(null, "EST001", "Asignada", null, LocalDateTime.now());
-            EstadoTarea estadoTarea2 = new EstadoTarea(null, "EST002", "Anulada", null, LocalDateTime.now());
-            EstadoTarea estadoTarea3 = new EstadoTarea(null, "EST003", "Finalizada", null, LocalDateTime.now());
+            EstadoTarea estadoTarea1 = new EstadoTarea( "EST001", "Asignada", null, LocalDateTime.now());
+            EstadoTarea estadoTarea2 = new EstadoTarea( "EST002", "Anulada", null, LocalDateTime.now());
+            EstadoTarea estadoTarea3 = new EstadoTarea( "EST003", "Finalizada", null, LocalDateTime.now());
 
             estadoTareaRepository.saveAll(Arrays.asList(estadoTarea1, estadoTarea2, estadoTarea3));
             System.out.println("Datos iniciales de EstadoTarea insertados correctamente.");
@@ -106,8 +100,8 @@ public class DataInitialazer {
 
         //inicializacion de datos moneda
         if (monedaRepository.count() == 0) {
-            Moneda moneda1 = new Moneda(null, "MON001", "Peso Argentino", LocalDateTime.now(), null);
-            Moneda moneda2 = new Moneda(null, "MON002", "Dolar", LocalDateTime.now(), null);
+            Moneda moneda1 = new Moneda( "MON001", "Peso Argentino", LocalDateTime.now(), null);
+            Moneda moneda2 = new Moneda( "MON002", "Dolar", LocalDateTime.now(), null);
 
             monedaRepository.saveAll(Arrays.asList(moneda1, moneda2));
             System.out.println("Datos iniciales de Moneda insertados correctamente.");
@@ -119,11 +113,11 @@ public class DataInitialazer {
         //inicializacion de datos categoria movimiento
         if (categoriaMovimientoRepository.count() == 0) {
 
-            CategoriaMovimiento categoriaMovimiento1 = new CategoriaMovimiento(null, "CAT001", "Seña", LocalDateTime.now(), null);
-            CategoriaMovimiento categoriaMovimiento2 = new CategoriaMovimiento(null, "CAT002", "Sueldo", LocalDateTime.now(), null);
-            CategoriaMovimiento categoriaMovimiento3 = new CategoriaMovimiento(null, "CAT003", "Cancelacion Reserva", LocalDateTime.now(), null);
-            CategoriaMovimiento categoriaMovimiento4 = new CategoriaMovimiento(null, "CAT004", "Rendicion a Inmueble", LocalDateTime.now(), null);
-            CategoriaMovimiento categoriaMovimiento5 = new CategoriaMovimiento(null, "CAT005", "Rendicion de Empleado", LocalDateTime.now(), null);
+            CategoriaMovimiento categoriaMovimiento1 = new CategoriaMovimiento( "CAT001", "Seña", LocalDateTime.now(), null);
+            CategoriaMovimiento categoriaMovimiento2 = new CategoriaMovimiento("CAT002", "Sueldo", LocalDateTime.now(), null);
+            CategoriaMovimiento categoriaMovimiento3 = new CategoriaMovimiento( "CAT003", "Cancelacion Reserva", LocalDateTime.now(), null);
+            CategoriaMovimiento categoriaMovimiento4 = new CategoriaMovimiento( "CAT004", "Rendicion a Inmueble", LocalDateTime.now(), null);
+            CategoriaMovimiento categoriaMovimiento5 = new CategoriaMovimiento( "CAT005", "Rendicion de Empleado", LocalDateTime.now(), null);
 
             categoriaMovimientoRepository.saveAll(Arrays.asList(categoriaMovimiento1, categoriaMovimiento2, categoriaMovimiento3, categoriaMovimiento4, categoriaMovimiento5));
             System.out.println("Datos iniciales de CategoriaMovimiento insertados correctamente.");
@@ -135,37 +129,28 @@ public class DataInitialazer {
         //inicializacion de datos roles
         if (rolRepository.count() == 0) {
 
-            Rol rolAdminFinanciero = new Rol(null, "ROL001", "Administrador Financiero", LocalDateTime.now(), null);
-            Rol rolGerencia = new Rol(null, "ROL002", "Gerencia", LocalDateTime.now(), null);
-            Rol rolEmpleado = new Rol(null, "ROL003", "Empleado", LocalDateTime.now(), null);
-            Rol rolAdminReservas = new Rol(null, "ROL004", "Administrador de Reservas", LocalDateTime.now(), null);
-            Rol rolAdminSistemas = new Rol(null, "ROL005", "Administrador del Sistema", LocalDateTime.now(), null);
+            Rol rol1 = new Rol( "ROL001", "Administrador Financiero", null, LocalDateTime.now());
+            Rol rol2 = new Rol( "ROL002", "Gerencia", null, LocalDateTime.now());
+            Rol rol3 = new Rol( "ROL003", "Empleado", null, LocalDateTime.now());
+            Rol rol4 = new Rol( "ROL004", "Administrador de Reservas", null, LocalDateTime.now());
+            Rol rol5 = new Rol( "ROL005", "Administrador del Sistema", null, LocalDateTime.now());
 
-            rolRepository.saveAll(Arrays.asList(rolAdminFinanciero, rolGerencia, rolEmpleado, rolAdminReservas, rolAdminSistemas));
+            rolRepository.saveAll(Arrays.asList(rol1, rol2, rol3, rol4, rol5));
             System.out.println("Datos iniciales de Rol insertados correctamente.");
         } else {
             System.out.println("La base de datos ya contiene datos de Rol, no se inicializaron nuevos datos.");
         }
         //inicializacion de datos roles
 
-        // Creo un empleado de prueba
-        Rol rolEmpleado = rolRepository.findByCodRol("ROL003")
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
-        Set<Rol> rolesEmpleado = new HashSet<>();
-        rolesEmpleado.add(rolEmpleado);
-
-        Empleado empleado = new Empleado(
-                null,
-                "12345678",
-                "EMP-Prueba",
-                "Juan Perez",
-                "1234567890",
-                50000L,
-                null,
-                LocalDateTime.now(),
-                null, // fechaUltimoCobroSalario
-                rolesEmpleado
-        );
-        empleadoRepository.save(empleado);
+        //Iniciacion de Empleado maestro
+        if (empleadoRepository.count() == 0) {
+            Empleado empleado1 = new Empleado("44310665","Empl001","Matias","2615199115", 200L,null,LocalDateTime.now(),null,null);
+            Empleado empleado2 = new Empleado("44000000","Empl002","Mauri","2615199115", 200L,null,LocalDateTime.now(),null,null);
+            Empleado empleado3 = new Empleado("44555555", "Empl003", "Clara", "2615000000", 200L, null, LocalDateTime.now(), null, null);
+            Empleado empleado4 = new Empleado("44666666", "Empl004", "Juan", "2615111111", 200L, null, LocalDateTime.now(), null, null);
+            Empleado empleado5 = new Empleado("44777777", "Empl005", "Lucia", "2615222222", 200L, null, LocalDateTime.now(), null, null);
+            empleadoRepository.saveAll(Arrays.asList(empleado1,empleado2,empleado3,empleado4,empleado5));
+            System.out.println("Datos iniciales de Empleado insertados correctamente.");
+        }
     }
 }

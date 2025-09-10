@@ -18,21 +18,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 /*Lombok*/
 
-public class EmpleadoCaja {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idEmpleadoCaja;
+public class EmpleadoCaja  extends Base {
 
-    @Column (unique = true)
+    @Column(unique = true)
     private Long nroEmpleadoCaja;
 
     @Column(unique = true)
     private String nombreEmpleadoCaja;
-
-    private BigDecimal balanceTotalARS;
-    private BigDecimal balanceTotalUSD;
-    private LocalDateTime fechaHoraAltaEmpleadoCaja;
-    private LocalDateTime fechaHoraBajaEmpleadoCaja;
+    private BigDecimal balanceARS;
+    private BigDecimal balanceUSD;
 
     @OneToOne
     @JoinColumn(name = "idEmpleado", nullable = false)
