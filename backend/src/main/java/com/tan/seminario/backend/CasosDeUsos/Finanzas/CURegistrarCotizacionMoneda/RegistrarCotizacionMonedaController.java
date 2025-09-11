@@ -22,11 +22,6 @@ public class RegistrarCotizacionMonedaController {
     @PostMapping
     public ResponseEntity<CotizacionMonedaHoy> registrarCotizacionMoneda(@RequestBody DTOCotizacionMoneda cotizacion){
         CotizacionMonedaHoy nuevaCotizacion = expertoRegistrarCotizacionMoneda.registrarCotizacionMoneda(cotizacion);
-
-        if (nuevaCotizacion == null) {
-            throw new RuntimeException("Error al registrar cotizacion");
-        }
-
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCotizacion);
     }
 
@@ -35,3 +30,5 @@ public class RegistrarCotizacionMonedaController {
         return ResponseEntity.ok(expertoRegistrarCotizacionMoneda.buscarMonedas());
     }
 }
+
+

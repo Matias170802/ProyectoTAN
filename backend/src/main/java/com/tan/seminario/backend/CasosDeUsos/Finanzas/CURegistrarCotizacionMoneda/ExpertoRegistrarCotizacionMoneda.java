@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +32,17 @@ public class ExpertoRegistrarCotizacionMoneda {
 
     public CotizacionMonedaHoy registrarCotizacionMoneda(DTOCotizacionMoneda cotizacion ){
         Moneda monedaSeleccionada = monedaRepository.findBynombreMoneda(cotizacion.nombreMoneda);
-
         if (monedaSeleccionada == null) {
             throw new RuntimeException("Moneda no encontrada");
         }
 
+        CotizacionMonedaHoy cotizacionExistente = cotizacionMonedaHoyRepository.findByFechaCotizacionMoneda(LocalDate.now());
+        if (cotizacionExistente != null) {
+            throw new RuntimeException("Cotizacion para la Moneda Seleccionada ya registrada para el dia de hoy");
+        }
+
         CotizacionMonedaHoy nuevaCotizacion = CotizacionMonedaHoy.builder()
-                .fechaCotizacionMoneda(LocalDateTime.now())
+                .fechaCotizacionMoneda(LocalDate.now())
                 .montoCompra(cotizacion.montoCompra)
                 .montoVenta(cotizacion.montoVenta)
                 .moneda(monedaSeleccionada)

@@ -4,7 +4,7 @@ package com.tan.seminario.backend.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /*Lombok*/
 @Entity
@@ -20,7 +20,7 @@ public class CotizacionMonedaHoy extends Base{
 
     private Long montoCompra;
     private Long montoVenta;
-    private LocalDateTime fechaCotizacionMoneda;
+    private LocalDate fechaCotizacionMoneda;
 
     @ManyToOne
     @JoinColumn(name= "idMoneda", nullable = false)
