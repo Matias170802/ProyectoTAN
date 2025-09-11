@@ -25,7 +25,6 @@ public class ReservaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(List.of());
         }
-    return null;
     }
 
 }

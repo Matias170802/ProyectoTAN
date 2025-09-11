@@ -1,6 +1,7 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {Button, List} from "../../generalComponents/index";
+import { useReservas } from "../../generalHooks/useReservas";
 import "./MainPageReservas.css";
 
 type Reserva = {
@@ -15,54 +16,6 @@ type Reserva = {
     origen: string;
 };
 
-const reservasEjemplo = [
-    {
-        propiedad: "Apartamento Centro",
-        checkin: "19/2/2025",
-        checkout: "24/2/2025",
-        huesped: "Juan Pérez",
-        personas: 2,
-        total: "$25000",
-        sena: "$10000",
-        estado: "Señada",
-        origen: "Airbnb",
-    },
-    {
-        propiedad: "Casa de Playa",
-        checkin: "4/3/2025",
-        checkout: "9/3/2025",
-        huesped: "María González",
-        personas: 4,
-        total: "$35000",
-        sena: "$15000",
-        estado: "Señada",
-        origen: "Booking",
-    },
-    {
-        propiedad: "Cabaña Montaña",
-        checkin: "14/3/2025",
-        checkout: "19/3/2025",
-        huesped: "Carlos Rodríguez",
-        personas: 3,
-        total: "$30000",
-        sena: "$12000",
-        estado: "Señada",
-        origen: "Directo",
-    },
-    {
-        propiedad: "Loft Urbano",
-        checkin: "24/2/2025",
-        checkout: "28/2/2025",
-        huesped: "Laura Martínez",
-        personas: 2,
-        total: "$22000",
-        sena: "$8000",
-        estado: "Preparada",
-        origen: "Airbnb",
-    },
-];
-
-
 
 const estadosPosibles = ["Todos", "Señada", "Preparada", "Finalizada", "Cancelada"];
 const inmueblesPosibles = [
@@ -73,20 +26,27 @@ const inmueblesPosibles = [
     "Loft Urbano"
 ];
 
+
 const MainPageReservas = () => {
-    const [reservas, setReservas] = useState<Reserva[]>([]);
+    const { reservas, loading, error } = useReservas();
     const [filtroEstado, setFiltroEstado] = useState("Todos");
     const [filtroInmueble, setFiltroInmueble] = useState("Todos");
 
-    useEffect(() => {
-        // Simular GET
-        setTimeout(() => {
-            setReservas(reservasEjemplo);
-        }, 500);
-    }, []);
+    // Adaptar los datos del backend al formato esperado por la tabla
+    const reservasAdaptadas = (reservas || []).map(r => ({
+        propiedad: r.nombreInmueble,
+        checkin: r.fechaHoraCheckin ? new Date(r.fechaHoraCheckin).toLocaleDateString() : "",
+        checkout: r.fechaHoraCheckout ? new Date(r.fechaHoraCheckout).toLocaleDateString() : "",
+        huesped: "-", // Si tienes el dato, reemplaza aquí
+        personas: r.cantHuespedes,
+        total: `$${r.totalMonto}`,
+        sena: `$${r.totalMontoSenia}`,
+        estado: r.nombreEstadoReserva,
+        origen: r.plataformaOrigen || "-"
+    }));
 
     // Filtrar reservas según los filtros seleccionados
-    let reservasFiltradas = reservas.filter(r => {
+    let reservasFiltradas = reservasAdaptadas.filter(r => {
         const estadoMatch = filtroEstado === "Todos" || r.estado === filtroEstado;
         const inmuebleMatch = filtroInmueble === "Todos" || r.propiedad === filtroInmueble;
         return estadoMatch && inmuebleMatch;
@@ -95,7 +55,6 @@ const MainPageReservas = () => {
     // Si no se selecciona inmueble ("Todos"), mostrar las reservas ordenadas por fecha de check-in más próxima
     if (filtroInmueble === "Todos") {
         reservasFiltradas = [...reservasFiltradas].sort((a, b) => {
-            // Asume formato dd/mm/yyyy
             const parseDate = (str: string) => {
                 const [d, m, y] = str.split("/").map(Number);
                 return new Date(y, m - 1, d).getTime();
@@ -140,6 +99,8 @@ const MainPageReservas = () => {
                 </div>
                 <h2 className="main-reservas-subtitle">Proximas Reservas ...</h2>
                 <div className="main-reservas-table-container">
+                    {loading && <p>Cargando reservas...</p>}
+                    {error && <p style={{color: 'red'}}>Error al cargar reservas</p>}
                     <List
                         items={reservasFiltradas}
                         columnas={["propiedad", "checkin", "checkout", "huesped", "personas", "total", "sena", "estado", "origen"]}
