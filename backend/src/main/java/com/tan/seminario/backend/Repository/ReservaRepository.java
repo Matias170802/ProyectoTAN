@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
-    List<Reserva> findByFechaAltaReservaBetweenOrderByFechaAltaReservaDesc(LocalDateTime desde, LocalDateTime hasta);
+    List<Reserva> findByFechaHoraAltaReservaBetweenOrderByFechaHoraAltaReserva(
+            LocalDateTime fechaHoraAltaReservaAfter,
+            LocalDateTime fechaHoraAltaReservaBefore);
 
 }

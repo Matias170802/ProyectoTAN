@@ -8,7 +8,6 @@ type Reserva = {
     propiedad: string;
     checkin: string;
     checkout: string;
-    huesped: string;
     personas: number;
     total: string;
     sena: string;
@@ -37,7 +36,6 @@ const MainPageReservas = () => {
         propiedad: r.nombreInmueble,
         checkin: r.fechaHoraCheckin ? new Date(r.fechaHoraCheckin).toLocaleDateString() : "",
         checkout: r.fechaHoraCheckout ? new Date(r.fechaHoraCheckout).toLocaleDateString() : "",
-        huesped: "-", // Si tienes el dato, reemplaza aquí
         personas: r.cantHuespedes,
         total: `$${r.totalMonto}`,
         sena: `$${r.totalMontoSenia}`,
@@ -103,7 +101,7 @@ const MainPageReservas = () => {
                     {error && <p style={{color: 'red'}}>Error al cargar reservas</p>}
                     <List
                         items={reservasFiltradas}
-                        columnas={["propiedad", "checkin", "checkout", "huesped", "personas", "total", "sena", "estado", "origen"]}
+                        columnas={["propiedad", "checkin", "checkout", "personas", "total", "sena", "estado", "origen"]}
                         showActions={false}
                         emptyMessage="No hay reservas para mostrar."
                     />

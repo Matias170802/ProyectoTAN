@@ -22,7 +22,7 @@ public class ExpertoReserva {
         LocalDateTime desde = hasta.minusDays(30);
 
         //Busca las reservas creadas en los ultimos 30 dias
-        List<Reserva> reservas = reservaRepository.findByFechaAltaReservaBetweenOrderByFechaAltaReservaDesc(desde, hasta);
+        List<Reserva> reservas = reservaRepository.findByFechaHoraAltaReservaBetweenOrderByFechaHoraAltaReserva(desde, hasta);
 
         List<DTOReserva> DTOReservasEnviar = new ArrayList<>();
         for (Reserva reserva : reservas) {
