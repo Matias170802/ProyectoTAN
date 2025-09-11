@@ -11,6 +11,7 @@ function AppContent() {
   const [openModal, setOpenModal] = useState(false);
   return (
     <main className="min-h-screen bg-gray-100">
+      
       <Button label="Abrir modal" onClick={() => setOpenModal(true)} /> 
       
       {openModal && (

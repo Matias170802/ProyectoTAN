@@ -1,8 +1,6 @@
 button {
     background-color: #ffffff;
     color: rgb(0, 0, 0);
-    background-color: #ffffff;
-    color: rgb(0, 0, 0);
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     cursor: pointer;
@@ -15,13 +13,8 @@ button {
 
 button:hover {
     background-color: #e6dddd;
-    background-color: #e6dddd;
     box-shadow: none;
     border: white 1px solid;
-}
-
-button:focus {
-    outline: none;
 }
 
 button:focus {
