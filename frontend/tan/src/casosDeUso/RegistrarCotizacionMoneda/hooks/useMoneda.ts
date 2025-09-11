@@ -1,23 +1,12 @@
-import React from 'react';
+import { useFetch } from "@/generalHooks/useFetch";
 import { type MonedasExistentes } from '../types';
-import { obtenerMonedasExistentes } from '../serviceRegistrarCotizacionMoneda';
 
 export const useMoneda = () => {
-    const [monedas, setMonedas] = React.useState<MonedasExistentes[]>([]);
-    const [loading, setLoading] = React.useState(false);
-    const [error, setError] = React.useState<Error | null>(null);
+    const { data, loading, error } = useFetch<MonedasExistentes[]>('/api/finanzas/registrarCotizacionMoneda');
 
-    const buscarMonedasExistentes = async () => {
-        setLoading(true);
-        try {
-            const datos = await obtenerMonedasExistentes();
-            setMonedas(Array.isArray(datos) ? datos : [datos]);
-        } catch (err) {
-            setError(err as Error);
-        } finally {
-            setLoading(false);
-        }
+    return {
+        monedas: data || [],
+        loading,
+        error
     };
-
-    return { monedas, buscarMonedasExistentes, loading, error };
 };

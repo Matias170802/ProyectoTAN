@@ -31,7 +31,7 @@ public class RegistrarCotizacionMonedaController {
     }
 
     @GetMapping
-    public List<DTOMonedas> buscarMonedas() {
-        return expertoRegistrarCotizacionMoneda.buscarMonedas();
+    public ResponseEntity<List<DTOMonedas>> buscarMonedas() {
+        return ResponseEntity.ok(expertoRegistrarCotizacionMoneda.buscarMonedas());
     }
 }

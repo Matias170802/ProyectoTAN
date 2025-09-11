@@ -1,3 +1,3 @@
 export interface MonedasExistentes {
-    nombre:string;
+    nombreMoneda:string;
 }

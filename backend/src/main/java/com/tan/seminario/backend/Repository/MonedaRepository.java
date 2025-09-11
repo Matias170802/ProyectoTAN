@@ -8,5 +8,5 @@ import java.util.List;
 public interface MonedaRepository extends JpaRepository<Moneda, Long> {
 
     List<Moneda> findByfechaHoraBajaMonedaIsNull();
-    Moneda findByNombreMoneda(String nombreMoneda);
+    Moneda findBynombreMoneda(String nombreMoneda);
 }

@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 
 const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title, description, showCloseButton}) => {
 
-    const {monedas, buscarMonedasExistentes, loading, error} = useMoneda();
+    const {monedas, loading, error} = useMoneda();
 
     //*uso del zod, useForm para manejar el formulario
     const { handleSubmit, control, formState: { errors }, reset, register } = useForm<formSchemaRegistrarCotizacionMonedaType>({
@@ -21,14 +21,6 @@ const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title
         },
         mode: 'onBlur'
     });
-
-    React.useEffect(() => {
-        if (isOpen) {
-            buscarMonedasExistentes();
-            console.log(monedas)
-        }
-
-    }, [isOpen])
 
 
     const onSubmit = () => {
@@ -53,7 +45,7 @@ const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title
                     <option value="Selecciona una moneda">Selecciona una moneda</option>
                     {monedas && monedas.length > 0 && (
                         monedas.map((moneda, index) => (
-                            <option key={index} value={moneda.nombre}>{moneda.nombre}</option>
+                            <option key={index} value={moneda.nombreMoneda}>{moneda.nombreMoneda}</option>
                         ))
                     )}
                 </select>
