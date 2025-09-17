@@ -18,11 +18,15 @@ export const useMoneda = () => {
             return false;
         }
     }
+
+    const resetError = () => setErrorEncontrado(null);
+
     return {
         monedas: data || [],
         loading,
         error,
         registrarCotizacionMoneda,
-        errorEncontrado
+        errorEncontrado,
+        resetError
     };
 };

@@ -12,9 +12,11 @@ export const registrarCotizacion = async (cotizacion: formSchemaRegistrarCotizac
 
     const result = await response.json();
     console.log("Este es el resultado del back: ", result)
+    console.log("este es el response.ok", response.ok)
+    console.log("Este es el result.codigo", result.codigo)
     
     //* Si el backend responde con error lógico
-    if (!response.ok || result.codigo !== 200) {
+    if (!response.ok) {
         console.log("Este es el mensaje del error del back: ", result.mensaje)
         throw new Error(result.message);
     }

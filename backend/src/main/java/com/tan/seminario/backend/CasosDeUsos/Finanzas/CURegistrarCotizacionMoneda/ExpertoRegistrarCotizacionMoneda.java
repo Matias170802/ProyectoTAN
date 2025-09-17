@@ -36,10 +36,16 @@ public class ExpertoRegistrarCotizacionMoneda {
             throw new RuntimeException("Moneda no encontrada");
         }
 
-        CotizacionMonedaHoy cotizacionExistente = cotizacionMonedaHoyRepository.findByFechaCotizacionMoneda(LocalDate.now());
-        if (cotizacionExistente != null) {
-            throw new RuntimeException("Cotizacion para la Moneda Seleccionada ya registrada para el dia de hoy");
+        List<CotizacionMonedaHoy> cotizacionesExistentes = cotizacionMonedaHoyRepository.findByFechaCotizacionMoneda(LocalDate.now());
+
+        if (!cotizacionesExistentes.isEmpty()) {
+            for (CotizacionMonedaHoy cotizacionExistente : cotizacionesExistentes) {
+                if (cotizacionExistente.getMoneda().getCodMoneda().equals(monedaSeleccionada.getCodMoneda())) {
+                    throw new RuntimeException("ya existe una cotizacion para el dia de hoy");
+                }
+            }
         }
+
 
         CotizacionMonedaHoy nuevaCotizacion = CotizacionMonedaHoy.builder()
                 .fechaCotizacionMoneda(LocalDate.now())

@@ -9,7 +9,7 @@ import { useForm, type Resolver} from 'react-hook-form';
 
 const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title, description, showCloseButton}) => {
 
-    const {monedas, loading, error, registrarCotizacionMoneda, errorEncontrado} = useMoneda();
+    const {monedas, loading, error, registrarCotizacionMoneda, errorEncontrado, resetError} = useMoneda();
     const [showMensajeExito, setShowMensajeExito] = React.useState(false);
 
     //*uso del zod, useForm para manejar el formulario
@@ -22,8 +22,21 @@ const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title
     });
 
 
+    //* Reinicia el modal cuando hay error después de 3 segundos
+    React.useEffect(() => {
+        if (errorEncontrado) {
+            const timer = setTimeout(() => {
+                resetError(); 
+                reset();      
+            }, 10000);
+            return () => clearTimeout(timer);
+        }
+    }, [errorEncontrado, reset, resetError]);
+
+
     const onSubmit = async (data: formSchemaRegistrarCotizacionMonedaType) => {
         const exito = await registrarCotizacionMoneda(data);
+        console.log("Este es mi exito", exito)
 
         if (exito) {
             setShowMensajeExito(true);
@@ -49,7 +62,7 @@ const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title
             >
                 
                 {showMensajeExito && <div id='mensajeExito'>Cotización registrada con éxito</div>}
-                {errorEncontrado && <div id='mensajeError'>Error: {errorEncontrado}</div>}
+                {errorEncontrado && <div id='mensajeError'>No se puedo registrar la cotizacion para la moneda seleccionada pues {errorEncontrado}</div>}
 
 
                 <label>Moneda</label>
