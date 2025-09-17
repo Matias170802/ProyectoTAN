@@ -5,7 +5,7 @@
 }
 
 #mainPageFinanzasContent {
-    padding: 30px 70px 30px 70px;
+    padding: 30px 60px 30px 60px;
 }
 
 #mainPageFinanzasContent p {
@@ -52,3 +52,34 @@
     background-color: black;
     color: white;
 }
+#parteIzquierda input[type="search"] {
+    padding: 0.8rem;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fff;
+    color: #222;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+#parteIzquierda input[type="search"]:focus {
+    border-color: #888;
+}
+
+#parteIzquierda select {
+    padding: 0.8rem;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fff;
+    color: #222;
+    outline: none;
+    transition: border-color 0.2s;
+    
+}
+
+#parteIzquierda select:focus {
+    border-color: #888;
+}
+
