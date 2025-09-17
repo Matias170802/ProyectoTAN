@@ -2,11 +2,9 @@ package com.tan.seminario.backend.Entity;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import java.time.LocalDateTime;
+import lombok.*;
+
+import java.time.LocalDate;
 
 /*Lombok*/
 @Entity
@@ -15,13 +13,14 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 /*Lombok*/
 
 public class CotizacionMonedaHoy extends Base{
 
     private Long montoCompra;
     private Long montoVenta;
-    private LocalDateTime fechaCotizacionMoneda;
+    private LocalDate fechaCotizacionMoneda;
 
     @ManyToOne
     @JoinColumn(name= "idMoneda", nullable = false)

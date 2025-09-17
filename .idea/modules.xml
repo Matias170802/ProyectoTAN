@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ProyectoTAN.iml" filepath="$PROJECT_DIR$/.idea/ProyectoTAN.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/TANSeminarioIntegrador.iml" filepath="$PROJECT_DIR$/.idea/TANSeminarioIntegrador.iml" />
     </modules>
   </component>
 </project>

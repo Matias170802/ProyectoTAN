@@ -1,4 +1,4 @@
-const MainPageReservas = () => {
+const MainPageReservas: React.FC = () => {
 
     return(
         <div>
