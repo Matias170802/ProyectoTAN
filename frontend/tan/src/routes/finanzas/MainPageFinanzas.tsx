@@ -4,6 +4,7 @@ import { MdCompareArrows, MdAttachMoney } from "react-icons/md";
 import {Button, List} from '../../generalComponents/index'
 import './MainPageFinanzas.css'
 import {ModalRegistrarCotizacionMoneda} from '../../casosDeUso/RegistrarCotizacionMoneda/components/index'
+import { useFinanzas } from './useFinanzas';
 
 const MainPageFinanzas: React.FC = () => {
 
@@ -13,7 +14,17 @@ const MainPageFinanzas: React.FC = () => {
         {id: 2, Nombre: 'Caja Secundaria', Tipo: 'Inmueble', BalanceARS: 3000, UltimoMovimiento: '2024-09-28'},
         {id: 3, Nombre: 'Caja Ahorros', Tipo: 'Otro', BalanceARS: 1500, UltimoMovimiento: '2024-09-30'},
     ]
+
+    //*estados para los filtros
+    const [tipoSeleccionado, setTipoSeleccionado] = React.useState("todasLasCajas");
+    const [ordenSeleccionado, setOrdenSeleccionado] = React.useState("Movimiento más reciente");
+    const [textoBuscado, setTextoBuscado] = React.useState("");
+
+    const { obtenerCajasFiltradas, loadingCajas } = useFinanzas();
     const columnas = ["Nombre", "Tipo", "BalanceARS", "BalanceUSD", "UltimoMovimiento"];
+
+    //*buscamos las cajas para mostrarlas
+    const cajasAMostrar = obtenerCajasFiltradas(tipoSeleccionado, ordenSeleccionado, textoBuscado);
 
     return(
         <div className="App">
@@ -26,19 +37,31 @@ const MainPageFinanzas: React.FC = () => {
                         
                         <section id='parteIzquierda'>
                             
-                            <input type="search" placeholder='Buscar Cajas...'/>
-                            <select>
+                            <input 
+                            type="search" 
+                            placeholder='Buscar Cajas...' 
+                            value={textoBuscado}
+                            onChange={e => setTextoBuscado(e.target.value)}
+                            />
+
+                            <select
+                            value={tipoSeleccionado} 
+                            onChange={e => setTipoSeleccionado(e.target.value)}
+                            >
                                 <option value="todasLasCajas">Todas las cajas</option>
                                 <option value="cajasEmpleados">Cajas de empleados</option>
                                 <option value="cajasEnmuebles">Cajas de inmuebles</option>
                                 <option value="otrasCajas">Otras cajas</option>
                             </select>
 
-                            <select>
-                                <option>Movimiento más reciente</option>
-                                <option>Movimiento más antiguo</option>
-                                <option>Mayor monto</option>
-                                <option>Menor monto</option>
+                            <select
+                            value={ordenSeleccionado} 
+                            onChange={e => setOrdenSeleccionado(e.target.value)}
+                            >
+                                <option value="MovimientoMasReciente">Movimiento más reciente</option>
+                                <option value="MovimientoMasAntiguo">Movimiento más antiguo</option>
+                                <option value="MayorMonto">Mayor monto</option>
+                                <option value="MenorMonto">Menor monto</option>
                             </select>
 
                         </section>
@@ -53,11 +76,16 @@ const MainPageFinanzas: React.FC = () => {
 
                     {/*//TODO: Reemplazar por la cantidad de cajas encontradas en los filtros*/}
                     <div id='middleBarModalFinanzas'>
-                            <h1 id='cajasEncontradasEnFiltros'>{cajas.length} cajas encontradas</h1>
+                            <h1 id='cajasEncontradasEnFiltros'>{cajasAMostrar.length} cajas encontradas</h1>
                     </div>
 
                     <div id='listContainer'>
-                        <List items={cajas} columnas={columnas}></List>
+                        <List 
+                        items={cajasAMostrar} 
+                        columnas={columnas} 
+                        showActions={false}
+                        emptyMessage='No se encontraron cajas que coincidan con los filtros.'
+                        />
                     </div>
 
                     {/*//*elementos extras que se muetran si se presiona un determinado boton */}
