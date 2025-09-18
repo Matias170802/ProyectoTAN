@@ -9,11 +9,6 @@ import { useFinanzas } from './useFinanzas';
 const MainPageFinanzas: React.FC = () => {
 
     const [openModalRegistrarCotizacionMoneda, setOpenModalRegistrarCotizacionMoneda] = React.useState(false);
-    const cajas = [
-        {id: 1, Nombre: 'Caja Principal', Tipo: 'Empleado', BalanceARS: 5000, UltimoMovimiento: '2024-10-01'},
-        {id: 2, Nombre: 'Caja Secundaria', Tipo: 'Inmueble', BalanceARS: 3000, UltimoMovimiento: '2024-09-28'},
-        {id: 3, Nombre: 'Caja Ahorros', Tipo: 'Otro', BalanceARS: 1500, UltimoMovimiento: '2024-09-30'},
-    ]
 
     //*estados para los filtros
     const [tipoSeleccionado, setTipoSeleccionado] = React.useState("todasLasCajas");
@@ -21,7 +16,7 @@ const MainPageFinanzas: React.FC = () => {
     const [textoBuscado, setTextoBuscado] = React.useState("");
 
     const { obtenerCajasFiltradas, loadingCajas } = useFinanzas();
-    const columnas = ["Nombre", "Tipo", "BalanceARS", "BalanceUSD", "UltimoMovimiento"];
+    const columnas = ["nombre", "tipo", "balanceARS", "balanceUSD", "ultimoMovimiento"];
 
     //*buscamos las cajas para mostrarlas
     const cajasAMostrar = obtenerCajasFiltradas(tipoSeleccionado, ordenSeleccionado, textoBuscado);
@@ -74,7 +69,6 @@ const MainPageFinanzas: React.FC = () => {
 
                     </div>
 
-                    {/*//TODO: Reemplazar por la cantidad de cajas encontradas en los filtros*/}
                     <div id='middleBarModalFinanzas'>
                             <h1 id='cajasEncontradasEnFiltros'>{cajasAMostrar.length} cajas encontradas</h1>
                     </div>
@@ -85,6 +79,7 @@ const MainPageFinanzas: React.FC = () => {
                         columnas={columnas} 
                         showActions={false}
                         emptyMessage='No se encontraron cajas que coincidan con los filtros.'
+                        loadingItems={loadingCajas}
                         />
                     </div>
 

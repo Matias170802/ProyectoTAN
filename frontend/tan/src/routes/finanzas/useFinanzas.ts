@@ -14,10 +14,10 @@ export const useFinanzas = () => {
 
     //* Ordenadores
     const ordenadores: Record<string, (a: Caja, b: Caja) => number> = {
-        "Movimiento más reciente": (a, b) => b.ultimoMovimiento.getTime() - a.ultimoMovimiento.getTime(),
-        "Movimiento más antiguo": (a, b) => a.ultimoMovimiento.getTime() - b.ultimoMovimiento.getTime(),
-        "Mayor monto": (a, b) => b.balanceARS - a.balanceARS,
-        "Menor monto": (a, b) => a.balanceARS - b.balanceARS
+        "MovimientoMasReciente": (a, b) => new Date(b.ultimoMovimiento).getTime() - new Date(a.ultimoMovimiento).getTime(),
+        "MovimientoMasAntiguo": (a, b) => new Date(a.ultimoMovimiento).getTime() - new Date(b.ultimoMovimiento).getTime(),
+        "MayorMonto": (a, b) => b.balanceARS - a.balanceARS,
+        "MenorMonto": (a, b) => a.balanceARS - b.balanceARS
     };
 
     //* Función principal de filtrado y orden
@@ -27,9 +27,11 @@ export const useFinanzas = () => {
         textoBuscado: string
     ) => {
         let resultado = cajasData || [];
+        console.log("Cajas antes de filtrar:", resultado);
 
         //* Filtrar por tipo
         resultado = resultado.filter(filtrosPorTipo[tipoSeleccionado] || filtrosPorTipo["todasLasCajas"]);
+        console.log(`Cajas después de filtrar por tipo (${tipoSeleccionado}):`, resultado);
 
         //* Filtrar por texto buscado (nombre o tipo)
         if (textoBuscado.trim() !== "") {
@@ -40,7 +42,8 @@ export const useFinanzas = () => {
         }
 
         //*Ordenar
-        resultado = resultado.slice().sort(ordenadores[ordenSeleccionado] || ordenadores["Movimiento más reciente"]);
+        resultado = resultado.slice().sort(ordenadores[ordenSeleccionado] || ordenadores["MovimientoMasReciente"]);
+        console.log(`Cajas después de ordenar (${ordenSeleccionado}):`, resultado);
 
         return resultado;
     };
