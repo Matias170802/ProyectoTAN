@@ -1,8 +1,9 @@
 "use client"
 import './Inicio.css'
-import {Modal, Button} from './generalComponents/index'
+import {Button} from './generalComponents/index'
 import { AppProvider } from './context/AppContext'
 import { useState } from 'react'
+import ModalRegistrarIngresoEgresoCaja from './casosDeUso/RegistrarIngresoEgresoCaja/components/ModalRegistrarIngresoEgresoCaja/ModalRegistrarIngresoEgresoCaja'
 
 
 //*Componente principal de la aplicacion
@@ -15,13 +16,7 @@ function AppContent() {
       <Button label="Abrir modal" onClick={() => setOpenModal(true)} /> 
       
       {openModal && (
-        <Modal
-        isOpen={true}
-        onClose={() => setOpenModal(false)}
-        children={<div>Contenido del modal
-          
-        </div>}
-        ></Modal>
+        <ModalRegistrarIngresoEgresoCaja/>
       )}
     </main>
   )

@@ -1,0 +1,1 @@
+//se utiliza el componente modalRegistrarIngresoEgresoCaja
