@@ -1,20 +1,10 @@
 
 import { useState } from "react";
-import {Button, List} from "../../generalComponents/index";
+import {Button, List, ModalAltaReserva} from "../../generalComponents/index";
 import { useReservas } from "../../generalHooks/useReservas";
+import { useReservas as useAMReservas } from "../../casosDeUso/AMReservas";
+import type { ReservaFormData } from "../../casosDeUso/AMReservas/types";
 import "./MainPageReservas.css";
-
-type Reserva = {
-    propiedad: string;
-    checkin: string;
-    checkout: string;
-    personas: number;
-    total: string;
-    sena: string;
-    estado: string;
-    origen: string;
-};
-
 
 const estadosPosibles = ["Todos", "Señada", "Preparada", "Finalizada", "Cancelada"];
 const inmueblesPosibles = [
@@ -28,8 +18,35 @@ const inmueblesPosibles = [
 
 const MainPageReservas = () => {
     const { reservas, loading, error } = useReservas();
+    const { 
+        inmuebles, 
+        mediosReserva, 
+        createReserva, 
+        loading: modalLoading 
+    } = useAMReservas();
+    
     const [filtroEstado, setFiltroEstado] = useState("Todos");
     const [filtroInmueble, setFiltroInmueble] = useState("Todos");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleSaveReserva = async (reservaData: ReservaFormData) => {
+        try {
+            await createReserva(reservaData);
+            // Podrías aquí refrescar la lista de reservas si es necesario
+            console.log('Reserva guardada exitosamente');
+        } catch (error) {
+            console.error('Error al guardar la reserva:', error);
+            throw error;
+        }
+    };
 
     // Adaptar los datos del backend al formato esperado por la tabla
     const reservasAdaptadas = (reservas || []).map(r => ({
@@ -65,7 +82,12 @@ const MainPageReservas = () => {
         <div className="main-reservas-bg">
             <div className="main-reservas-header">
                 <h1 className="main-reservas-title">Reservas</h1>
-                <Button label="Añadir Reserva" type="button" id="btn-add-reserva" />
+                <Button 
+                    label="Añadir Reserva" 
+                    type="button" 
+                    id="btn-add-reserva" 
+                    onClick={handleOpenModal}
+                />
             </div>
             <div className="main-reservas-card">
                 {/* Filtros de inmueble y estado */}
@@ -107,6 +129,15 @@ const MainPageReservas = () => {
                     />
                 </div>
             </div>
+
+            <ModalAltaReserva
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onSave={handleSaveReserva}
+                inmuebles={inmuebles}
+                mediosReserva={mediosReserva}
+                loading={modalLoading}
+            />
         </div>
     );
 };

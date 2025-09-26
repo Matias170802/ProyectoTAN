@@ -4,3 +4,4 @@ export { default as Button } from './Button/Butoon.tsx';
 export { default as Navbar } from './Navbar/Navbar.tsx';
 export { default as ModalAdministrarRolesUsuario } from '../casosDeUso/AdministrarRolesDeUsuario/components/ModalAdministrarRolesUsuario.tsx';
 export { default as List } from './List/List.tsx';
+export { default as ModalAltaReserva } from '../casosDeUso/AMReservas/components/ModalAltaReserva.tsx';
