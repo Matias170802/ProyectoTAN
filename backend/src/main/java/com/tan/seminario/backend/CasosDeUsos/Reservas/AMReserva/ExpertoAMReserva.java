@@ -7,7 +7,10 @@ import java.util.List;
 
 @Service
 public class ExpertoAMReserva {
-    public List<DTOReserva> altaReserva(){
+    public String altaReserva(DTOReserva reserva){
+
+
+
         return null;
     }
 }
