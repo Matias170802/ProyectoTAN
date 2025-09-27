@@ -99,11 +99,11 @@ public class DataInitialazer {
             EstadoReserva estFinalizada = estadoReservaRepository.findByNombreEstadoReserva("Finalizado");
             EstadoReserva estCancelada = estadoReservaRepository.findByNombreEstadoReserva("Cancelado");
 
-            Reserva r1 = new Reserva("RES001", LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(7), LocalDateTime.now(), 5, 2,"Clara",261500001,"clara@gmail.com", 25000.0, 10000.0, 10000.0, "Airbnb","Amable contactar por telefono", in1, estSenada);
-            Reserva r2 = new Reserva("RES002", LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(15), LocalDateTime.now(), 5, 4, "Clara", 261500001, "clara@gmail.com", 35000.0, 15000.0, 15000.0, "Booking", "Amable contactar por telefono", in2, estSenada);
-            Reserva r3 = new Reserva("RES003", LocalDateTime.now().plusDays(20), LocalDateTime.now().plusDays(25), LocalDateTime.now(), 5, 3, "Clara", 261500001, "clara@gmail.com", 30000.0, 12000.0, 12000.0, "Directo", "Amable contactar por telefono", in3, estPreparada);
-            Reserva r4 = new Reserva("RES004", LocalDateTime.now().plusDays(30), LocalDateTime.now().plusDays(35), LocalDateTime.now(), 5, 2, "Clara", 261500001, "clara@gmail.com", 22000.0, 8000.0, 8000.0, "Airbnb", "Amable contactar por telefono", in4, estFinalizada);
-            Reserva r5 = new Reserva("RES005", LocalDateTime.now().plusDays(40), LocalDateTime.now().plusDays(45), LocalDateTime.now(), 5, 2, "Clara", 261500001, "clara@gmail.com", 27000.0, 9000.0, 9000.0, "Booking", "Amable contactar por telefono", in1, estCancelada);
+            Reserva r1 = new Reserva("RES001", LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(7), LocalDateTime.now(), 5, 2,"Clara","261500001","clara@gmail.com", 25000.0, 10000.0, 10000.0, "Airbnb","Amable contactar por telefono", in1, estSenada);
+            Reserva r2 = new Reserva("RES002", LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(15), LocalDateTime.now(), 5, 4, "Matias", "261500001", "matias@gmail.com", 35000.0, 15000.0, 15000.0, "Booking", "", in2, estSenada);
+            Reserva r3 = new Reserva("RES003", LocalDateTime.now().plusDays(20), LocalDateTime.now().plusDays(25), LocalDateTime.now(), 5, 3, "Juan", "261500001", "juan@gmail.com", 30000.0, 12000.0, 12000.0, "Directo", "Son 3 una familia", in3, estPreparada);
+            Reserva r4 = new Reserva("RES004", LocalDateTime.now().plusDays(30), LocalDateTime.now().plusDays(35), LocalDateTime.now(), 5, 2, "Fernando", "261500001", "fernando@gmail.com", 22000.0, 8000.0, 8000.0, "Airbnb", "Contactar por mail", in4, estFinalizada);
+            Reserva r5 = new Reserva("RES005", LocalDateTime.now().plusDays(40), LocalDateTime.now().plusDays(45), LocalDateTime.now(), 5, 2, "Nico", "261500001", "nico@gmail.com", 27000.0, 9000.0, 9000.0, "Booking", "Pareja", in1, estCancelada);
             reservaRepository.saveAll(Arrays.asList(r1, r2, r3, r4, r5));
             System.out.println("Reservas e inmuebles de prueba insertados correctamente.");
         }

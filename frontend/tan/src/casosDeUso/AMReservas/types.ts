@@ -21,11 +21,17 @@ export interface ReservaFormData {
     totalMonto: number;
     totalMontoSenia: number;
     plataformaOrigen: string;
-    nombreHuesped: string; // Campo adicional para el frontend, no va al DTO
-    detalles?: string; // Campo adicional para el frontend
+    nombreHuesped: string;
+    emailHuesped: string;
+    descripcionReserva: string;
+    numeroTelefonoHuesped: string;
+    totalDias: number;
+    // detalles?: string; // Si ya no se usa, se puede eliminar
 }
 
 // DTO que coincide con el backend
+// Incluye todos los campos del backend
+// Si falta alguno, agregarlo aquí para evitar errores de tipado
 export interface DTOReserva {
     codReserva: string;
     fechaHoraCheckin: string; // LocalDateTime como ISO string
@@ -40,6 +46,10 @@ export interface DTOReserva {
     nombreInmueble?: string;
     codEstadoReserva?: string;
     nombreEstadoReserva?: string;
+    nombreHuesped?: string;
+    emailHuesped?: string;
+    descripcionReserva?: string;
+    numeroTelefonoHuesped?: string;
 }
 
 // Interfaz para mostrar reservas (lo que viene del backend)
@@ -54,4 +64,6 @@ export interface ReservaState {
     mediosReserva: MedioReserva[];
     loading: boolean;
     error: string | null;
+    nombreHuesped?: string;
+    descripcionReserva?: string;
 }

@@ -20,7 +20,12 @@ const mapFormDataToDTO = (formData: ReservaFormData): DTOReserva => {
         totalMonto: formData.totalMonto,
         totalMontoSenia: formData.totalMontoSenia,
         plataformaOrigen: formData.plataformaOrigen,
-        codInmueble: formData.codInmueble
+        codInmueble: formData.codInmueble,
+        nombreHuesped: formData.nombreHuesped,
+        emailHuesped: formData.emailHuesped || (formData as any).emailHuesped || '',
+        descripcionReserva: formData.descripcionReserva || (formData as any).descripcionReserva || '',
+        numeroTelefonoHuesped: formData.numeroTelefonoHuesped || (formData as any).numeroTelefonoHuesped || '',
+        totalDias: formData.totalDias || undefined,
     };
 };
 

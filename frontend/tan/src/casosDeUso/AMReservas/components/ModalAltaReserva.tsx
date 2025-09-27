@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { DateRange } from 'react-date-range';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
 import { Modal, Button } from '../../../generalComponents';
 import type { DTOReserva, Inmueble, MedioReserva } from '../types';
 import './ModalAltaReserva.css';
@@ -6,7 +9,7 @@ import './ModalAltaReserva.css';
 interface ModalAltaReservaProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (reservaData: DTOReserva) => Promise<void>;
+    onSave: (reservaData: any) => Promise<void>; // Permitir ReservaFormData o DTOReserva
     inmuebles: Inmueble[];
     mediosReserva: MedioReserva[];
     loading?: boolean;
@@ -40,6 +43,16 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
         descripcionReserva: '',
     });
 
+    // Estado para el rango de fechas visual
+    const [dateRange, setDateRange] = useState([
+        {
+            startDate: null,
+            endDate: null,
+            key: 'selection',
+        },
+    ]);
+    const [showDateRange, setShowDateRange] = useState(true);
+
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     // Reset form when modal opens/closes
@@ -64,6 +77,13 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
                 emailHuesped: '',
                 descripcionReserva: '',
             });
+            setDateRange([
+                {
+                    startDate: null,
+                    endDate: null,
+                    key: 'selection',
+                },
+            ]);
             setErrors({});
         }
     }, [isOpen]);
@@ -73,12 +93,27 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: '' }));
         }
-        setFormData(prev => ({
+    setFormData((prev: any) => ({
             ...prev,
             [name]: ['cantHuespedes', 'totalMonto', 'totalMontoSenia', 'totalDias'].includes(name)
                 ? Number(value) || 0
                 : value
         }));
+    };
+
+    // Manejar el cambio de rango de fechas visual
+    const handleDateRangeChange = (ranges: any) => {
+        const { startDate, endDate } = ranges.selection;
+        setDateRange([ranges.selection]);
+        setFormData((prev: any) => ({
+            ...prev,
+            fechaHoraCheckin: startDate ? new Date(startDate).toISOString() : '',
+            fechaHoraCheckout: endDate ? new Date(endDate).toISOString() : '',
+        }));
+        // Solo cerrar si ambos extremos están definidos y son diferentes
+        if (startDate && endDate && startDate.getTime() !== endDate.getTime()) {
+            setShowDateRange(false);
+        }
     };
 
     const validateForm = (): boolean => {
@@ -138,7 +173,10 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
                 nombreInmueble: inmuebles.find(i => i.codInmueble === formData.codInmueble)?.nombreInmueble || '',
                 codEstadoReserva: formData.codEstadoReserva,
                 nombreEstadoReserva: 'Señada',
-                // Los campos extra (nombreHuesped, email, etc) no se mandan al backend por ahora
+                nombreHuesped: formData.nombreHuesped,
+                emailHuesped: formData.emailHuesped,
+                descripcionReserva: formData.descripcionReserva,
+                numeroTelefonoHuesped: formData.numeroTelefonoHuesped,
             };
             await onSave(reservaDTO);
             onClose();
@@ -182,34 +220,44 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
                             {errors.codInmueble && <span className="error-message">{errors.codInmueble}</span>}
                         </div>
                     </div>
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="fechaHoraCheckin" className="form-label">
-                                Fecha de Check-in *
+                    <div className="form-row" style={{ gridColumn: '1 / -1', width: '100%', display: 'block' }}>
+                        <div className="form-group" style={{ width: '100%', maxWidth: '100%' }}>
+                            <label className="form-label" style={{ display: 'block', marginBottom: 8 }}>
+                                Fechas de Check-in y Check-out *
                             </label>
-                            <input
-                                type="date"
-                                id="fechaHoraCheckin"
-                                name="fechaHoraCheckin"
-                                value={formData.fechaHoraCheckin.split('T')[0]}
-                                onChange={handleInputChange}
-                                className={`form-input ${errors.fechaHoraCheckin ? 'error' : ''}`}
-                            />
-                            {errors.fechaHoraCheckin && <span className="error-message">{errors.fechaHoraCheckin}</span>}
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="fechaHoraCheckout" className="form-label">
-                                Fecha de Check-out *
-                            </label>
-                            <input
-                                type="date"
-                                id="fechaHoraCheckout"
-                                name="fechaHoraCheckout"
-                                value={formData.fechaHoraCheckout.split('T')[0]}
-                                onChange={handleInputChange}
-                                className={`form-input ${errors.fechaHoraCheckout ? 'error' : ''}`}
-                            />
-                            {errors.fechaHoraCheckout && <span className="error-message">{errors.fechaHoraCheckout}</span>}
+                            {showDateRange ? (
+                                <div style={{ width: '100%' }}>
+                                    <DateRange
+                                        ranges={dateRange}
+                                        onChange={handleDateRangeChange}
+                                        moveRangeOnFirstSelection={false}
+                                        minDate={new Date()}
+                                        rangeColors={["#294f75ff"]}
+                                        showMonthAndYearPickers={true}
+                                        showDateDisplay={false}
+                                        months={1}
+                                        direction="horizontal"
+                                        locale={undefined}
+                                        style={{ width: '100%', minWidth: 0, maxWidth: '100%' }}
+                                    />
+                                </div>
+                            ) : (
+                                <div style={{ margin: '16px 0' }}>
+                                    <button type="button" className="btn-fecha" onClick={() => setShowDateRange(true)}>
+                                        Cambiar fechas
+                                    </button>
+                                    <div style={{ fontSize: '1rem', marginTop: 8 }}>
+                                        {dateRange[0].startDate && dateRange[0].endDate
+                                            ? `${new Date(dateRange[0].startDate).toLocaleDateString()} - ${new Date(dateRange[0].endDate).toLocaleDateString()}`
+                                            : 'Selecciona un rango'}
+                                    </div>
+                                </div>
+                            )}
+                            {(errors.fechaHoraCheckin || errors.fechaHoraCheckout) && (
+                                <span className="error-message">
+                                    {errors.fechaHoraCheckin || errors.fechaHoraCheckout}
+                                </span>
+                            )}
                         </div>
                     </div>
                     <div className="form-row">
@@ -347,13 +395,11 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
                         </div>
                     </div>
                     {/* Botones de acción */}
-                    <div className="form-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className="form-actions">
                         <Button
                             type="button"
                             label="Cancelar"
                             onClick={onClose}
-                            className="btn-cancelar"
-                            style={{ marginRight: 'auto' }}
                         />
                         <Button
                             type="submit"

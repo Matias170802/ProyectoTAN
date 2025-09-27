@@ -59,6 +59,7 @@ public class ExpertoAMReserva {
         reservaCreada.setDescripcionReserva(reserva.getDescripcionReserva());
         reservaCreada.setNombreHuesped(reserva.getNombreHuesped());
         reservaCreada.setNumeroTelefonoHuesped(reserva.getNumeroTelefonoHuesped());
+        reservaCreada.setEmailHuesped(reserva.getEmailHuesped());
 
         Inmueble inmueble = inmuebleRepository.findByCodInmueble(codigoInmueble);
         reservaCreada.setInmueble(inmueble);

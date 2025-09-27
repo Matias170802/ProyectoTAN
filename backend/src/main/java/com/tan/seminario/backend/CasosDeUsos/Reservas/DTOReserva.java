@@ -21,7 +21,7 @@ public class DTOReserva {
     private double totalMontoSenia;
     private String plataformaOrigen;
     private String nombreHuesped;
-    private int numeroTelefonoHuesped;
+    private String numeroTelefonoHuesped;
     private String emailHuesped;
     private String descripcionReserva;
 

@@ -28,7 +28,7 @@ public class Reserva  extends Base {
     private Integer totalDias;
     private Integer cantidadHuespedes;
     private String nombreHuesped;
-    private Integer numeroTelefonoHuesped;
+    private String numeroTelefonoHuesped;
     private String emailHuesped;
     private Double totalMonto;
     private Double totalMontoCheckIn;

@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import {Button, List, ModalAltaReserva} from "../../generalComponents/index";
-import { useReservas } from "../../generalHooks/useReservas";
 import { useReservas as useAMReservas } from "../../casosDeUso/AMReservas";
 import type { ReservaFormData } from "../../casosDeUso/AMReservas/types";
 import "./MainPageReservas.css";
@@ -17,7 +16,7 @@ const inmueblesPosibles = [
 
 
 const MainPageReservas = () => {
-    const { reservas, loading, error } = useReservas();
+    const { reservas, loading, error, refreshReservas } = useAMReservas();
     const { 
         inmuebles, 
         mediosReserva, 
@@ -40,8 +39,8 @@ const MainPageReservas = () => {
     const handleSaveReserva = async (reservaData: ReservaFormData) => {
         try {
             await createReserva(reservaData);
-            // Podrías aquí refrescar la lista de reservas si es necesario
-            console.log('Reserva guardada exitosamente');
+            await refreshReservas(); // Refresca la lista automáticamente
+            handleCloseModal(); // Cierra el modal solo si la reserva fue exitosa
         } catch (error) {
             console.error('Error al guardar la reserva:', error);
             throw error;
@@ -57,7 +56,11 @@ const MainPageReservas = () => {
         total: `$${r.totalMonto}`,
         sena: `$${r.totalMontoSenia}`,
         estado: r.nombreEstadoReserva,
-        origen: r.plataformaOrigen || "-"
+        origen: r.plataformaOrigen || "-",
+        huesped: r.nombreHuesped || "",
+        email: r.emailHuesped || "",
+        descripcion: r.descripcionReserva || "",
+        dias: r.totalDias ?? '',
     }));
 
     // Filtrar reservas según los filtros seleccionados
@@ -123,7 +126,7 @@ const MainPageReservas = () => {
                     {error && <p style={{color: 'red'}}>Error al cargar reservas</p>}
                     <List
                         items={reservasFiltradas}
-                        columnas={["propiedad", "checkin", "checkout", "personas", "total", "sena", "estado", "origen"]}
+                        columnas={["propiedad", "checkin", "checkout", "personas", "huesped", "email", "dias", "descripcion", "total", "sena", "estado", "origen"]}
                         showActions={false}
                         emptyMessage="No hay reservas para mostrar."
                     />
@@ -136,7 +139,7 @@ const MainPageReservas = () => {
                 onSave={handleSaveReserva}
                 inmuebles={inmuebles}
                 mediosReserva={mediosReserva}
-                loading={modalLoading}
+                loading={loading}
             />
         </div>
     );
