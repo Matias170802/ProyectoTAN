@@ -2,14 +2,16 @@ import {type Props} from './ModalTypes'
 import {Button} from '../index'
 import './Modal.css'
 
-const Modal = ({isOpen, onClose, children, title, showCloseButton}: Props) => {
 
+interface ModalProps extends Props {
+    wide?: boolean;
+}
+
+const Modal = ({isOpen, onClose, children, title, showCloseButton, wide}: ModalProps) => {
     if (!isOpen) return null;
-
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                
+            <div className={`modal-content${wide ? ' modal-content--wide' : ''}`} onClick={(e) => e.stopPropagation()}>
                 {(title || showCloseButton) && (
                     <div className="modal-header-flex">
                         {title && <h2>{title}</h2>}
@@ -22,7 +24,6 @@ const Modal = ({isOpen, onClose, children, title, showCloseButton}: Props) => {
                         )}
                     </div>
                 )}
-                
                 <div className="modal-body">
                     {children}
                 </div>

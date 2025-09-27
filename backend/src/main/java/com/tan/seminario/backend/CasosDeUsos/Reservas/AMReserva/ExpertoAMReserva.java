@@ -56,6 +56,9 @@ public class ExpertoAMReserva {
         reservaCreada.setTotalMonto(reserva.getTotalMonto());
         reservaCreada.setTotalMontoSenia(reserva.getTotalMontoSenia());
         reservaCreada.setPlataformaOrigen(plataformaOrigen);
+        reservaCreada.setDescripcionReserva(reserva.getDescripcionReserva());
+        reservaCreada.setNombreHuesped(reserva.getNombreHuesped());
+        reservaCreada.setNumeroTelefonoHuesped(reserva.getNumeroTelefonoHuesped());
 
         Inmueble inmueble = inmuebleRepository.findByCodInmueble(codigoInmueble);
         reservaCreada.setInmueble(inmueble);

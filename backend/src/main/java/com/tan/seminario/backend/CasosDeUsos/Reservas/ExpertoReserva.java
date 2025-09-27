@@ -37,6 +37,10 @@ public class ExpertoReserva {
             dtoReserva.setTotalMonto(reserva.getTotalMonto());
             dtoReserva.setTotalMontoSenia(reserva.getTotalMontoSenia());
             dtoReserva.setPlataformaOrigen(reserva.getPlataformaOrigen());
+            dtoReserva.setDescripcionReserva(reserva.getDescripcionReserva());
+            dtoReserva.setNombreHuesped(reserva.getNombreHuesped());
+            dtoReserva.setNumeroTelefonoHuesped(reserva.getNumeroTelefonoHuesped());
+            if (reserva.getEmailHuesped() != null) {dtoReserva.setEmailHuesped(reserva.getEmailHuesped());}
 
             //Sets EstadoReserva
             EstadoReserva estadoReserva = reserva.getEstadoReserva();
