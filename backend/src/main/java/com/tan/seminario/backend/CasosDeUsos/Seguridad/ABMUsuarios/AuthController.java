@@ -1,6 +1,4 @@
-package com.tan.seminario.backend.Controller;
-
-import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.AuthService;
+package com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios;
 
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.LoginRequest;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.RegisterRequest;
@@ -17,11 +15,12 @@ public class AuthController {
 
     private final AuthService service;
 
-    @PostMapping("/register")
-    public ResponseEntity<TokenResponse> register(@RequestBody final RegisterRequest request) {
-        final TokenResponse token = service.register(request);
-        return ResponseEntity.ok(token);
-    }
+    // ENDPOINT DESTINADO AL TESTING UNICAMENTE
+//    @PostMapping("/register")
+//    public ResponseEntity<TokenResponse> register(@RequestBody final RegisterRequest request) {
+//        final TokenResponse token = service.register(request);
+//        return ResponseEntity.ok(token);
+//    }
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> authenticate(@RequestBody final LoginRequest request) {
