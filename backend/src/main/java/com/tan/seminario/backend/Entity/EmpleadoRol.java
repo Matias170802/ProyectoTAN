@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 
 public class EmpleadoRol  extends Base{
 
-
     private LocalDateTime fechaHoraAltaEmpleadoRol;
     private LocalDateTime fechaHoraBajaEmpleadoRol;
 

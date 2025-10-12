@@ -6,8 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.tan.seminario.backend.DTOGenerales.DTOErrorResponse;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -32,5 +36,17 @@ public class GlobalExceptionHandler {
         error.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
         log.error("Exception: {}", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // Maneja errores de validación de argumentos de método
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errores = new HashMap<>();
+
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                errores.put(error.getField(), error.getDefaultMessage())
+        );
+
+        return ResponseEntity.badRequest().body(errores);
     }
 }
