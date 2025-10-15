@@ -16,7 +16,13 @@ function AppContent() {
       <Button label="Abrir modal" onClick={() => setOpenModal(true)} /> 
       
       {openModal && (
-        <ModalRegistrarIngresoEgresoCaja/>
+        <ModalRegistrarIngresoEgresoCaja
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+        title="Registrar Nueva Transacción"
+        description="Completa el formulario para registrar un nuevo ingreso o egreso en tu caja"
+        showCloseButton={false}
+        />
       )}
     </main>
   )

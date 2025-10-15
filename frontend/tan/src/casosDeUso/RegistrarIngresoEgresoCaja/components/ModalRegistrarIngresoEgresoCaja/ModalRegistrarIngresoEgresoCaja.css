@@ -21,3 +21,19 @@
     justify-content: center;
     margin-top: 20px;
 }
+
+#botonRegistrarTransaccion{
+    background-color: black;
+    color: white;
+}
+
+#datosTransaccion {
+    margin-bottom: 2px;
+}
+
+#contenedorBotonesAccionModalRegistrarIngresoEgresoCaja {
+    display: flex;
+    justify-content: right;
+    gap: 1rem;
+    margin-top: 1rem;
+}
