@@ -29,5 +29,5 @@ public class ExpertoRegistrarIngresoEgresoCaja {
         return tiposTransaccionAEnviar;
     }
 
-    public List<>
+    //public List<>
 }

@@ -25,7 +25,7 @@ public class RegistrarIngresoEgresoCajaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCotizacion);
     }*/
 
-    @GetMapping("/api/finanzas/registrarIngresoEgresoCaja/tiposTransaccion")
+    @GetMapping("/tiposTransaccion")
     public ResponseEntity<List<DTOTipoTransaccion>> buscarTiposTransaccion() {
         return ResponseEntity.ok(expertoRegistrarIngresoEgresoCaja.buscarTiposTransaccion());
     }

@@ -5,13 +5,14 @@ import {type formSchemaRegistrarIngresoEgresoCajaType, schemaRegistrarIngresoEgr
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, type Resolver} from 'react-hook-form';
 import {type Props} from './ModalRegistrarIngresoEgresoCajaTypes'
+import {useIngresoEgresoCaja} from '../../hooks/useIngresoEgresoCaja'
 
 const ModalRegistrarIngresoEgresoCaja: React.FC<Props> = ({isOpen, onClose, title, description, showCloseButton}) => {
     
     const [activo, setActivo] = React.useState<'transaccion' | 'comprobante'>('transaccion');
-    
+    const {tiposTransaccion} = useIngresoEgresoCaja();
     //*uso del zod, useForm para manejar el formulario
-    const { handleSubmit, control, formState: { errors }, reset, register } = useForm<formSchemaRegistrarIngresoEgresoCajaType>({
+    const { handleSubmit, control, formState: { errors }, reset, register, watch } = useForm<formSchemaRegistrarIngresoEgresoCajaType>({
         resolver: zodResolver(schemaRegistrarIngresoEgresoCaja) as Resolver<formSchemaRegistrarIngresoEgresoCajaType>,
         defaultValues: {
             tipoTransaccion: "Selecciona un tipo de transacción",
@@ -23,6 +24,7 @@ const ModalRegistrarIngresoEgresoCaja: React.FC<Props> = ({isOpen, onClose, titl
         },
         mode: 'onBlur'
     });
+    const categoriaValue = watch("categoria");
     
 
     const onSubmit = async (data: formSchemaRegistrarIngresoEgresoCajaType) => {}
@@ -60,14 +62,27 @@ const ModalRegistrarIngresoEgresoCaja: React.FC<Props> = ({isOpen, onClose, titl
                             <label>Tipo de Transacción</label>
                             <select
                             {...register("tipoTransaccion")}
-                            ></select>
+                            >
+
+                                <option value={"Selecciona un tipo de transacción"}>"Selecciona un tipo de transacción"</option>
+                                {tiposTransaccion && tiposTransaccion.length > 0 && (
+                                    tiposTransaccion.map((tiposTransaccion, index) => (
+                                        <option key={index} value={tiposTransaccion.nombreTipoTransaccion}>{tiposTransaccion.nombreTipoTransaccion}</option>
+                                    ))
+                                )}
+                                
+                            </select>
 
                             <label>Categoría</label>
                             <select
                             {...register("categoria")}
-                            ></select>
+                            >
+                                <option value={"Selecciona una categoría"}>"Selecciona una categoría"</option>
+                                <option value={"Empleado"}></option>
+                                <option value={"Inmueble"}></option>
+                            </select>
 
-                            <label>(nombre de la categoria seleccionada)</label>
+                            <label>{categoriaValue}</label>
                             <select
                             {...register("subcategoria")}
                             >
