@@ -37,3 +37,21 @@
     gap: 1rem;
     margin-top: 1rem;
 }
+
+input {
+    padding: 0.8rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fafafa;
+    color: #222;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+
+}
+
+input:focus,
+input:focus {
+    border-color: #888;
+}

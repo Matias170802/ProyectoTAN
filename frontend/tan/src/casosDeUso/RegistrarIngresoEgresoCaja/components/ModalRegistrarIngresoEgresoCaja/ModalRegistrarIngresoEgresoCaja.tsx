@@ -17,14 +17,14 @@ const ModalRegistrarIngresoEgresoCaja: React.FC<Props> = ({isOpen, onClose, titl
         defaultValues: {
             tipoTransaccion: "Selecciona un tipo de transacción",
             categoria: "Selecciona una categoría",
-            subcategoria: "Selecciona una subcategoría",
-            tipoOperacion: "Selecciona un tipo de operación",
-            monto: 0, 
-            detalles: ""
+            //subcategoria: "Selecciona una subcategoría",
+            //tipoOperacion: "Selecciona un tipo de operación",
+            moneda: "Selecciona una moneda", 
+            descripcion: ""
         },
         mode: 'onBlur'
     });
-    const categoriaValue = watch("categoria");
+    //const categoriaValue = watch("categoria");
     
 
     const onSubmit = async (data: formSchemaRegistrarIngresoEgresoCajaType) => {}
@@ -78,32 +78,29 @@ const ModalRegistrarIngresoEgresoCaja: React.FC<Props> = ({isOpen, onClose, titl
                             {...register("categoria")}
                             >
                                 <option value={"Selecciona una categoría"}>"Selecciona una categoría"</option>
-                                <option value={"Empleado"}></option>
-                                <option value={"Inmueble"}></option>
+                            
                             </select>
 
-                            <label>{categoriaValue}</label>
+                            <label>Moneda</label>
                             <select
-                            {...register("subcategoria")}
+                            {...register("moneda")}
                             >
-
+                                <option value={"Selecciona una moneda"}>"Selecciona una moneda"</option>
+                                
                             </select>
-
-                            <label>Tipo Operación</label>
-                            <select
-                            {...register("tipoOperacion")}
-                            ></select>
 
                             <label>Monto</label>
                             <input
                             type='number'
+                            placeholder='Ingrese el monto de la transacción'
                             {...register("monto")}
                             ></input>
 
-                            <label>Detalles</label>
+                            <label>Descripcion</label>
                             <input
                             type='text'
-                            {...register("detalles")}
+                            placeholder='Ingrese una pequeña descripcion de la transacción'
+                            {...register("descripcion")}
                             ></input>
 
                     </section>
