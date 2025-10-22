@@ -75,3 +75,7 @@ public class ExpertoAMReserva {
         return "Reserva Creada";
     }
 }
+
+    public List<DTOReserva> modificarReservas(String codReserva, DTOModificarReserva dtoModificarReserva){
+    List<Reserva> reserva = ReservaRepository.findByCodReserva(codReserva).orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+    }

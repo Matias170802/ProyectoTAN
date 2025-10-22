@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
+    List<Reserva> findByCodReserva(String codReserva);
 
     List<Reserva> findByFechaHoraAltaReservaBetweenOrderByFechaHoraAltaReserva(
             LocalDateTime fechaHoraAltaReservaAfter,
