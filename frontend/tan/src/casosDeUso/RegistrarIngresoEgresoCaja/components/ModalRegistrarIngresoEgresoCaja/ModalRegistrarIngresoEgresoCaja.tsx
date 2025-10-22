@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Modal, Button} from '../../../../generalComponents/index'
 import "./ModalRegistrarIngresoEgresoCaja.css"
 import {type formSchemaRegistrarIngresoEgresoCajaType, schemaRegistrarIngresoEgresoCaja} from '../../models/modelRegistrarIngresoEgresoCaja'
@@ -10,7 +10,8 @@ import {useIngresoEgresoCaja} from '../../hooks/useIngresoEgresoCaja'
 const ModalRegistrarIngresoEgresoCaja: React.FC<Props> = ({isOpen, onClose, title, description, showCloseButton}) => {
     
     const [activo, setActivo] = React.useState<'transaccion' | 'comprobante'>('transaccion');
-    const {tiposTransaccion} = useIngresoEgresoCaja();
+    const {tiposTransaccion, tiposMoneda, categorias, registrarIngresoEgresoCaja, errorEncontrado} = useIngresoEgresoCaja();
+    const [showMensajeExito, setShowMensajeExito] = useState(false);
     //*uso del zod, useForm para manejar el formulario
     const { handleSubmit, control, formState: { errors }, reset, register, watch } = useForm<formSchemaRegistrarIngresoEgresoCajaType>({
         resolver: zodResolver(schemaRegistrarIngresoEgresoCaja) as Resolver<formSchemaRegistrarIngresoEgresoCajaType>,
@@ -24,10 +25,23 @@ const ModalRegistrarIngresoEgresoCaja: React.FC<Props> = ({isOpen, onClose, titl
         },
         mode: 'onBlur'
     });
-    //const categoriaValue = watch("categoria");
-    
+    //const tipoTransaccionValue = watch("tipoTransaccion");
 
-    const onSubmit = async (data: formSchemaRegistrarIngresoEgresoCajaType) => {}
+    const onSubmit = async (data: formSchemaRegistrarIngresoEgresoCajaType) => {
+        const exito = await registrarIngresoEgresoCaja(data);
+        console.log("Este es mi exito", exito)
+
+        if (exito) {
+            setShowMensajeExito(true);
+            reset();
+            setTimeout(() => {
+                setShowMensajeExito(false);
+                onClose();
+            }, 3000);
+        }else {
+            setShowMensajeExito(false);
+        }
+    }
     
     return(
         
@@ -55,6 +69,10 @@ const ModalRegistrarIngresoEgresoCaja: React.FC<Props> = ({isOpen, onClose, titl
                 />
             </section>
 
+            {showMensajeExito && <div id='mensajeExito'>Transacción registrada con éxito</div>}
+            {errorEncontrado && <div id='mensajeError'>No se puedo registrar la transacción pues {errorEncontrado}</div>}
+
+
             { activo === 'transaccion' && (
                 <div id='contenedorTransaccion'>
                     <section id='datosTransaccion'>
@@ -78,7 +96,11 @@ const ModalRegistrarIngresoEgresoCaja: React.FC<Props> = ({isOpen, onClose, titl
                             {...register("categoria")}
                             >
                                 <option value={"Selecciona una categoría"}>"Selecciona una categoría"</option>
-                            
+                                {categorias && categorias.length > 0 && (
+                                    categorias.map((categorias, index) => (
+                                        <option key={index} value={categorias.nombreCategoria}>{categorias.nombreCategoria}</option>
+                                    ))
+                                )}
                             </select>
 
                             <label>Moneda</label>
@@ -86,7 +108,11 @@ const ModalRegistrarIngresoEgresoCaja: React.FC<Props> = ({isOpen, onClose, titl
                             {...register("moneda")}
                             >
                                 <option value={"Selecciona una moneda"}>"Selecciona una moneda"</option>
-                                
+                                {tiposMoneda && tiposMoneda.length > 0 && (
+                                    tiposMoneda.map((tiposMoneda, index) => (
+                                        <option key={index} value={tiposMoneda.nombreMoneda}>{tiposMoneda.nombreMoneda}</option>
+                                    )
+                                ))}
                             </select>
 
                             <label>Monto</label>

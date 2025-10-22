@@ -1,8 +1,10 @@
 package com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarIngresoEgresoCaja;
 
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarCotizacionMoneda.DTO.DTOCotizacionMoneda;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarIngresoEgresoCaja.DTO.DTOCategoriaMovimiento;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarIngresoEgresoCaja.DTO.DTOMoneda;
 import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarIngresoEgresoCaja.DTO.DTOTipoTransaccion;
-import com.tan.seminario.backend.Entity.CotizacionMonedaHoy;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarIngresoEgresoCaja.DTO.DTOTransaccionARegistrar;
+import com.tan.seminario.backend.Entity.Movimiento;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +21,24 @@ public class RegistrarIngresoEgresoCajaController {
         this.expertoRegistrarIngresoEgresoCaja = expertoRegistrarIngresoEgresoCaja;
     }
 
-    /*@PostMapping
-    public ResponseEntity<CotizacionMonedaHoy> registrarIngresoEgresoCaja(@RequestBody DTOCotizacionMoneda cotizacion){
-        CotizacionMonedaHoy nuevaCotizacion = expertoRegistrarCotizacionMoneda.registrarCotizacionMoneda(cotizacion);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCotizacion);
-    }*/
+    @PostMapping
+    public ResponseEntity<Movimiento> registrarIngresoEgresoCaja(@RequestBody DTOTransaccionARegistrar transaccionARegistrar){
+        Movimiento nuevoMovimiento = expertoRegistrarIngresoEgresoCaja.registrarMovimiento(transaccionARegistrar);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoMovimiento);
+    }
 
     @GetMapping("/tiposTransaccion")
     public ResponseEntity<List<DTOTipoTransaccion>> buscarTiposTransaccion() {
         return ResponseEntity.ok(expertoRegistrarIngresoEgresoCaja.buscarTiposTransaccion());
+    }
+
+    @GetMapping("/tiposMoneda")
+    public ResponseEntity<List<DTOMoneda>> buscarTiposMoneda () {
+        return ResponseEntity.ok(expertoRegistrarIngresoEgresoCaja.buscarTiposMoneda());
+    }
+
+    @GetMapping("/categorias")
+    public ResponseEntity<List<DTOCategoriaMovimiento>> buscarCategoriasMovimiento () {
+        return ResponseEntity.ok(expertoRegistrarIngresoEgresoCaja.buscarCategoriasMovimiento());
     }
 }

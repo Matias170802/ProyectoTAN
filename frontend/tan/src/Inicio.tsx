@@ -3,7 +3,7 @@ import './Inicio.css'
 import {Button} from './generalComponents/index'
 import { AppProvider } from './context/AppContext'
 import { useState } from 'react'
-import ModalRegistrarIngresoEgresoCaja from './casosDeUso/RegistrarIngresoEgresoCaja/components/ModalRegistrarIngresoEgresoCaja/ModalRegistrarIngresoEgresoCaja'
+
 
 
 //*Componente principal de la aplicacion
@@ -15,15 +15,6 @@ function AppContent() {
       
       <Button label="Abrir modal" onClick={() => setOpenModal(true)} /> 
       
-      {openModal && (
-        <ModalRegistrarIngresoEgresoCaja
-        isOpen={openModal}
-        onClose={() => setOpenModal(false)}
-        title="Registrar Nueva Transacción"
-        description="Completa el formulario para registrar un nuevo ingreso o egreso en tu caja"
-        showCloseButton={false}
-        />
-      )}
     </main>
   )
 }

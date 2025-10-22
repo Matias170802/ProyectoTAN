@@ -1,10 +1,8 @@
 package com.tan.seminario.backend.Entity;
 
+import com.tan.seminario.backend.Repository.MovimientoRepository;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -15,11 +13,12 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 /*Lombok*/
 
 public class Movimiento  extends Base {
 
-    @Column (unique = true)
+    @Column(unique = true)
     private Long nroMovimiento;
 
     private String descripcionMovimiento;
@@ -57,4 +56,17 @@ public class Movimiento  extends Base {
     @ManyToOne
     @JoinColumn(name = "idTarea", nullable = true)
     private Tarea tarea;
+
+    public static Long generarProximoNumero(MovimientoRepository repository) {
+        Long ultimoNumero = repository.findMaxNroMovimiento();
+        return (ultimoNumero != null) ? ultimoNumero + 1 : 1L;
+    }
+
+    /**
+     * Builder personalizado que auto-genera el número
+     */
+    public static MovimientoBuilder builderConNumero(MovimientoRepository repository) {
+        return Movimiento.builder()
+                .nroMovimiento(generarProximoNumero(repository));
+    }
 }
