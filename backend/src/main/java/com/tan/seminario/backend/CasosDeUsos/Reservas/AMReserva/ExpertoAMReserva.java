@@ -1,5 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Reservas.AMReserva;
 
+import com.tan.seminario.backend.CasosDeUsos.Reservas.AMReserva.DTOsAMReserva.DTOModificarReserva;
 import com.tan.seminario.backend.CasosDeUsos.Reservas.DTOReserva;
 import com.tan.seminario.backend.Entity.EstadoReserva;
 import com.tan.seminario.backend.Entity.Inmueble;
@@ -24,7 +25,7 @@ public class ExpertoAMReserva {
         this.reservaRepository = reservaRepository;
     }
 
-    public String altaReserva(DTOReserva reserva){
+    public String altaReserva(DTOReserva reserva) {
         System.out.println("Alta de reserva");
         System.out.println(reserva);
 
@@ -74,8 +75,72 @@ public class ExpertoAMReserva {
         }
         return "Reserva Creada";
     }
-}
 
-    public List<DTOReserva> modificarReservas(String codReserva, DTOModificarReserva dtoModificarReserva){
-    List<Reserva> reserva = ReservaRepository.findByCodReserva(codReserva).orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+
+    public String modificarReservas(String codReserva, DTOModificarReserva dtoModificarReserva) {
+        List<Reserva> reserva = reservaRepository.findByCodReserva(codReserva);
+        if (reserva.isEmpty()) {
+            throw new IllegalArgumentException("No se pudo encontrar la reserva con el codigo " + codReserva);
+        }
+        Reserva reservaModificada = reserva.get(0);
+
+        // Modificamos la Reserva con los nuevos valores modificados
+        LocalDateTime fechaHoraInicioReserva = dtoModificarReserva.getFechaHoraInicioReserva();
+        LocalDateTime fechaHoraFinReserva = dtoModificarReserva.getFechaHoraFinReserva();
+        String nombreHuesped = dtoModificarReserva.getNombreHuesped();
+        String numeroTelefonoHuesped = dtoModificarReserva.getNumeroTelefonoHuesped();
+        String emailHuesped = dtoModificarReserva.getEmailHuesped();
+        String descripcionReserva = dtoModificarReserva.getDescripcionReserva();
+        Integer totalDias = dtoModificarReserva.getTotalDias();
+        Integer cantidadHuespedes = dtoModificarReserva.getCantidadHuespedes();
+        Double totalMonto = dtoModificarReserva.getTotalMonto();
+        Double totalMontoSenia = dtoModificarReserva.getTotalMontoSenia();
+        Double totalMontoCheckIn = dtoModificarReserva.getTotalMontoCheckIn();
+        String plataformaOrigen = dtoModificarReserva.getPlataformaOrigen();
+
+        if (fechaHoraInicioReserva != null) {
+            reservaModificada.setFechaHoraInicioReserva(fechaHoraInicioReserva);
+        }
+        if (fechaHoraFinReserva != null) {
+            reservaModificada.setFechaHoraFinReserva(fechaHoraFinReserva);
+        }
+        if (nombreHuesped != null) {
+            reservaModificada.setNombreHuesped(nombreHuesped);
+        }
+        if (numeroTelefonoHuesped != null) {
+            reservaModificada.setNumeroTelefonoHuesped(numeroTelefonoHuesped);
+        }
+        if (emailHuesped != null) {
+            reservaModificada.setEmailHuesped(emailHuesped);
+        }
+        if (descripcionReserva != null) {
+            reservaModificada.setDescripcionReserva(descripcionReserva);
+        }
+        if (totalDias != null) {
+            reservaModificada.setTotalDias(totalDias);
+        }
+        if (cantidadHuespedes != null) {
+            reservaModificada.setCantidadHuespedes(cantidadHuespedes);
+        }
+        if (totalMonto != null) {
+            reservaModificada.setTotalMonto(totalMonto);
+        }
+        if (totalMontoSenia != null) {
+            reservaModificada.setTotalMontoSenia(totalMontoSenia);
+        }
+        if (totalMontoCheckIn != null) {
+            reservaModificada.setTotalMontoCheckIn(totalMontoCheckIn);
+        }
+        if (plataformaOrigen != null) {
+            reservaModificada.setPlataformaOrigen(plataformaOrigen);
+        }
+
+        Reserva reservaGuardada = reservaRepository.save(reservaModificada);
+
+        if (reservaGuardada == null) {
+            throw new IllegalArgumentException("No se pudo guardar la reserva");
+        }
+        return "Reserva Modificada";
+
     }
+}

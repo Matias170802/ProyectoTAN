@@ -1,5 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Reservas.AMReserva;
 
+import com.tan.seminario.backend.CasosDeUsos.Reservas.AMReserva.DTOsAMReserva.DTOModificarReserva;
 import com.tan.seminario.backend.CasosDeUsos.Reservas.DTOReserva;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,15 +25,15 @@ public class AMReservaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of());
         }
     }
-}
 
-@PatchMapping("/reservas/{codReserva}")
-public ResponseEntity<List<DTOReserva>> modificarReserva(){
-    try{
-        @PathVariable("codReserva") String codReserva;
-        @RequestBody DTOModificarReserva dtoModificarReserva;
-        List<DTOReserva> reservasModificadas = experto.modificarReservas(codReserva,dtoModificarReserva);
-    }catch (Exception e){
 
+    @PatchMapping("/reservas/{codReserva}")
+    public ResponseEntity<?> modificarReserva(@PathVariable("codReserva") String codReserva,@RequestBody DTOModificarReserva dtoModificarReserva){
+        try{
+            String respuesta = experto.modificarReservas(codReserva,dtoModificarReserva);
+            return ResponseEntity.ok(respuesta);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of());
+        }
     }
 }
