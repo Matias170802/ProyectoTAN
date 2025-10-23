@@ -36,6 +36,17 @@ public class ExpertoAMReserva {
         LocalDateTime fechaHoraCheckout = reserva.getFechaHoraCheckout();
         String plataformaOrigen = reserva.getPlataformaOrigen();
 
+        //Revisamos que no exista una reserva en ese inmueble para la misma fecha
+        List<Reserva> reservasInmueble = reservaRepository.findByInmueble_CodInmueble(codigoInmueble);
+        for (Reserva reservaInmueble : reservasInmueble) {
+            LocalDateTime fechaCheckInReservaVieja = reservaInmueble.getFechaHoraInicioReserva();
+            LocalDateTime fechaCheckOutReservaVieja = reservaInmueble.getFechaHoraFinReserva();
+
+            if (fechaHoraCheckin.isBefore(fechaCheckOutReservaVieja)&& fechaHoraCheckout.isAfter(fechaCheckOutReservaVieja)) {
+
+            }
+        }
+
         if (codigoReserva == null)
             throw new IllegalArgumentException("El codigo de reserva no puede ser null");
         if (codigoInmueble == null)
