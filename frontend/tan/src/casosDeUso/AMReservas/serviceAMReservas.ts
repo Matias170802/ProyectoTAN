@@ -21,6 +21,7 @@ const mapFormDataToDTO = (formData: ReservaFormData): DTOReserva => {
         totalMontoSenia: formData.totalMontoSenia,
         plataformaOrigen: formData.plataformaOrigen,
         codInmueble: formData.codInmueble,
+        nombreInmueble: (formData as any).nombreInmueble || '',
         nombreHuesped: formData.nombreHuesped,
         emailHuesped: formData.emailHuesped || (formData as any).emailHuesped || '',
         descripcionReserva: formData.descripcionReserva || (formData as any).descripcionReserva || '',
@@ -116,25 +117,27 @@ export const createReserva = async (reservaData: ReservaFormData): Promise<Reser
             },
             body: JSON.stringify(dtoReserva)
         });
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Error al crear la reserva: ${errorText}`);
-        }
-        
-        // El backend devuelve un string "Reserva Creada", pero nosotros necesitamos 
-        // devolver la reserva creada para actualizar el estado
         const responseText = await response.text();
-        console.log('Respuesta del servidor:', responseText);
-        
-        // Crear un objeto reserva basado en los datos enviados
+
+        // El backend puede devolver mensajes informativos (por ejemplo conflicto de fechas).
+        // Detectamos el mensaje y lanzamos error para que la UI lo maneje.
+        console.log('Respuesta del servidor (alta):', responseText);
+        if (!response.ok) {
+            throw new Error(responseText || 'Error al crear la reserva');
+        }
+
+        if (responseText && responseText.toLowerCase().includes('ya existe una reserva')) {
+            throw new Error(responseText);
+        }
+
+        // Construir la reserva basada en lo que enviamos (el backend actualmente no devuelve la entidad completa)
         const nuevaReserva: Reserva = {
             ...dtoReserva,
             nombreEstadoReserva: 'Señada',
             fechaHoraAltaReserva: new Date().toISOString(),
             totalDias: Math.ceil((new Date(dtoReserva.fechaHoraCheckout).getTime() - new Date(dtoReserva.fechaHoraCheckin).getTime()) / (1000 * 60 * 60 * 24))
         };
-        
+
         return nuevaReserva;
     } catch (error) {
         console.error('Error creating reserva:', error);
@@ -142,19 +145,74 @@ export const createReserva = async (reservaData: ReservaFormData): Promise<Reser
     }
 };
 
-export const updateReserva = async (codReserva: string, reservaData: Partial<ReservaFormData>): Promise<Reserva> => {
+// Implementación de actualizar reserva (PATCH)
+export const updateReserva = async (codReserva: string, reservaData: Partial<ReservaFormData> | any): Promise<Reserva> => {
     try {
-        // TODO: Implementar cuando el backend tenga endpoint de actualización
-        throw new Error('Funcionalidad de actualización no implementada en el backend');
+        // Mapear los campos que enviaremos al backend según DTOModificarReserva
+        const payload: any = {};
+        if (reservaData.fechaHoraCheckin) payload.fechaHoraInicioReserva = reservaData.fechaHoraCheckin;
+        if (reservaData.fechaHoraCheckout) payload.fechaHoraFinReserva = reservaData.fechaHoraCheckout;
+        if (typeof reservaData.totalDias !== 'undefined') payload.totalDias = reservaData.totalDias;
+        if (typeof reservaData.cantHuespedes !== 'undefined') payload.cantidadHuespedes = reservaData.cantHuespedes;
+        if (reservaData.nombreHuesped) payload.nombreHuesped = reservaData.nombreHuesped;
+        if (reservaData.numeroTelefonoHuesped) payload.numeroTelefonoHuesped = reservaData.numeroTelefonoHuesped;
+        if (reservaData.emailHuesped) payload.emailHuesped = reservaData.emailHuesped;
+        if (typeof reservaData.totalMonto !== 'undefined') payload.totalMonto = reservaData.totalMonto;
+        if (typeof reservaData.totalMontoCheckIn !== 'undefined') payload.totalMontoCheckIn = reservaData.totalMontoCheckIn;
+        if (typeof reservaData.totalMontoSenia !== 'undefined') payload.totalMontoSenia = reservaData.totalMontoSenia;
+        if (reservaData.plataformaOrigen) payload.plataformaOrigen = reservaData.plataformaOrigen;
+        if (reservaData.descripcionReserva) payload.descripcionReserva = reservaData.descripcionReserva;
+
+        const response = await fetch(`${API_BASE_URL}/api/reserva/reservas/${encodeURIComponent(codReserva)}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const responseText = await response.text();
+        console.log('Respuesta del servidor (modificar):', responseText);
+
+        if (!response.ok) {
+            throw new Error(responseText || 'Error al modificar la reserva');
+        }
+
+        if (responseText && responseText.toLowerCase().includes('ya existe una reserva')) {
+            throw new Error(responseText);
+        }
+
+        // Como el backend devuelve solo un mensaje, reconstruimos la reserva con los datos enviados
+        const reservaActualizada: Reserva = {
+            codReserva,
+            fechaHoraCheckin: reservaData.fechaHoraCheckin || reservaData.fechaHoraInicioReserva || '',
+            fechaHoraCheckout: reservaData.fechaHoraCheckout || reservaData.fechaHoraFinReserva || '',
+            totalDias: reservaData.totalDias,
+            cantHuespedes: reservaData.cantHuespedes || reservaData.cantidadHuespedes || 0,
+            totalMonto: reservaData.totalMonto || 0,
+            totalMontoSenia: reservaData.totalMontoSenia || 0,
+            plataformaOrigen: reservaData.plataformaOrigen || '',
+            codInmueble: reservaData.codInmueble || '',
+            nombreHuesped: reservaData.nombreHuesped || '',
+            emailHuesped: reservaData.emailHuesped || '',
+            descripcionReserva: reservaData.descripcionReserva || '',
+            numeroTelefonoHuesped: reservaData.numeroTelefonoHuesped || '',
+            nombreEstadoReserva: 'Señada'
+        };
+
+        return reservaActualizada;
     } catch (error) {
         console.error('Error updating reserva:', error);
         throw error;
     }
 };
 
+
+
 export const deleteReserva = async (codReserva: string): Promise<void> => {
     try {
         // TODO: Implementar cuando el backend tenga endpoint de eliminación
+        console.warn('deleteReserva no implementado. codReserva:', codReserva);
         throw new Error('Funcionalidad de eliminación no implementada en el backend');
     } catch (error) {
         console.error('Error deleting reserva:', error);

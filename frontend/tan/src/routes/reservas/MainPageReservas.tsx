@@ -16,17 +16,15 @@ const inmueblesPosibles = [
 
 
 const MainPageReservas = () => {
-    const { reservas, loading, error, refreshReservas } = useAMReservas();
-    const { 
-        inmuebles, 
-        mediosReserva, 
-        createReserva, 
-        loading: modalLoading 
-    } = useAMReservas();
+    const am = useAMReservas();
+    const { reservas, loading, error, refreshReservas, inmuebles, mediosReserva, createReserva, updateReserva } = am;
     
     const [filtroEstado, setFiltroEstado] = useState("Todos");
     const [filtroInmueble, setFiltroInmueble] = useState("Todos");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [editingReservaCod, setEditingReservaCod] = useState<string | null>(null);
+    const [editingReservaData, setEditingReservaData] = useState<any | null>(null);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -38,7 +36,12 @@ const MainPageReservas = () => {
 
     const handleSaveReserva = async (reservaData: ReservaFormData) => {
         try {
-            await createReserva(reservaData);
+            if (isEditMode && editingReservaCod) {
+                // Llamada a modificar
+                await updateReserva(editingReservaCod, reservaData);
+            } else {
+                await createReserva(reservaData);
+            }
             await refreshReservas(); // Refresca la lista automáticamente
             handleCloseModal(); // Cierra el modal solo si la reserva fue exitosa
         } catch (error) {
@@ -49,6 +52,7 @@ const MainPageReservas = () => {
 
     // Adaptar los datos del backend al formato esperado por la tabla
     const reservasAdaptadas = (reservas || []).map(r => ({
+        codReserva: r.codReserva,
         propiedad: r.nombreInmueble,
         checkin: r.fechaHoraCheckin ? new Date(r.fechaHoraCheckin).toLocaleDateString() : "",
         checkout: r.fechaHoraCheckout ? new Date(r.fechaHoraCheckout).toLocaleDateString() : "",
@@ -127,7 +131,18 @@ const MainPageReservas = () => {
                     <List
                         items={reservasFiltradas}
                         columnas={["propiedad", "checkin", "checkout", "personas", "huesped", "email", "dias", "descripcion", "total", "sena", "estado", "origen"]}
-                        showActions={false}
+                        showActions={true}
+                        onItemEdit={(item) => {
+                            // item es el objeto adaptado; buscamos la reserva original por codReserva
+                            const cod = (item as any).codReserva;
+                            const original = reservas.find(r => r.codReserva === cod);
+                            if (original) {
+                                setEditingReservaCod(cod || null);
+                                setEditingReservaData(original);
+                                setIsEditMode(true);
+                                setIsModalOpen(true);
+                            }
+                        }}
                         emptyMessage="No hay reservas para mostrar."
                     />
                 </div>
@@ -140,6 +155,7 @@ const MainPageReservas = () => {
                 inmuebles={inmuebles}
                 mediosReserva={mediosReserva}
                 loading={loading}
+                initialData={isEditMode ? editingReservaData : null}
             />
         </div>
     );

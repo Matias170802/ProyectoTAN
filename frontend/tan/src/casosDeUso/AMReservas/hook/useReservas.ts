@@ -54,10 +54,12 @@ export const useReservas = () => {
         setState(prev => ({ ...prev, loading: true, error: null }));
 
         try {
-            const newReserva = await createReserva(reservaData);
+            await createReserva(reservaData);
+            // Tras crear, recargar desde backend para tener la versión canónica
+            const reservasData = await getReservas();
             setState(prev => ({
                 ...prev,
-                reservas: [...prev.reservas, newReserva],
+                reservas: reservasData,
                 loading: false
             }));
         } catch (error) {

@@ -13,6 +13,7 @@ interface ModalAltaReservaProps {
     inmuebles: Inmueble[];
     mediosReserva: MedioReserva[];
     loading?: boolean;
+    initialData?: DTOReserva | null;
 }
 
 const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
@@ -21,7 +22,8 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
     onSave,
     inmuebles,
     mediosReserva,
-    loading = false
+    loading = false,
+    initialData = null
 }) => {
     const [formData, setFormData] = useState<any>({
         codReserva: '',
@@ -44,7 +46,7 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
     });
 
     // Estado para el rango de fechas visual
-    const [dateRange, setDateRange] = useState([
+    const [dateRange, setDateRange] = useState<Array<{ startDate: Date | null; endDate: Date | null; key: string }>>([
         {
             startDate: null,
             endDate: null,
@@ -54,8 +56,9 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
     const [showDateRange, setShowDateRange] = useState(true);
 
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [generalError, setGeneralError] = useState<string | null>(null);
 
-    // Reset form when modal opens/closes
+    // Reset form when modal opens/closes or load initial data when editing
     useEffect(() => {
         if (!isOpen) {
             setFormData({
@@ -85,6 +88,38 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
                 },
             ]);
             setErrors({});
+            setGeneralError(null);
+        } else {
+            // Si se abre el modal y vienen datos iniciales (modo edición), cargarlos
+            if (initialData) {
+                setFormData((prev: any) => ({
+                    ...prev,
+                    codReserva: initialData.codReserva || '',
+                    fechaHoraCheckin: initialData.fechaHoraCheckin || '',
+                    fechaHoraCheckout: initialData.fechaHoraCheckout || '',
+                    fechaHoraAltaReserva: initialData.fechaHoraAltaReserva || '',
+                    totalDias: initialData.totalDias || 0,
+                    cantHuespedes: initialData.cantHuespedes || 1,
+                    totalMonto: initialData.totalMonto || 0,
+                    totalMontoSenia: initialData.totalMontoSenia || 0,
+                    plataformaOrigen: initialData.plataformaOrigen || '',
+                    codInmueble: initialData.codInmueble || '',
+                    nombreInmueble: initialData.nombreInmueble || '',
+                    codEstadoReserva: initialData.codEstadoReserva || '',
+                    nombreEstadoReserva: initialData.nombreEstadoReserva || '',
+                    nombreHuesped: initialData.nombreHuesped || '',
+                    numeroTelefonoHuesped: initialData.numeroTelefonoHuesped || '',
+                    emailHuesped: initialData.emailHuesped || '',
+                    descripcionReserva: initialData.descripcionReserva || '',
+                }));
+
+                // Ajustar dateRange visual si hay fechas
+                const start = initialData.fechaHoraCheckin ? new Date(initialData.fechaHoraCheckin) : null;
+                const end = initialData.fechaHoraCheckout ? new Date(initialData.fechaHoraCheckout) : null;
+                setDateRange([{ startDate: start, endDate: end, key: 'selection' }]);
+                setShowDateRange(false);
+                setGeneralError(null);
+            }
         }
     }, [isOpen]);
 
@@ -180,8 +215,12 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
             };
             await onSave(reservaDTO);
             onClose();
+            setGeneralError(null);
         } catch (error) {
             console.error('Error saving reservation:', error);
+            // Mostrar mensaje al usuario en el modal
+            const msg = (error as any)?.message || 'Error al guardar la reserva';
+            setGeneralError(msg);
         }
     };
 
@@ -194,6 +233,11 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
             wide={true}
         >
             <div className="modal-alta-reserva">
+                {generalError && (
+                    <div className="modal-error-message" style={{ color: 'red', marginBottom: 8 }}>
+                        {generalError}
+                    </div>
+                )}
                 <p className="modal-alta-reserva__description">
                     Las nuevas reservas se crean en estado "Señada" hasta que se asignen empleados para check-in y check-out.
                 </p>

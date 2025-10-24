@@ -150,7 +150,7 @@ public class ExpertoAMReserva {
             LocalDateTime fechaCheckInReservaVieja = reservaInmueble.getFechaHoraInicioReserva();
             LocalDateTime fechaCheckOutReservaVieja = reservaInmueble.getFechaHoraFinReserva();
 
-            if (fechaHoraInicioReserva.isBefore(fechaCheckOutReservaVieja)&& fechaHoraFinReserva.isAfter(fechaCheckInReservaVieja)) {
+            if (fechaHoraInicioReserva.isBefore(fechaCheckOutReservaVieja) && fechaHoraFinReserva.isAfter(fechaCheckInReservaVieja)) {
                 return "Ya existe una reserva para ese inmueble en esas fechas";
             }
         }
