@@ -42,8 +42,8 @@ public class ExpertoAMReserva {
             LocalDateTime fechaCheckInReservaVieja = reservaInmueble.getFechaHoraInicioReserva();
             LocalDateTime fechaCheckOutReservaVieja = reservaInmueble.getFechaHoraFinReserva();
 
-            if (fechaHoraCheckin.isBefore(fechaCheckOutReservaVieja)&& fechaHoraCheckout.isAfter(fechaCheckOutReservaVieja)) {
-
+            if (fechaHoraCheckin.isBefore(fechaCheckOutReservaVieja)&& fechaHoraCheckout.isAfter(fechaCheckInReservaVieja)) {
+                return "Ya existe una reserva para ese inmueble en esas fechas";
             }
         }
 
@@ -81,9 +81,6 @@ public class ExpertoAMReserva {
 
         Reserva reservaGuardada = reservaRepository.save(reservaCreada);
 
-        if (reservaGuardada == null) {
-            throw new IllegalArgumentException("No se pudo guardar la reserva");
-        }
         return "Reserva Creada";
     }
 
@@ -146,11 +143,20 @@ public class ExpertoAMReserva {
             reservaModificada.setPlataformaOrigen(plataformaOrigen);
         }
 
+        Inmueble inmueble = reservaModificada.getInmueble();
+        //Revisamos que no exista una reserva en ese inmueble para la misma fecha
+        List<Reserva> reservasInmueble = reservaRepository.findByInmueble(inmueble);
+        for (Reserva reservaInmueble : reservasInmueble) {
+            LocalDateTime fechaCheckInReservaVieja = reservaInmueble.getFechaHoraInicioReserva();
+            LocalDateTime fechaCheckOutReservaVieja = reservaInmueble.getFechaHoraFinReserva();
+
+            if (fechaHoraInicioReserva.isBefore(fechaCheckOutReservaVieja)&& fechaHoraFinReserva.isAfter(fechaCheckInReservaVieja)) {
+                return "Ya existe una reserva para ese inmueble en esas fechas";
+            }
+        }
+
         Reserva reservaGuardada = reservaRepository.save(reservaModificada);
 
-        if (reservaGuardada == null) {
-            throw new IllegalArgumentException("No se pudo guardar la reserva");
-        }
         return "Reserva Modificada";
 
     }

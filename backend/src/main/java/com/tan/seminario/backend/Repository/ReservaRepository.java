@@ -10,6 +10,7 @@ import java.util.List;
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     List<Reserva> findByCodReserva(String codReserva);
     List<Reserva> findByInmueble_CodInmueble(String codInmueble);
+    List<Reserva> findByInmueble(Inmueble inmueble);
     List<Reserva> findByFechaHoraAltaReservaBetweenOrderByFechaHoraAltaReserva(
             LocalDateTime fechaHoraAltaReservaAfter,
             LocalDateTime fechaHoraAltaReservaBefore);
