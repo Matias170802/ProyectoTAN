@@ -33,36 +33,12 @@ const mapFormDataToDTO = (formData: ReservaFormData): DTOReserva => {
 // Funciones para manejar inmuebles
 export const getInmuebles = async (): Promise<Inmueble[]> => {
     try {
-        // Por ahora usamos datos mock ya que no hay endpoint específico para inmuebles
-        // TODO: Crear endpoint en el backend para obtener inmuebles
-        const mockInmuebles: Inmueble[] = [
-            { 
-                codInmueble: "INM001", 
-                nombreInmueble: "Casa de Playa", 
-                capacidad: 6,
-                precioPorNocheUSD: 150
-            },
-            { 
-                codInmueble: "INM002", 
-                nombreInmueble: "Departamento Centro", 
-                capacidad: 4,
-                precioPorNocheUSD: 100
-            },
-            { 
-                codInmueble: "INM003", 
-                nombreInmueble: "Cabaña Montaña", 
-                capacidad: 8,
-                precioPorNocheUSD: 200
-            },
-            { 
-                codInmueble: "INM004", 
-                nombreInmueble: "Loft Urbano", 
-                capacidad: 2,
-                precioPorNocheUSD: 80
-            }
-        ];
-        
-        return mockInmuebles;
+        const response = await fetch(`${API_BASE_URL}/api/inmuebles/inmuebles`);
+        if (!response.ok) {
+            throw new Error('Error al cargar inmuebles');
+        }
+        const data: Inmueble[] = await response.json();
+        return data;
     } catch (error) {
         console.error('Error fetching inmuebles:', error);
         throw error;
@@ -217,5 +193,21 @@ export const deleteReserva = async (codReserva: string): Promise<void> => {
     } catch (error) {
         console.error('Error deleting reserva:', error);
         throw error;
+    }
+};
+
+// Obtener estados desde backend
+export const getEstadosReserva = async (): Promise<{ codEstadoReserva: string; nombreEstadoReserva: string }[]> => {
+    try {
+        // Endpoint moved to Reservas controller: GET /api/reservas/estados
+        const response = await fetch(`${API_BASE_URL}/api/reservas/estados`);
+        if (!response.ok) {
+            throw new Error('Error al cargar estados');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching estados:', error);
+        return [];
     }
 };

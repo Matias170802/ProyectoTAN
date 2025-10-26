@@ -24,7 +24,6 @@ public class ExpertoAMReserva {
         this.estadoReservaRepository = estadoReservaRepository;
         this.reservaRepository = reservaRepository;
     }
-
     public String altaReserva(DTOReserva reserva) {
         System.out.println("Alta de reserva");
         System.out.println(reserva);
@@ -39,10 +38,16 @@ public class ExpertoAMReserva {
         //Revisamos que no exista una reserva en ese inmueble para la misma fecha
         List<Reserva> reservasInmueble = reservaRepository.findByInmueble_CodInmueble(codigoInmueble);
         for (Reserva reservaInmueble : reservasInmueble) {
+            // Ignorar reservas canceladas
+            EstadoReserva estado = reservaInmueble.getEstadoReserva();
+            if (estado != null && "Cancelado".equalsIgnoreCase(estado.getNombreEstadoReserva())) {
+                continue;
+            }
+
             LocalDateTime fechaCheckInReservaVieja = reservaInmueble.getFechaHoraInicioReserva();
             LocalDateTime fechaCheckOutReservaVieja = reservaInmueble.getFechaHoraFinReserva();
 
-            if (fechaHoraCheckin.isBefore(fechaCheckOutReservaVieja)&& fechaHoraCheckout.isAfter(fechaCheckInReservaVieja)) {
+            if (fechaHoraCheckin.isBefore(fechaCheckOutReservaVieja) && fechaHoraCheckout.isAfter(fechaCheckInReservaVieja)) {
                 return "Ya existe una reserva para ese inmueble en esas fechas";
             }
         }
@@ -147,6 +152,16 @@ public class ExpertoAMReserva {
         //Revisamos que no exista una reserva en ese inmueble para la misma fecha
         List<Reserva> reservasInmueble = reservaRepository.findByInmueble(inmueble);
         for (Reserva reservaInmueble : reservasInmueble) {
+            // Ignorar la misma reserva que estamos modificando
+            if (reservaInmueble.getCodReserva() != null && reservaInmueble.getCodReserva().equals(codReserva)) {
+                continue;
+            }
+            // Ignorar reservas canceladas
+            EstadoReserva est = reservaInmueble.getEstadoReserva();
+            if (est != null && "Cancelado".equalsIgnoreCase(est.getNombreEstadoReserva())) {
+                continue;
+            }
+
             LocalDateTime fechaCheckInReservaVieja = reservaInmueble.getFechaHoraInicioReserva();
             LocalDateTime fechaCheckOutReservaVieja = reservaInmueble.getFechaHoraFinReserva();
 

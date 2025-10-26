@@ -6,7 +6,8 @@ import {
     updateReserva, 
     deleteReserva,
     getInmuebles,
-    getMediosReserva 
+    getMediosReserva,
+    getEstadosReserva
 } from '../serviceAMReservas';
 
 export const useReservas = () => {
@@ -14,6 +15,7 @@ export const useReservas = () => {
         reservas: [],
         inmuebles: [],
         mediosReserva: [],
+        estados: [],
         loading: false,
         error: null
     });
@@ -27,10 +29,11 @@ export const useReservas = () => {
         setState(prev => ({ ...prev, loading: true, error: null }));
         
         try {
-            const [reservasData, inmueblesData, mediosData] = await Promise.all([
+            const [reservasData, inmueblesData, mediosData, estadosData] = await Promise.all([
                 getReservas(),
                 getInmuebles(),
-                getMediosReserva()
+                getMediosReserva(),
+                getEstadosReserva()
             ]);
 
             setState(prev => ({
@@ -38,6 +41,7 @@ export const useReservas = () => {
                 reservas: reservasData,
                 inmuebles: inmueblesData,
                 mediosReserva: mediosData,
+                estados: estadosData,
                 loading: false
             }));
         } catch (error) {
@@ -169,8 +173,9 @@ export const useReservas = () => {
     return {
         // State
         reservas: state.reservas,
-        inmuebles: state.inmuebles,
-        mediosReserva: state.mediosReserva,
+    inmuebles: state.inmuebles,
+    mediosReserva: state.mediosReserva,
+    estados: state.estados,
         loading: state.loading,
         error: state.error,
 

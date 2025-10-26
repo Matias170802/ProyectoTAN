@@ -11,6 +11,11 @@ export interface MedioReserva {
     descripcion?: string;
 }
 
+export interface EstadoReserva {
+    codEstadoReserva: string;
+    nombreEstadoReserva: string;
+}
+
 // Interfaz para el formulario del modal (lo que recoge el usuario)
 export interface ReservaFormData {
     codReserva: string;
@@ -62,6 +67,7 @@ export interface ReservaState {
     reservas: Reserva[];
     inmuebles: Inmueble[];
     mediosReserva: MedioReserva[];
+    estados?: EstadoReserva[];
     loading: boolean;
     error: string | null;
     nombreHuesped?: string;

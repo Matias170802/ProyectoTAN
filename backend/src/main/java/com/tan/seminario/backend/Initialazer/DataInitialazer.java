@@ -80,10 +80,10 @@ public class DataInitialazer {
             Cliente clienteDemo = new Cliente("44310665","CLI001","Juan",null,LocalDateTime.now());
             clienteRepository.save(clienteDemo);
 
-            Inmueble in1 = new Inmueble("INM001", "Apartamento Centro", 1, 2, 4, "Calle Falsa 123", LocalDateTime.now(), null, 60.0, 100.0, clienteDemo);
-            Inmueble in2 = new Inmueble("INM002", "Casa de Playa", 2, 3, 8, "Av. Mar 456", LocalDateTime.now(), null, 120.0, 200.0, clienteDemo);
+            Inmueble in1 = new Inmueble("INM001", "Casa Chacras", 1, 2, 4, "Calle Falsa 123", LocalDateTime.now(), null, 60.0, 100.0, clienteDemo);
+            Inmueble in2 = new Inmueble("INM002", "Casa Godoy Cruz", 2, 3, 8, "Av. Mar 456", LocalDateTime.now(), null, 120.0, 200.0, clienteDemo);
             Inmueble in3 = new Inmueble("INM003", "Cabaña Montaña", 1, 2, 5, "Ruta 7 km 20", LocalDateTime.now(), null, 80.0, 150.0, clienteDemo);
-            Inmueble in4 = new Inmueble("INM004", "Loft Urbano", 1, 1, 2, "Edificio Central Piso 5", LocalDateTime.now(), null, 40.0, 90.0, clienteDemo);
+            Inmueble in4 = new Inmueble("INM004", "Terraoliva", 1, 1, 2, "Edificio Central Piso 5", LocalDateTime.now(), null, 40.0, 90.0, clienteDemo);
             inmuebleRepository.saveAll(Arrays.asList(in1, in2, in3, in4));
         }
 

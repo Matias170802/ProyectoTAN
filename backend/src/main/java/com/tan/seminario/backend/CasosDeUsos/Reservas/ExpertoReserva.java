@@ -3,6 +3,7 @@ package com.tan.seminario.backend.CasosDeUsos.Reservas;
 import com.tan.seminario.backend.Entity.EstadoReserva;
 import com.tan.seminario.backend.Entity.Inmueble;
 import com.tan.seminario.backend.Entity.Reserva;
+import com.tan.seminario.backend.Repository.EstadoReservaRepository;
 import com.tan.seminario.backend.Repository.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.List;
 public class ExpertoReserva {
     @Autowired
     private ReservaRepository reservaRepository;
+    private EstadoReservaRepository estadoReservaRepository;
 
 
     public List<DTOReserva> obtenerReservas(){
@@ -56,5 +58,17 @@ public class ExpertoReserva {
         }
 
         return DTOReservasEnviar;
+    }
+
+    public List<DTOEstadoReserva> obtenerEstados() {
+        List<EstadoReserva> estados = estadoReservaRepository.findAll();
+        List<DTOEstadoReserva> dtos = new ArrayList<>();
+        for (EstadoReserva e : estados) {
+            DTOEstadoReserva dto = new DTOEstadoReserva();
+            dto.setCodEstadoReserva(e.getCodEstadoReserva());
+            dto.setNombreEstadoReserva(e.getNombreEstadoReserva());
+            dtos.add(dto);
+        }
+        return dtos;
     }
 }

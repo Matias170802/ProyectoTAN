@@ -1,5 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Reservas;
 
+import com.tan.seminario.backend.CasosDeUsos.Reservas.AMReserva.ExpertoAMReserva;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +25,14 @@ public class ReservaController {
                     .body(List.of());
         }
     }
-
+    @GetMapping("/estados")
+    public ResponseEntity<List<DTOEstadoReserva>> obtenerEstados() {
+        try {
+            List<DTOEstadoReserva> estados = experto.obtenerEstados();
+            return ResponseEntity.ok(estados);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of());
+        }
+    }
 }
+

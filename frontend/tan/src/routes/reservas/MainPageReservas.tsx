@@ -5,14 +5,8 @@ import { useReservas as useAMReservas } from "../../casosDeUso/AMReservas";
 import type { ReservaFormData } from "../../casosDeUso/AMReservas/types";
 import "./MainPageReservas.css";
 
-const estadosPosibles = ["Todos", "Señada", "Preparada", "Finalizada", "Cancelada"];
-const inmueblesPosibles = [
-    "Todos",
-    "Apartamento Centro",
-    "Casa de Playa",
-    "Cabaña Montaña",
-    "Loft Urbano"
-];
+// Los estados se obtienen desde el backend via el hook; mantenemos esta lista como fallback
+const estadosFallback = ["Señada", "Preparada", "Finalizada", "Cancelado"];
 
 
 const MainPageReservas = () => {
@@ -85,6 +79,12 @@ const MainPageReservas = () => {
         });
     }
 
+    // Preparar lista de inmuebles para el select: preferimos la lista del backend, si está vacía
+    // construimos una lista única a partir de las reservas (nombreInmueble).
+    const inmueblesOptions = (inmuebles && inmuebles.length > 0)
+        ? inmuebles
+        : Array.from(new Map((reservas || []).map(r => [r.nombreInmueble, { codInmueble: r.codInmueble || r.nombreInmueble, nombreInmueble: r.nombreInmueble }])).values());
+
     return (
         <div className="main-reservas-bg">
             <div className="main-reservas-header">
@@ -106,8 +106,9 @@ const MainPageReservas = () => {
                             value={filtroInmueble}
                             onChange={e => setFiltroInmueble(e.target.value)}
                         >
-                            {inmueblesPosibles.map((inmueble, idx) => (
-                                <option key={idx} value={inmueble}>{inmueble === "Todos" ? "Todos los inmuebles" : inmueble}</option>
+                            <option value="Todos">Todos los inmuebles</option>
+                            {inmueblesOptions.map((inmueble) => (
+                                <option key={inmueble.codInmueble || inmueble.nombreInmueble} value={inmueble.nombreInmueble}>{inmueble.nombreInmueble}</option>
                             ))}
                         </select>
                     </div>
@@ -118,7 +119,8 @@ const MainPageReservas = () => {
                             value={filtroEstado}
                             onChange={e => setFiltroEstado(e.target.value)}
                         >
-                            {estadosPosibles.map((estado, idx) => (
+                            <option value="Todos">Estado: Todos</option>
+                            {(am.estados && am.estados.length > 0 ? am.estados.map((e) => e.nombreEstadoReserva) : estadosFallback).map((estado, idx) => (
                                 <option key={idx} value={estado}>Estado: {estado}</option>
                             ))}
                         </select>

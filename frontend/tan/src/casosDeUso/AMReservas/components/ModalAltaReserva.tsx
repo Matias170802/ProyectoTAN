@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
@@ -57,6 +57,37 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
 
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [generalError, setGeneralError] = useState<string | null>(null);
+    const errorTimeoutRef = useRef<number | null>(null);
+
+    const resetForm = () => {
+        setFormData({
+            codReserva: '',
+            fechaHoraCheckin: '',
+            fechaHoraCheckout: '',
+            fechaHoraAltaReserva: '',
+            totalDias: 0,
+            cantHuespedes: 1,
+            totalMonto: 0,
+            totalMontoSenia: 0,
+            plataformaOrigen: '',
+            codInmueble: '',
+            nombreInmueble: '',
+            codEstadoReserva: '',
+            nombreEstadoReserva: '',
+            nombreHuesped: '',
+            numeroTelefonoHuesped: '',
+            emailHuesped: '',
+            descripcionReserva: '',
+        });
+        setDateRange([
+            {
+                startDate: null,
+                endDate: null,
+                key: 'selection',
+            },
+        ]);
+        setErrors({});
+    };
 
     // Reset form when modal opens/closes or load initial data when editing
     useEffect(() => {
@@ -221,6 +252,19 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
             // Mostrar mensaje al usuario en el modal
             const msg = (error as any)?.message || 'Error al guardar la reserva';
             setGeneralError(msg);
+            // Limpiar cualquier timeout anterior
+            if (errorTimeoutRef.current) {
+                window.clearTimeout(errorTimeoutRef.current);
+            }
+            // Mostrar por 5 segundos y luego limpiar el mensaje.
+            // Solo resetear el formulario si estamos en modo ALTA (no hay initialData).
+            errorTimeoutRef.current = window.setTimeout(() => {
+                setGeneralError(null);
+                if (!initialData) {
+                    resetForm();
+                }
+                errorTimeoutRef.current = null;
+            }, 5000);
         }
     };
 
@@ -233,11 +277,6 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
             wide={true}
         >
             <div className="modal-alta-reserva">
-                {generalError && (
-                    <div className="modal-error-message" style={{ color: 'red', marginBottom: 8 }}>
-                        {generalError}
-                    </div>
-                )}
                 <p className="modal-alta-reserva__description">
                     Las nuevas reservas se crean en estado "Señada" hasta que se asignen empleados para check-in y check-out.
                 </p>
@@ -440,6 +479,12 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
                     </div>
                     {/* Botones de acción */}
                     <div className="form-actions">
+                        {/* Mostrar el error justo arriba de los botones para que sea visible al presionar Guardar */}
+                        {generalError && (
+                            <div className="modal-error-message" style={{ color: 'red', marginBottom: 8 }}>
+                                {generalError}
+                            </div>
+                        )}
                         <Button
                             type="button"
                             label="Cancelar"
