@@ -14,5 +14,6 @@ public interface RolRepository extends JpaRepository<Rol, Long> {
     List<Rol> findByNombreRol(String nombre);
     List<Rol> findByFechaHoraBajaRolIsNull();
 
+    List<Rol> findAllByCodRolInAndFechaHoraBajaRolIsNull(List<String> codRoles);
 }
 

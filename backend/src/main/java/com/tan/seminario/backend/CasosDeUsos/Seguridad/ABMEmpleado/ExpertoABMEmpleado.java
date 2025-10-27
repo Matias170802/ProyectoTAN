@@ -2,6 +2,9 @@ package com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado;
 
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpleado.AltaEmpleadoRequest;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpleado.AltaEmpleadoResponse;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.AuthService;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.RegisterRequest;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.TokenResponse;
 import com.tan.seminario.backend.Entity.Empleado;
 import com.tan.seminario.backend.Entity.EmpleadoRol;
 import com.tan.seminario.backend.Entity.Rol;
@@ -9,13 +12,11 @@ import com.tan.seminario.backend.Repository.EmpleadoRepository;
 import com.tan.seminario.backend.Repository.RolRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,67 +24,40 @@ public class ExpertoABMEmpleado {
 
     private final EmpleadoRepository empleadoRepository;
     private final RolRepository rolRepository;
+    private final AuthService authService;
 
-    // ALTA EMPLEADO
     @Transactional
     public AltaEmpleadoResponse altaEmpleado(AltaEmpleadoRequest request) {
-        // 1. Generar código automáticamente
+        validarRequest(request);
+
         String codigoEmpleado = generarCodigoEmpleado();
+        validarDniUnico(request.getDniEmpleado());
+        List<Rol> rolesValidos = validarYObtenerRoles(request.getCodRoles());
 
-        // 2. Validar DNI no repetido
-        if (empleadoRepository.existsByDniEmpleadoAndFechaHoraBajaEmpleadoIsNull(request.getDniEmpleado())) {
-            throw new IllegalArgumentException("Ya existe un empleado activo con ese DNI");
-        }
+        Empleado empleado = crearEmpleado(request, codigoEmpleado);
+        asociarRolesAEmpleado(empleado, rolesValidos);
 
-        // 3. Obtener Roles y validar su actividad.
-        List<Rol> rolesValidos = new ArrayList<>();
-        for (String codRol : request.getCodRoles()) {
-            Optional<Rol> rol = rolRepository.findByCodRolAndFechaHoraBajaRolIsNull(codRol);
-            if (rol.isEmpty()) {
-                throw new IllegalArgumentException("Al menos uno de los roles ingresados es inválido.");
-            }
-            rolesValidos.add(rol.get());
-        }
+        empleado = empleadoRepository.save(empleado);
 
-        // 4. Crear entidad Empleado (sin roles todavía)
-        Empleado empleado = Empleado.builder()
-                .dniEmpleado(request.getDniEmpleado())
-                .codEmpleado(codigoEmpleado)
-                .nombreEmpleado(request.getNombreEmpleado())
-                .nroTelefonoEmpleado(request.getNroTelefonoEmpleado())
-                .salarioEmpleado(request.getSalarioEmpleado())
-                .fechaHoraBajaEmpleado(null)
-                .fechaHoraAltaEmpleado(LocalDateTime.now())
-                .fechaUltimoCobroSalario(null)
-                .empleadosRoles(new ArrayList<>())
+        // Crear usuario
+        RegisterRequest registerRequest = RegisterRequest.builder()
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .cod(codigoEmpleado)
+                .tipoUsuario(RegisterRequest.TipoUsuario.EMPLEADO)
                 .build();
 
-        // 5. Guardar Empleado en BD primero (para que tenga ID)
-        empleado = empleadoRepository.save(empleado);
-
-        // 6. Crear y asociar EmpleadoRol para cada Rol válido
-        for (Rol rol : rolesValidos) {
-            EmpleadoRol empleadoRol = new EmpleadoRol();
-            empleadoRol.setFechaHoraAltaEmpleadoRol(LocalDateTime.now());
-            empleadoRol.setFechaHoraBajaEmpleadoRol(null);
-            empleadoRol.setEmpleado(empleado);
-            empleadoRol.setRol(rol);
-
-            // Agregar a la lista del empleado
-            empleado.getEmpleadosRoles().add(empleadoRol);
-        }
-
-        // 7. Guardar nuevamente el empleado (esto guardará las relaciones por cascade)
-        empleado = empleadoRepository.save(empleado);
-
-        // 8. TODO: IR A CREAR EL USUARIO CON EL CODIGO EMPLEADO desde el servicio
+        TokenResponse tokenResponse = authService.register(registerRequest);
 
 
-        // 9. TODO: Crear EmpleadoCaja
 
-        // Construir el RESPONSE
+        //  TODO: Crear caja
+
+        // TODO: Asignar tokens al response
         return construirResponse(empleado);
     }
+
+
 
     // BAJA EMPLEADO
 
@@ -95,6 +69,12 @@ public class ExpertoABMEmpleado {
     // -----------------------------------
 
     // METODOS PRIVADOS AUXILIARES
+    private void validarRequest(AltaEmpleadoRequest request) {
+        if (request.getCodRoles() == null || request.getCodRoles().isEmpty()) {
+            throw new IllegalArgumentException("Debe asignar al menos un rol");
+        }
+    }
+
     private String generarCodigoEmpleado() {
         // Obtener el último código
         String ultimoCodigo = empleadoRepository.findTopByOrderByCodEmpleadoDesc()
@@ -109,12 +89,57 @@ public class ExpertoABMEmpleado {
         return String.format("EMPL-%03d", numero);
     }
 
+    private void validarDniUnico(String dni) {
+        if (empleadoRepository.existsByDniEmpleadoAndFechaHoraBajaEmpleadoIsNull(dni)) {
+            throw new IllegalArgumentException("Ya existe un empleado activo con ese DNI");
+        }
+    }
+
+    private List<Rol> validarYObtenerRoles(List<String> codRoles) {
+        List<Rol> roles = rolRepository
+                .findAllByCodRolInAndFechaHoraBajaRolIsNull(codRoles);
+
+        if (roles.size() != codRoles.size()) {
+            throw new IllegalArgumentException("Algunos roles son inválidos o están inactivos");
+        }
+
+        return roles;
+    }
+
+    private Empleado crearEmpleado(AltaEmpleadoRequest request, String codigoEmpleado) {
+        return Empleado.builder()
+                .dniEmpleado(request.getDniEmpleado())
+                .codEmpleado(codigoEmpleado)
+                .nombreEmpleado(request.getNombreEmpleado())
+                .nroTelefonoEmpleado(request.getNroTelefonoEmpleado())
+                .salarioEmpleado(request.getSalarioEmpleado())
+                .fechaHoraAltaEmpleado(LocalDateTime.now())
+                .fechaHoraBajaEmpleado(null)
+                .fechaUltimoCobroSalario(null)
+                .empleadosRoles(new ArrayList<>())
+                .build();
+    }
+
+    private void asociarRolesAEmpleado(Empleado empleado, List<Rol> roles) {
+        LocalDateTime ahora = LocalDateTime.now();
+
+        for (Rol rol : roles) {
+            EmpleadoRol empleadoRol = EmpleadoRol.builder()
+                    .fechaHoraAltaEmpleadoRol(ahora)
+                    .fechaHoraBajaEmpleadoRol(null)
+                    .empleado(empleado)
+                    .rol(rol)
+                    .build();
+
+            empleado.getEmpleadosRoles().add(empleadoRol);
+        }
+    }
+
     private AltaEmpleadoResponse construirResponse(Empleado empleado) {
 
         return AltaEmpleadoResponse.builder()
                 .build();
     }
-
 }
 
 // ABM EMPLEADO LO REALIZA LA GERENCIA -> Un empleado con el rol de gerente.
