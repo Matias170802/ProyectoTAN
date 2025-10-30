@@ -10,7 +10,6 @@ import com.tan.seminario.backend.Repository.EmpleadoRolRepository;
 import com.tan.seminario.backend.Repository.RolRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

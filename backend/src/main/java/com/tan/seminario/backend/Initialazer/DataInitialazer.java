@@ -4,6 +4,7 @@ package com.tan.seminario.backend.Initialazer;
 import com.tan.seminario.backend.Entity.*;
 import com.tan.seminario.backend.Repository.*;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -36,6 +37,20 @@ public class DataInitialazer {
         this.empleadoRolRepository = empleadoRolRepository;
     }
 
+    // ========================
+    // DATOS DE PRUEBA RESERVAS E INMUEBLES (BORRAR AL FINAL)
+    // ========================
+    @Autowired
+    private ReservaRepository reservaRepository;
+    @Autowired
+    private InmuebleRepository inmuebleRepository;
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+
+    // ========================
+    // FIN DATOS DE PRUEBA
+    // ========================
     @PostConstruct
     public void initializeData() {
 
@@ -56,6 +71,45 @@ public class DataInitialazer {
             System.out.println("La base de datos ya contiene datos de EstadoReserva, no se inicializaron nuevos datos.");
         }
         //inicializacion de datos estado reserva
+
+        // ========================
+        // ZONA DE CREACION DE INMUEBLES Y RESERVAS DE PRUEBA
+        // ========================
+        // Crear inmuebles de ejemplo si no existen
+        if (inmuebleRepository.count() == 0) {
+            Cliente clienteDemo = new Cliente("44310665","CLI001","Juan",null,LocalDateTime.now());
+            clienteRepository.save(clienteDemo);
+
+            Inmueble in1 = new Inmueble("INM001", "Casa Chacras", 1, 2, 4, "Calle Falsa 123", LocalDateTime.now(), null, 60.0, 100.0, clienteDemo);
+            Inmueble in2 = new Inmueble("INM002", "Casa Godoy Cruz", 2, 3, 8, "Av. Mar 456", LocalDateTime.now(), null, 120.0, 200.0, clienteDemo);
+            Inmueble in3 = new Inmueble("INM003", "Cabaña Montaña", 1, 2, 5, "Ruta 7 km 20", LocalDateTime.now(), null, 80.0, 150.0, clienteDemo);
+            Inmueble in4 = new Inmueble("INM004", "Terraoliva", 1, 1, 2, "Edificio Central Piso 5", LocalDateTime.now(), null, 40.0, 90.0, clienteDemo);
+            inmuebleRepository.saveAll(Arrays.asList(in1, in2, in3, in4));
+        }
+
+        // Crear reservas de ejemplo si no existen
+        if (reservaRepository.count() == 0) {
+            Inmueble in1 = inmuebleRepository.findByCodInmueble("INM001");
+            Inmueble in2 = inmuebleRepository.findByCodInmueble("INM002");
+            Inmueble in3 = inmuebleRepository.findByCodInmueble("INM003");
+            Inmueble in4 = inmuebleRepository.findByCodInmueble("INM004");
+
+            EstadoReserva estSenada = estadoReservaRepository.findByNombreEstadoReserva("Señada");
+            EstadoReserva estPreparada = estadoReservaRepository.findByNombreEstadoReserva("Preparada");
+            EstadoReserva estFinalizada = estadoReservaRepository.findByNombreEstadoReserva("Finalizado");
+            EstadoReserva estCancelada = estadoReservaRepository.findByNombreEstadoReserva("Cancelado");
+
+            Reserva r1 = new Reserva("RES001", LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(7), LocalDateTime.now(), 5, 2,"Clara","261500001","clara@gmail.com", 25000.0, 10000.0, 10000.0, "Airbnb","Amable contactar por telefono", in1, estSenada);
+            Reserva r2 = new Reserva("RES002", LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(15), LocalDateTime.now(), 5, 4, "Matias", "261500001", "matias@gmail.com", 35000.0, 15000.0, 15000.0, "Booking", "", in2, estSenada);
+            Reserva r3 = new Reserva("RES003", LocalDateTime.now().plusDays(20), LocalDateTime.now().plusDays(25), LocalDateTime.now(), 5, 3, "Juan", "261500001", "juan@gmail.com", 30000.0, 12000.0, 12000.0, "Directo", "Son 3 una familia", in3, estPreparada);
+            Reserva r4 = new Reserva("RES004", LocalDateTime.now().plusDays(30), LocalDateTime.now().plusDays(35), LocalDateTime.now(), 5, 2, "Fernando", "261500001", "fernando@gmail.com", 22000.0, 8000.0, 8000.0, "Airbnb", "Contactar por mail", in4, estFinalizada);
+            Reserva r5 = new Reserva("RES005", LocalDateTime.now().plusDays(40), LocalDateTime.now().plusDays(45), LocalDateTime.now(), 5, 2, "Nico", "261500001", "nico@gmail.com", 27000.0, 9000.0, 9000.0, "Booking", "Pareja", in1, estCancelada);
+            reservaRepository.saveAll(Arrays.asList(r1, r2, r3, r4, r5));
+            System.out.println("Reservas e inmuebles de prueba insertados correctamente.");
+        }
+        // ========================
+        // FIN ZONA DE CREACION DE INMUEBLES Y RESERVAS DE PRUEBA
+        // ========================
 
         //inicializacion de datos tipo movimiento
         if (tipoMovimientoRepository.count() == 0) {

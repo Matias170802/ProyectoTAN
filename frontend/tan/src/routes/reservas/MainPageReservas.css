@@ -1,0 +1,117 @@
+/* Estilos para la página principal de reservas */
+
+.main-reservas-bg {
+  background: #f7f7f7;
+  min-height: 100vh;
+  padding: 32px;
+}
+
+.main-reservas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.main-reservas-filtros {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+.main-reservas-filtro-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-reservas-filtro-label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.main-reservas-select {
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  min-width: 220px;
+  background: #fff;
+  font-weight: 500;
+}
+
+#btn-add-reserva {
+  background-color: #111;
+  color: #fff;
+  border: none;
+}
+
+.main-reservas-title {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.main-reservas-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 2px 8px #0001;
+}
+
+.main-reservas-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.main-reservas-subtitle {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.main-reservas-table-container {
+  overflow-x: auto;
+}
+
+.main-reservas-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.main-reservas-table th {
+  text-align: left;
+  padding: 10px 8px;
+  font-weight: 500;
+  color: #888;
+  font-size: 15px;
+  border-bottom: 1px solid #eee;
+  background: #fafafa;
+}
+
+.main-reservas-table td {
+  padding: 10px 8px;
+  font-size: 15px;
+  color: #222;
+}
+
+.main-reservas-table tr {
+  border-bottom: 1px solid #eee;
+}
+
+.main-reservas-estado {
+  border-radius: 12px;
+  padding: 2px 12px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+  display: inline-block;
+}
+
+.main-reservas-estado-preparada {
+  background: #d2fbe3;
+}
+
+.main-reservas-estado-senada {
+  background: #fdf3c4;
+}

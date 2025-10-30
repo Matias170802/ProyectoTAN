@@ -24,10 +24,17 @@ public class Reserva  extends Base {
 
     private LocalDateTime fechaHoraInicioReserva;
     private LocalDateTime fechaHoraFinReserva;
+    private LocalDateTime fechaHoraAltaReserva;
     private Integer totalDias;
+    private Integer cantidadHuespedes;
+    private String nombreHuesped;
+    private String numeroTelefonoHuesped;
+    private String emailHuesped;
     private Double totalMonto;
     private Double totalMontoCheckIn;
     private Double totalMontoSenia;
+    private String plataformaOrigen;//Airbnb Booking etc
+    private String descripcionReserva;
 
     @ManyToOne
     @JoinColumn(name = "idInmueble", nullable = false)

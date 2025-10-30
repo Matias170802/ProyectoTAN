@@ -11,6 +11,12 @@ button {
     
 }
 
+.button-black {
+    background-color: #111;
+    color: #fff;
+    border: none;
+}
+
 button:hover {
     background-color: #e6dddd;
     box-shadow: none;
