@@ -24,6 +24,8 @@ import java.time.LocalDateTime;
 
 public class Rol  extends Base{
 
+    private Long idRol;
+
     @Column(unique = true)
     private String codRol;
 

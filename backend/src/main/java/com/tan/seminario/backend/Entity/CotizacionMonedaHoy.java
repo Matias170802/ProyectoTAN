@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 
 public class CotizacionMonedaHoy extends Base{
 
+    private Long idCotizacionMonedaHoy;
+
     private Long montoCompra;
     private Long montoVenta;
     private LocalDateTime fechaCotizacionMoneda;

@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 
 public class Inmueble  extends Base {
 
+    private Long idInmueble;
+
     @Column(unique = true)
     private String codInmueble;
 

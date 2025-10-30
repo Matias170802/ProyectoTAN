@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 
 public class Moneda  extends Base {
 
+    private Long idMoneda;
+
     @Column(unique = true)
     private String codMoneda;
 

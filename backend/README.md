@@ -13,7 +13,7 @@ Spring Boot DevTools (opcional) => Útil para desarrollo, reinicios automáticos
 Spring Security => Te va a servir más adelante para implementar autenticación y autorización.
 Lombok (opcional, pero recomendable) => Para reducir código boilerplate (constructores, getters, etc.).
 
-## Base de Datos!
+## Base de Datos
 PostgreSQL 17
 
 user: postgre

@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 
 public class CategoriaMovimiento extends Base {
 
+    private Long idCategoriaMovimiento;
 
     @Column (unique = true)
     private String codCategoriaMovimiento;

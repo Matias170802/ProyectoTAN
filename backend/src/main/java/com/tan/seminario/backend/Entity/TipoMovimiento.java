@@ -25,6 +25,7 @@ public class TipoMovimiento  extends Base {
     @Column (unique = true)
     private String nombreTipoMovimiento;
 
-    private LocalDateTime fechaHoraBajaTipoMovimiento;
     private LocalDateTime fechaHoraAltaTipoMovimiento;
+
+    private LocalDateTime fechaHoraBajaTipoMovimiento;
 }

@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 
 public class Tarea  extends Base {
 
+    @Column (unique = true)
     private Long nroTarea;
 
     private String nombreTarea;
