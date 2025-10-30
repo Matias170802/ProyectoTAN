@@ -1,10 +1,7 @@
 package com.tan.seminario.backend.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -15,11 +12,12 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Builder
 public class Usuario extends Base {
 
     private String name;
     private String password; // Encriptada - hashed
+    private Boolean activo;
 
     @Column(name = "email", unique = true)
     private String email;

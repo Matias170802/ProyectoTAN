@@ -1,4 +1,4 @@
-const MainPageMiCaja = () => {
+const MainPageMiCaja: React.FC = () => {
 
     return(
         <div>

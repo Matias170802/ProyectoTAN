@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
                 <li><Link to="/"><Button label="🏠Inicio"/></Link></li>
                 <li><Link to="/reservas"><Button label="📅Reservas"/></Link></li>
                 <li><Link to="/finanzas"><Button label="💲Finanzas"/></Link></li>
-                <li><Link to="/admin"><Button label="⚙Administracion"/></Link></li>
+                <li><Link to="/admin"><Button label="⚙️Administracion"/></Link></li>
                 <li><Link to="/micaja"><Button label="💳Mi Caja"/></Link></li>
                 <li><Link to="/perfil"><Button label="👤Mi Perfil"/></Link></li>
                 

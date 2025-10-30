@@ -1,6 +1,5 @@
-
-import { useState } from "react";
-import {Button, List, ModalAltaReserva} from "../../generalComponents/index";
+import React, { useState } from "react";
+import { Button, List, ModalAltaReserva } from "../../generalComponents/index";
 import { useReservas as useAMReservas } from "../../casosDeUso/AMReservas";
 import type { ReservaFormData } from "../../casosDeUso/AMReservas/types";
 import "./MainPageReservas.css";
@@ -8,11 +7,10 @@ import "./MainPageReservas.css";
 // Los estados se obtienen desde el backend via el hook; mantenemos esta lista como fallback
 const estadosFallback = ["Señada", "Preparada", "Finalizada", "Cancelado"];
 
-
-const MainPageReservas = () => {
+const MainPageReservas: React.FC = () => {
     const am = useAMReservas();
     const { reservas, loading, error, refreshReservas, inmuebles, mediosReserva, createReserva, updateReserva } = am;
-    
+
     const [filtroEstado, setFiltroEstado] = useState("Todos");
     const [filtroInmueble, setFiltroInmueble] = useState("Todos");
     const [isModalOpen, setIsModalOpen] = useState(false);
