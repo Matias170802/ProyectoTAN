@@ -1,0 +1,88 @@
+.modal-admin__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-admin__container {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.16);
+  padding: 64px 80px 100px 80px;
+  min-width: 650px;
+  max-width: 98vw;
+  text-align: left;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-admin__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.modal-admin__desc {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 24px;
+}
+
+.modal-admin__option {
+  display: flex;
+  align-items: center;
+  background: #f7f7f7;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-size: 1.08rem;
+  margin-bottom: 16px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: 500;
+  color: #111;
+  transition: background 0.2s;
+}
+.modal-admin__option:hover:not(.disabled) {
+  background: #575757;
+}
+.modal-admin__option.disabled {
+  color: #aaa;
+  cursor: not-allowed;
+}
+.modal-admin__icon {
+  font-size: 1.3rem;
+  margin-right: 12px;
+}
+.modal-admin__soon {
+  margin-left: 12px;
+  font-size: 0.95rem;
+  color: #b48be4;
+  font-weight: 400;
+}
+.modal-admin__close {
+  position: absolute;
+  right: 24px;
+  bottom: 18px;
+  background: #f7f7f7;
+  color: #222;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.modal-admin__close:hover {
+  background: #eaeaea;
+}

@@ -1,14 +1,14 @@
 package com.tan.seminario.backend.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /*Lombok*/
+@Builder
 @Entity
 @Table(name = "Empleado")
 @Getter
@@ -18,8 +18,6 @@ import java.time.LocalDateTime;
 /*Lombok*/
 
 public class Empleado  extends Base {
-
-    private Long idEmpleado;
 
     @Column(unique = true)
     private String dniEmpleado;
@@ -34,5 +32,7 @@ public class Empleado  extends Base {
     private LocalDateTime fechaHoraAltaEmpleado;
     private LocalDateTime fechaUltimoCobroSalario;
 
-}
+    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL)
+    private List<EmpleadoRol> empleadosRoles = new ArrayList<>();
 
+}
