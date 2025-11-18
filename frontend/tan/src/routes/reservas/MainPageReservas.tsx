@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, List, ModalAltaReserva } from "../../generalComponents/index";
 import { useReservas as useAMReservas } from "../../casosDeUso/AMReservas";
+import ModalConfirmarCancelar from '../../casosDeUso/CancelarReserva/components/ModalConfirmarCancelar';
 import type { ReservaFormData } from "../../casosDeUso/AMReservas/types";
 import "./MainPageReservas.css";
 
@@ -10,6 +11,10 @@ const estadosFallback = ["Señada", "Preparada", "Finalizada", "Cancelado"];
 const MainPageReservas: React.FC = () => {
     const am = useAMReservas();
     const { reservas, loading, error, refreshReservas, inmuebles, mediosReserva, createReserva, updateReserva } = am;
+
+    // Cancel modal state
+    const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+    const [cancelingReservaCod, setCancelingReservaCod] = useState<string | null>(null);
 
     const [filtroEstado, setFiltroEstado] = useState("Todos");
     const [filtroInmueble, setFiltroInmueble] = useState("Todos");
@@ -132,6 +137,7 @@ const MainPageReservas: React.FC = () => {
                         items={reservasFiltradas}
                         columnas={["propiedad", "checkin", "checkout", "personas", "huesped", "email", "dias", "descripcion", "total", "sena", "estado", "origen"]}
                         showActions={true}
+                        idField="codReserva"
                         onItemEdit={(item) => {
                             // item es el objeto adaptado; buscamos la reserva original por codReserva
                             const cod = (item as any).codReserva;
@@ -142,6 +148,18 @@ const MainPageReservas: React.FC = () => {
                                 setIsEditMode(true);
                                 setIsModalOpen(true);
                             }
+                        }}
+                        onItemDelete={(id) => {
+                            // id viene del List como getItemId(item) => codReserva
+                            const cod = String(id);
+                            setCancelingReservaCod(cod);
+                            setIsCancelModalOpen(true);
+                        }}
+                        // Mostrar la acción 'delete' (cruz) solo si el estado permite cancelar
+                        getVisibleActions={(item) => {
+                            const estado = (item as any).estado;
+                            if (estado === 'Señada' || estado === 'Preparada') return ['edit', 'delete'];
+                            return ['edit'];
                         }}
                         emptyMessage="No hay reservas para mostrar."
                     />
@@ -156,6 +174,22 @@ const MainPageReservas: React.FC = () => {
                 mediosReserva={mediosReserva}
                 loading={loading}
                 initialData={isEditMode ? editingReservaData : null}
+            />
+
+            <ModalConfirmarCancelar
+                isOpen={isCancelModalOpen}
+                onClose={() => { setIsCancelModalOpen(false); setCancelingReservaCod(null); }}
+                codReserva={cancelingReservaCod}
+                onConfirm={async (cod) => {
+                    try {
+                        await am.cancelReserva(cod);
+                        await refreshReservas();
+                    } catch (error) {
+                        console.error('Error al cancelar reserva desde UI:', error);
+                        // El hook ya setea el error en su estado; aquí podemos mostrar algo adicional si hace falta
+                    }
+                }}
+                loading={loading}
             />
         </div>
     );
