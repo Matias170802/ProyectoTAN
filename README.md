@@ -29,4 +29,4 @@ TAN - Seminario Integrador/
 - Spring Boot
 - Maven / Gradle
 - JPA / Hibernate
-- H2 (modo desarrollo) o PostgreSQL
+- PostgreSQL
