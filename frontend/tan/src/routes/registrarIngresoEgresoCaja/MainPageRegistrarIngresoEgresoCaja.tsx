@@ -1,4 +1,5 @@
-import ModalRegistrarIngresoEgresoCaja from '../../casosDeUso/RegistrarIngresoEgresoCaja/components/ModalRegistrarIngresoEgresoCaja/ModalRegistrarIngresoEgresoCaja'
+import FormRegistrarIngresoEgresoCaja from '../../casosDeUso/RegistrarIngresoEgresoCaja/components/FormRegistrarIngresoEgresoCaja/FormRegistrarIngresoEgresoCaja'
+import './MainPageRegistrarIngresoEgresoCaja.css'
 
 const MainPageRegistrarIngresoEgresoCaja: React.FC = () => {
 
@@ -8,13 +9,10 @@ const MainPageRegistrarIngresoEgresoCaja: React.FC = () => {
             <div id='mainPageFinanzasContent'>
                 <p>Registrar Nuevo Ingreso/Egreso</p>
                 
-                <div id='modalFinanzas'>
-                    <ModalRegistrarIngresoEgresoCaja
-                    isOpen={true}
-                    onClose={() => {}}
+                <div id='formRegistrarIngresoEgresoCajaContainer'>
+                    <FormRegistrarIngresoEgresoCaja
                     title="Registrar Nueva Transacción"
                     description="Completa el formulario para registrar un nuevo ingreso o egreso en tu caja"
-                    showCloseButton={false}
                     />
                 </div>
         

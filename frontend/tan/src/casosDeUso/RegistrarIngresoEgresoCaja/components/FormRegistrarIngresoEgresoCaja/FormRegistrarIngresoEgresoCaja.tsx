@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import {Modal, Button} from '../../../../generalComponents/index'
-import "./ModalRegistrarIngresoEgresoCaja.css"
+import {Button} from '../../../../generalComponents/index'
+import "./FormRegistrarIngresoEgresoCaja.css"
 import {type formSchemaRegistrarIngresoEgresoCajaType, schemaRegistrarIngresoEgresoCaja} from '../../models/modelRegistrarIngresoEgresoCaja'
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, type Resolver} from 'react-hook-form';
-import {type Props} from './ModalRegistrarIngresoEgresoCajaTypes'
+import {type Props} from './FormRegistrarIngresoEgresoCajaTypes'
 import {useIngresoEgresoCaja} from '../../hooks/useIngresoEgresoCaja'
 
-const ModalRegistrarIngresoEgresoCaja: React.FC<Props> = ({isOpen, onClose, title, description, showCloseButton}) => {
+const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description }) => {
     
     const [activo, setActivo] = React.useState<'transaccion' | 'comprobante'>('transaccion');
     const {tiposTransaccion, tiposMoneda, categorias, registrarIngresoEgresoCaja, errorEncontrado} = useIngresoEgresoCaja();
@@ -36,7 +36,6 @@ const ModalRegistrarIngresoEgresoCaja: React.FC<Props> = ({isOpen, onClose, titl
             reset();
             setTimeout(() => {
                 setShowMensajeExito(false);
-                onClose();
             }, 3000);
         }else {
             setShowMensajeExito(false);
@@ -45,13 +44,12 @@ const ModalRegistrarIngresoEgresoCaja: React.FC<Props> = ({isOpen, onClose, titl
     
     return(
         
-        <Modal
-        title= {title}
-        description={description}
-        showCloseButton={showCloseButton}
-        isOpen={isOpen}
-        onClose={onClose}
-        >
+        <div id='formRegistrarIngresoEgreso'>
+            <header>
+                <h2 id='tituloForm'>{title}</h2>
+                <p id='descripcionForm'>{description}</p>
+            </header>
+
             <section id='contenedorBotonesModalRegistrarIngresoEgresoCaja'>
                 <Button
                     label="Transacción"
@@ -149,8 +147,8 @@ const ModalRegistrarIngresoEgresoCaja: React.FC<Props> = ({isOpen, onClose, titl
                 </section>
             )}
 
-        </Modal>
+        </div>
     )
 }
 
-export default ModalRegistrarIngresoEgresoCaja;
+export default FormRegistrarIngresoEgresoCaja;
