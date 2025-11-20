@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/api/reserva")
 public class CancelarReservaController {
-    ExpertoCancelarReserva experto;
+    @Autowired
+    private ExpertoCancelarReserva experto;
 
     @PatchMapping("/cancelarReserva/{codReserva}")
     public ResponseEntity<?> cancelarReserva(@PathVariable("codReserva") String codReserva){

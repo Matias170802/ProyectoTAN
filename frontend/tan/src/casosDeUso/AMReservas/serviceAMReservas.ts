@@ -199,6 +199,7 @@ export const deleteReserva = async (codReserva: string): Promise<void> => {
 // Función para cancelar una reserva (PATCH -> /api/reserva/cancelarReserva/{codReserva})
 export const cancelarReserva = async (codReserva: string): Promise<string> => {
     try {
+        console.log('[serviceAMReservas] Cancelling reserva:', codReserva);
         const response = await fetch(`${API_BASE_URL}/api/reserva/cancelarReserva/${encodeURIComponent(codReserva)}`, {
             method: 'PATCH',
             headers: {
@@ -207,6 +208,7 @@ export const cancelarReserva = async (codReserva: string): Promise<string> => {
         });
 
         const responseText = await response.text();
+        console.log('[serviceAMReservas] cancelarReserva response:', response.status, responseText);
         if (!response.ok) {
             throw new Error(responseText || 'Error al cancelar la reserva');
         }

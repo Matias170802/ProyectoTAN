@@ -7,16 +7,22 @@ import com.tan.seminario.backend.Repository.EstadoReservaRepository;
 import com.tan.seminario.backend.Repository.ReservaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 
 import java.util.List;
 
 
+@Service
 public class ExpertoCancelarReserva {
     private static final Logger log = LoggerFactory.getLogger(ExpertoCancelarReserva.class);
 
-    private  ReservaRepository reservaRepository;
-    private  EstadoReservaRepository estadoReservaRepository;
+    @Autowired
+    private ReservaRepository reservaRepository;
+
+    @Autowired
+    private EstadoReservaRepository estadoReservaRepository;
 
     public String cancelarReserva(String codReserva){
         List<Reserva> reservas = reservaRepository.findByCodReserva(codReserva);
@@ -28,7 +34,7 @@ public class ExpertoCancelarReserva {
         String nombreEstadoReserva = estadoReserva.getNombreEstadoReserva();
 
         if (nombreEstadoReserva.equals("Señada") || nombreEstadoReserva.equals("Preparada")){
-            EstadoReserva estadoReservaCancelada = estadoReservaRepository.findByNombreEstadoReserva("Cancelada");
+            EstadoReserva estadoReservaCancelada = estadoReservaRepository.findByCodEstadoReserva("EST002");
             if (estadoReservaCancelada == null) {
                 throw new RuntimeException("No se encuentra el Estado de Reserva Cancelada");
             }

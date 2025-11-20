@@ -12,8 +12,17 @@ interface Props {
 const ModalConfirmarCancelar: React.FC<Props> = ({ isOpen, onClose, codReserva, onConfirm, loading = false }) => {
     const handleConfirm = async () => {
         if (!codReserva) return;
-        await onConfirm(codReserva);
-        onClose();
+        try {
+            console.log('[ModalConfirmarCancelar] confirming cancel for', codReserva);
+            await onConfirm(codReserva);
+            console.log('[ModalConfirmarCancelar] onConfirm finished for', codReserva);
+        } catch (err) {
+            console.error('[ModalConfirmarCancelar] error onConfirm:', err);
+            // Re-throw so caller can handle if needed
+            throw err;
+        } finally {
+            onClose();
+        }
     };
 
     return (

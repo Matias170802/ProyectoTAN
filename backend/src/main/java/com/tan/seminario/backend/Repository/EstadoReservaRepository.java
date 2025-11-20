@@ -5,4 +5,6 @@ import com.tan.seminario.backend.Entity.EstadoReserva;
 
 public interface EstadoReservaRepository extends JpaRepository<EstadoReserva, Long> {
     EstadoReserva findByNombreEstadoReserva(String nombreEstadoReserva);
+
+    EstadoReserva findByCodEstadoReserva(String codEstadoReserva);
 }
