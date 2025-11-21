@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import Inicio from './Inicio.tsx'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import {MainPageAdministrador, MainPageCliente, MainPageFinanzas, MainPageMiCaja, MainPagePerfil, MainPageReservas} from './routes/index.ts'
+import {MainPageAdministrador, MainPageCliente, MainPageFinanzas, MainPageMiCaja, MainPagePerfil, MainPageReservas, MainPageRegistrarIngresoEgresoCaja} from './routes/index.ts'
 import AdministrarRolesDeUsuarioPage from './casosDeUso/AdministrarRolesDeUsuario/pages/AdministrarRolesDeUsuarioPage';
 import { Navbar } from './generalComponents/index.ts';
 
@@ -20,6 +20,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/micaja" element={<MainPageMiCaja/>}/>
         <Route path="/perfil" element={<MainPagePerfil/>}/>
         <Route path="/reservas" element={<MainPageReservas/>}/>
+        <Route path="/registrarIngresoEgresoCaja" element={<MainPageRegistrarIngresoEgresoCaja/>}/>
       </Routes>
     </BrowserRouter>
   </StrictMode>,

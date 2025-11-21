@@ -6,6 +6,7 @@ export interface Props <T = any> {
     onItemEdit?: (item: T) => void;
     onItemInfo?: (item: T) => void;
     emptyMessage?: string;
+    loadingItems?: boolean;
     showActions?: boolean;
     columnas: string[];
     idField?: string; //* Nombre del campo que actúa como ID único en los items

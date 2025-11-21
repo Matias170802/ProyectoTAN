@@ -10,3 +10,14 @@ html, body, #root {
   width: 100%;
   height: 100%;
 }
+
+#mainPageInicio {
+  padding: 30px 60px 30px 60px;
+}
+
+.titulo {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+

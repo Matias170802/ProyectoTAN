@@ -27,6 +27,8 @@ public class EmpleadoCaja  extends Base {
     private String nombreEmpleadoCaja;
     private BigDecimal balanceARS;
     private BigDecimal balanceUSD;
+    private LocalDateTime fechaHoraAltaEmpleadoCaja;
+    private LocalDateTime fechaHoraBajaEmpleadoCaja;
 
     @OneToOne
     @JoinColumn(name = "idEmpleado", nullable = false)

@@ -6,6 +6,7 @@ import {useMoneda} from '../../hooks/useMoneda'
 import {type formSchemaRegistrarCotizacionMonedaType, schemaRegistrarCotizacionMoneda} from '../../models/modelRegistrarCotizacionMoneda'
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type Resolver} from 'react-hook-form';
+import { set } from 'zod';
 
 const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title, description, showCloseButton}) => {
 
@@ -46,7 +47,7 @@ const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title
                 onClose();
             }, 3000);
         }else {
-            
+            setShowMensajeExito(false);
         }
     }
 

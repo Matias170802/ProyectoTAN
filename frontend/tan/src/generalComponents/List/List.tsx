@@ -1,8 +1,20 @@
 import './List.css'
 import {type Props} from './List.ts'
 
-const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete, onItemEdit, onItemInfo, emptyMessage, showActions = true, columnas, idField = 'id', getVisibleActions}: Props<T>) => {
+const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete, onItemEdit, onItemInfo, emptyMessage, showActions = true, columnas, idField = 'id', getVisibleActions, loadingItems}: Props<T>) => {
     
+    //* en el caso de que la lista este cargando
+    if (loadingItems) {
+        return (
+            <section className='contenedor-lista'>
+                <div className="lista-cargando">
+                    <div className="spinner"></div>
+                    Cargando items...
+                </div>
+            </section>
+        );
+    }
+
     //* en el caso de que la lista de items sea vacia
     if (items.length === 0) {
         return (
