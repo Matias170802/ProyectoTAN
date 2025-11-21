@@ -168,4 +168,4 @@ public class ExpertoABMEmpleado {
 }
 
 // ABM EMPLEADO LO REALIZA LA GERENCIA -> Un empleado con el rol de gerente.
-//Si se da de baja a un empleado: codEmpleado
+//Si se da de baja a un empleado: codEmpleado, fechaHoraBajaEmpleado, fechaUltimoCobroSalario, empleadosRoles, empleadosRoles.fechaHoraBajaEmpleadoRol
