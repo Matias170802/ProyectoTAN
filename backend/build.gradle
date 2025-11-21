@@ -53,6 +53,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// Dependencias de JWT
+//	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.13.0'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.13.0'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.13.0'
@@ -62,13 +63,11 @@ dependencies {
 
 	implementation 'org.postgresql:postgresql'
 
+	// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
+	// JUnit -> Testing
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

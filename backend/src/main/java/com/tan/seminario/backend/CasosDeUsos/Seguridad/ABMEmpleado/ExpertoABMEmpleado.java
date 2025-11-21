@@ -89,8 +89,6 @@ public class ExpertoABMEmpleado {
                 .map(Empleado::getCodEmpleado)
                 .orElse("EMPL-000");
 
-        System.out.println("Último código encontrado: " + ultimoCodigo);  // LOG TEMPORAL
-
         try {
             // Extraer el número y incrementar
             String[] partes = ultimoCodigo.split("-");
@@ -103,10 +101,7 @@ public class ExpertoABMEmpleado {
             numero++;
 
             // Formatear con ceros a la izquierda
-            String nuevoCodigo = String.format("EMPL-%03d", numero);
-            System.out.println("Nuevo código generado: " + nuevoCodigo);  // LOG TEMPORAL
-
-            return nuevoCodigo;
+            return String.format("EMPL-%03d", numero);
 
         } catch (NumberFormatException e) {
             throw new IllegalStateException("No se pudo parsear el número del código: " + ultimoCodigo, e);
@@ -162,7 +157,6 @@ public class ExpertoABMEmpleado {
     }
 
     private AltaEmpleadoResponse construirResponse(Empleado empleado, TokenResponse tokenResponse, String email, String password) {
-
         return AltaEmpleadoResponse.builder()
                 .tokenResponse(tokenResponse)
                 .nombreEmpleado(empleado.getNombreEmpleado())
