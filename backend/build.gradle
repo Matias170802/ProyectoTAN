@@ -54,7 +54,7 @@ dependencies {
 
 	implementation 'org.hibernate.orm:hibernate-core'
 
-	runtimeOnly 'org.postgresql:postgresql'
+	implementation 'org.postgresql:postgresql'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

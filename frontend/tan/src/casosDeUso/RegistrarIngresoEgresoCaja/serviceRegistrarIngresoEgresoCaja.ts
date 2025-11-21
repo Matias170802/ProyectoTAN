@@ -3,7 +3,6 @@ import type { formSchemaRegistrarIngresoEgresoCajaType } from "./models/modelReg
 
 export const registrarIngresoEgreso = async (ingresoEgresoCaja: formSchemaRegistrarIngresoEgresoCajaType ): Promise<formSchemaRegistrarIngresoEgresoCajaType> => {
     
-    //TODO: cambiar segun corresponde el endpoint
     const response = await fetch ('/api/finanzas/registrarIngresoEgresoCaja', {
         method: 'POST',
         headers: {

@@ -89,6 +89,9 @@ const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description }) 
                                 
                             </select>
 
+                            {errors.tipoTransaccion && <span className='mensajeErrorValidacion'>{errors.tipoTransaccion.message}</span>}
+                    
+
                             <label>Categoría</label>
                             <select
                             {...register("categoria")}
@@ -100,6 +103,9 @@ const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description }) 
                                     ))
                                 )}
                             </select>
+
+                            {errors.categoria && <span className='mensajeErrorValidacion'>{errors.categoria.message}</span>}
+
 
                             <label>Moneda</label>
                             <select
@@ -113,6 +119,9 @@ const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description }) 
                                 ))}
                             </select>
 
+                            {errors.moneda && <span className='mensajeErrorValidacion'>{errors.moneda.message}</span>}
+
+
                             <label>Monto</label>
                             <input
                             type='number'
@@ -120,12 +129,18 @@ const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description }) 
                             {...register("monto")}
                             ></input>
 
+                            {errors.monto && <span className='mensajeErrorValidacion'>{errors.monto.message}</span>}
+
+
                             <label>Descripcion</label>
                             <input
                             type='text'
                             placeholder='Ingrese una pequeña descripcion de la transacción'
                             {...register("descripcion")}
                             ></input>
+
+                            {errors.descripcion && <span className='mensajeErrorValidacion'>{errors.descripcion.message}</span>}
+
 
                     </section>
 

@@ -123,3 +123,11 @@ input:focus {
     line-height: 1.4 !important;
     margin-bottom: 1.5rem !important;
 }
+
+.mensajeErrorValidacion {
+
+    color: rgb(241, 44, 44);
+    padding: 5px;
+    border-radius: 8px;
+
+}
