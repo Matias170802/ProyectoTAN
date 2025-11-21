@@ -58,8 +58,8 @@ public class DataInitialazer {
         if (estadoReservaRepository.count() == 0) {
             // Crear datos iniciales para EstadoReserva
             EstadoReserva estado1 = new EstadoReserva("EST001", "Señada", null, LocalDateTime.now());
-            EstadoReserva estado2 = new EstadoReserva("EST002", "Cancelado", null, LocalDateTime.now());
-            EstadoReserva estado3 = new EstadoReserva("EST003", "Finalizado", null, LocalDateTime.now());
+            EstadoReserva estado2 = new EstadoReserva("EST002", "Cancelada", null, LocalDateTime.now());
+            EstadoReserva estado3 = new EstadoReserva("EST003", "Finalizada", null, LocalDateTime.now());
             EstadoReserva estado4 = new EstadoReserva("EST004", "Preparada", null, LocalDateTime.now());
             EstadoReserva estado5 = new EstadoReserva("EST005", "En Curso", null, LocalDateTime.now());
 
@@ -96,8 +96,8 @@ public class DataInitialazer {
 
             EstadoReserva estSenada = estadoReservaRepository.findByNombreEstadoReserva("Señada");
             EstadoReserva estPreparada = estadoReservaRepository.findByNombreEstadoReserva("Preparada");
-            EstadoReserva estFinalizada = estadoReservaRepository.findByNombreEstadoReserva("Finalizado");
-            EstadoReserva estCancelada = estadoReservaRepository.findByNombreEstadoReserva("Cancelado");
+            EstadoReserva estFinalizada = estadoReservaRepository.findByNombreEstadoReserva("Finalizada");
+            EstadoReserva estCancelada = estadoReservaRepository.findByNombreEstadoReserva("Cancelada");
 
             Reserva r1 = new Reserva("RES001", LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(7), LocalDateTime.now(), 5, 2,"Clara","261500001","clara@gmail.com", 25000.0, 10000.0, 10000.0, "Airbnb","Amable contactar por telefono", in1, estSenada);
             Reserva r2 = new Reserva("RES002", LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(15), LocalDateTime.now(), 5, 4, "Matias", "261500001", "matias@gmail.com", 35000.0, 15000.0, 15000.0, "Booking", "", in2, estSenada);

@@ -7,7 +7,8 @@ import {
     deleteReserva,
     getInmuebles,
     getMediosReserva,
-    getEstadosReserva
+    getEstadosReserva,
+    cancelarReserva
 } from '../serviceAMReservas';
 
 export const useReservas = () => {
@@ -119,6 +120,29 @@ export const useReservas = () => {
         }
     };
 
+    const cancelExistingReserva = async (codReserva: string): Promise<void> => {
+        setState(prev => ({ ...prev, loading: true, error: null }));
+
+        try {
+            await cancelarReserva(codReserva);
+            // Refrescar la lista desde backend para reflejar el nuevo estado
+            const reservasData = await getReservas();
+            setState(prev => ({
+                ...prev,
+                reservas: reservasData,
+                loading: false
+            }));
+        } catch (error) {
+            console.error('Error cancelling reservation:', error);
+            setState(prev => ({
+                ...prev,
+                loading: false,
+                error: 'Error al cancelar la reserva'
+            }));
+            throw error;
+        }
+    };
+
     const refreshReservas = async (): Promise<void> => {
         setState(prev => ({ ...prev, loading: true, error: null }));
 
@@ -182,6 +206,7 @@ export const useReservas = () => {
         // Actions
         createReserva: createNewReserva,
         updateReserva: updateExistingReserva,
+    cancelReserva: cancelExistingReserva,
         deleteReserva: deleteExistingReserva,
         refreshReservas,
         clearError,
@@ -194,4 +219,5 @@ export const useReservas = () => {
         // Reload initial data
         reloadData: loadInitialData
     };
+    
 };
