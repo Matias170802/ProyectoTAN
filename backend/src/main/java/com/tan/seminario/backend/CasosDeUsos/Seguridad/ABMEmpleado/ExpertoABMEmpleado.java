@@ -28,18 +28,24 @@ public class ExpertoABMEmpleado {
 
     @Transactional
     public AltaEmpleadoResponse altaEmpleado(AltaEmpleadoRequest request) {
+        // 1. Validar que tenga roles
         validarRequest(request);
 
+        // 2. Generar código de empleado
         String codigoEmpleado = generarCodigoEmpleado();
+
+        // 3. Validar que el DNI no exista en otro empleado
         validarDniUnico(request.getDniEmpleado());
-        List<Rol> rolesValidos = validarYObtenerRoles(request.getCodRoles());
 
+        // 4. Validar y obtener roles
+        List<Rol> rolesValidados = validarYObtenerRoles(request.getCodRoles());
+
+        // 5. Crear y guardar empleado
         Empleado empleado = crearEmpleado(request, codigoEmpleado);
-        asociarRolesAEmpleado(empleado, rolesValidos);
-
+        asociarRolesAEmpleado(empleado, rolesValidados);
         empleado = empleadoRepository.save(empleado);
 
-        // Crear usuario
+        // 6. Crear el usuario para el empleado
         RegisterRequest registerRequest = RegisterRequest.builder()
                 .email(request.getEmail())
                 .password(request.getPassword())
@@ -47,14 +53,16 @@ public class ExpertoABMEmpleado {
                 .tipoUsuario(RegisterRequest.TipoUsuario.EMPLEADO)
                 .build();
 
+        // 7. Obtener los tokens del usuario creado
         TokenResponse tokenResponse = authService.register(registerRequest);
 
+        String email = registerRequest.getEmail();
+        String password = registerRequest.getPassword();
 
-
-        //  TODO: Crear caja
+        //  8. TODO: Crear caja
 
         // TODO: Asignar tokens al response
-        return construirResponse(empleado);
+        return construirResponse(empleado, tokenResponse, email, password);
     }
 
 
@@ -135,9 +143,14 @@ public class ExpertoABMEmpleado {
         }
     }
 
-    private AltaEmpleadoResponse construirResponse(Empleado empleado) {
+    private AltaEmpleadoResponse construirResponse(Empleado empleado, TokenResponse tokenResponse, String email, String password) {
 
         return AltaEmpleadoResponse.builder()
+                .tokenResponse(tokenResponse)
+                .nombreEmpleado(empleado.getNombreEmpleado())
+                .mensaje("Empleado creado con exito!")
+                .email(email)
+                .password(password)
                 .build();
     }
 }
