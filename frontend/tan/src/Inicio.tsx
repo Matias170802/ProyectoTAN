@@ -19,6 +19,7 @@ function AppContent() {
       tipoTarea: "Check-in"
     }
   ]
+  const [verDetalles, setVerDetalles] = useState(false);
 
   return (
     <main className="min-h-screen bg-gray-100" id='mainPageInicio'>
@@ -35,12 +36,25 @@ function AppContent() {
 
           {tareas && tareas.length >0 && (
             tareas.map((tarea,index) => (
-              <div key={index} className='itemTareaAsignada'>
-                <p className='nombreTareaAsignada'>{tarea.nombreTarea}</p>
-                <p className='detalleTareaAsignada'>Fecha: {tarea.fechaTarea} - Hora: {tarea.horaTarea}</p>
-                <p className='detalleTareaAsignada'>Ubicación: {tarea.ubicacionTarea}</p>
-                <p className='detalleTareaAsignada'>Tipo de Tarea: {tarea.tipoTarea}</p>
-              </div>
+              <section key={index} className='itemTareaAsignada'>
+                <div id='contenedorDetallesTareaAsignada'>
+                  <p className='nombreTareaAsignada'>{tarea.nombreTarea}</p>
+                  <p className='detalleTareaAsignada'>Fecha: {tarea.fechaTarea} - Hora: {tarea.horaTarea}</p>
+                  <p className='detalleTareaAsignada'>Ubicación: {tarea.ubicacionTarea}</p>
+                  <p className='detalleTareaAsignada'>Tipo de Tarea: {tarea.tipoTarea}</p>
+                </div>
+
+                <div id='contenedorBotonesTareaAsignada'>
+                  <Button
+                  label='Detalles'
+                  onClick={()=> setVerDetalles(!verDetalles)}
+                  />
+
+                  <Button
+                  label='Finalizar Tarea'
+                  />
+                </div>
+              </section>
             ))
           )}
         </div>
