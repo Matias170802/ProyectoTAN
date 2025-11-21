@@ -89,12 +89,30 @@ public class ExpertoABMEmpleado {
                 .map(Empleado::getCodEmpleado)
                 .orElse("EMPL-000");
 
-        // Extraer el número y incrementar
-        int numero = Integer.parseInt(ultimoCodigo.split("-")[1]);
-        numero++;
+        System.out.println("Último código encontrado: " + ultimoCodigo);  // LOG TEMPORAL
 
-        // Formatear con ceros a la izquierda
-        return String.format("EMPL-%03d", numero);
+        try {
+            // Extraer el número y incrementar
+            String[] partes = ultimoCodigo.split("-");
+
+            if (partes.length != 2) {
+                throw new IllegalStateException("Formato de código inválido: " + ultimoCodigo);
+            }
+
+            int numero = Integer.parseInt(partes[1]);
+            numero++;
+
+            // Formatear con ceros a la izquierda
+            String nuevoCodigo = String.format("EMPL-%03d", numero);
+            System.out.println("Nuevo código generado: " + nuevoCodigo);  // LOG TEMPORAL
+
+            return nuevoCodigo;
+
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("No se pudo parsear el número del código: " + ultimoCodigo, e);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new IllegalStateException("Código de empleado con formato incorrecto: " + ultimoCodigo, e);
+        }
     }
 
     private void validarDniUnico(String dni) {

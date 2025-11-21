@@ -108,7 +108,7 @@ public class DataInitialazer {
             System.out.println("Reservas e inmuebles de prueba insertados correctamente.");
         }
         // ========================
-        // FIN ZONA DE CREACION DE INMUEBLES Y RESERVAS DE PRUEBA
+        // FIN ZONA DE CREACION DE INMUEBLES Y RESERVAS DE PRU  EBA
         // ========================
 
         //inicializacion de datos tipo movimiento
