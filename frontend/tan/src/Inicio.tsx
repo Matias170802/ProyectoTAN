@@ -8,12 +8,23 @@ import { useState } from 'react'
 
 //*Componente principal de la aplicacion
 function AppContent() {
-  
-  const [openModal, setOpenModal] = useState(false);
+  //TODO: traer las tareas con el useStateInicio o al AppContext
+  const [] = useState();
+
   return (
-    <main className="min-h-screen bg-gray-100">
+    <main className="min-h-screen bg-gray-100" id='mainPageInicio'>
       
-      <Button label="Abrir modal" onClick={() => setOpenModal(true)} /> 
+      <p className='titulo'>Panel de Control</p>
+
+      <section id='contenedorPrincipalTareasAsignadas'>
+
+        <p>Tareas Asignadas</p>
+
+        <div id='contenedorSecundarioTareasAsignadas'>
+          //TODO: logica de que por cada tarea crear un nuevo item en la lista de tareas
+        </div>
+      </section>
+      
       
     </main>
   )

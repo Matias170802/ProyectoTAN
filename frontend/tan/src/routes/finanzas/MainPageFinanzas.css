@@ -8,7 +8,7 @@
     padding: 30px 60px 30px 60px;
 }
 
-#mainPageFinanzasContent p {
+.titulo {
     font-size: 30px;
     font-weight: 600;
     margin-bottom: 20px;

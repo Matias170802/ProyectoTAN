@@ -25,7 +25,7 @@ const MainPageFinanzas: React.FC = () => {
         <div className="App">
             
             <div id='mainPageFinanzasContent'>
-                <p>Finanzas</p>
+                <p className='titulo'>Finanzas</p>
                 
                 <div id='modalFinanzas'>
                     <div id='topBarModalFinanzas'>
