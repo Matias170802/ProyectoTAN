@@ -7,6 +7,8 @@ export interface Props <T = any> {
     onItemInfo?: (item: T) => void;
     emptyMessage?: string;
     showActions?: boolean;
+    /** Position of the actions column. 'right' (default) or 'left' */
+    actionsPosition?: 'left' | 'right';
     columnas: string[];
     idField?: string; //* Nombre del campo que actúa como ID único en los items
     getVisibleActions?: (item: T) => ('info' | 'edit' | 'delete')[];

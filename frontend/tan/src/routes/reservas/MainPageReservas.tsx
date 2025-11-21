@@ -137,6 +137,7 @@ const MainPageReservas: React.FC = () => {
                         items={reservasFiltradas}
                         columnas={["propiedad", "checkin", "checkout", "personas", "huesped", "email", "dias", "descripcion", "total", "sena", "estado", "origen"]}
                         showActions={true}
+                        actionsPosition="left"
                         idField="codReserva"
                         onItemEdit={(item) => {
                             // item es el objeto adaptado; buscamos la reserva original por codReserva

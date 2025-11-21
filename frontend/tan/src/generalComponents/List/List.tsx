@@ -1,7 +1,7 @@
 import './List.css'
 import {type Props} from './List.ts'
 
-const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete, onItemEdit, onItemInfo, emptyMessage, showActions = true, columnas, idField = 'id', getVisibleActions}: Props<T>) => {
+const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete, onItemEdit, onItemInfo, emptyMessage, showActions = true, columnas, idField = 'id', getVisibleActions, actionsPosition = 'right'}: Props<T>) => {
     
     //* en el caso de que la lista de items sea vacia
     if (items.length === 0) {
@@ -98,15 +98,18 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
             {/*encabezado tabla*/}
             <thead>
                 <tr className="tabla-header">
+                    {actionsPosition === 'left' && showActions && (
+                        <th className="header-cell actions-header">Acciones</th>
+                    )}
+
                     {columnas.map((columna) => (
                         <th key={columna} className="header-cell">
                             {formatoColumna(columna)}
                         </th>
                     ))}
-                    {showActions && (
-                        <th className="header-cell actions-header">
-                            Acciones
-                        </th>
+
+                    {actionsPosition === 'right' && showActions && (
+                        <th className="header-cell actions-header">Acciones</th>
                     )}
                 </tr>
             </thead>
@@ -119,6 +122,8 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                         className='tabla-row'
                         onClick={() => onItemClick?.(item)}
                     >
+                        {actionsPosition === 'left' && renderActionButtons(item)}
+
                         {/* celdas de datos*/}
                         {columnas.map((columna) => (
                             <td key={columna} className="tabla-cell">
@@ -126,7 +131,7 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                             </td>
                         ))}
 
-                        {renderActionButtons(item)}
+                        {actionsPosition === 'right' && renderActionButtons(item)}
                     </tr>
                 ))}
             </tbody>
