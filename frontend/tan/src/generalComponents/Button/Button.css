@@ -7,7 +7,7 @@ button {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-width: 140px;
+    gap: 0.5rem;
     
 }
 
