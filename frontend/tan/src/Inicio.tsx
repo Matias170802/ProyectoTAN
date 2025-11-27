@@ -1,8 +1,10 @@
 "use client"
 import './Inicio.css'
-import {Button} from './generalComponents/index'
+import {Button, Modal} from './generalComponents/index'
 import { AppProvider } from './context/AppContext'
 import { useState } from 'react'
+import { GoInfo } from "react-icons/go";
+import { FaRegCheckCircle } from "react-icons/fa";
 
 
 
@@ -17,9 +19,16 @@ function AppContent() {
       horaTarea: "14:00", 
       ubicacionTarea: "Apartamento Centro, Calle Principal 123",
       tipoTarea: "Check-in"
+    },
+    {
+      nombreTarea: "Check-out: Casa de Playa",
+      fechaTarea: "16/4/2025",
+      horaTarea: "10:00", 
+      ubicacionTarea: "Casa de Playa, Av. Costanera 456",
+      tipoTarea: "Check-out"
     }
   ]
-  const [verDetalles, setVerDetalles] = useState(false);
+  const [verDetalles, setVerDetalles] = useState<number | null>(null);
 
   return (
     <main className="min-h-screen bg-gray-100" id='mainPageInicio'>
@@ -37,23 +46,95 @@ function AppContent() {
           {tareas && tareas.length >0 && (
             tareas.map((tarea,index) => (
               <section key={index} className='itemTareaAsignada'>
+
+                <span className={`etiquetaTipoTarea ${
+                  tarea.tipoTarea.toLowerCase() === 'check-in' ? 'etiqueta-checkin' : 
+                  tarea.tipoTarea.toLowerCase() === 'check-out' ? 'etiqueta-checkout' : ''
+                }`}>
+                  {tarea.tipoTarea}
+                </span>
+
                 <div id='contenedorDetallesTareaAsignada'>
-                  <p className='nombreTareaAsignada'>{tarea.nombreTarea}</p>
+                  <p id='nombreTareaAsignada'>{tarea.nombreTarea}</p>
                   <p className='detalleTareaAsignada'>Fecha: {tarea.fechaTarea} - Hora: {tarea.horaTarea}</p>
                   <p className='detalleTareaAsignada'>Ubicación: {tarea.ubicacionTarea}</p>
-                  <p className='detalleTareaAsignada'>Tipo de Tarea: {tarea.tipoTarea}</p>
                 </div>
 
                 <div id='contenedorBotonesTareaAsignada'>
                   <Button
                   label='Detalles'
-                  onClick={()=> setVerDetalles(!verDetalles)}
+                  onClick={()=> setVerDetalles(verDetalles === index ? null : index)}
+                  icon={<GoInfo />}
+                  id='botonDetallesTarea'
                   />
 
                   <Button
                   label='Finalizar Tarea'
+                  icon={<FaRegCheckCircle />}
+                  id='botonFinalizaTarea'
                   />
                 </div>
+
+                {verDetalles===index && (
+                  <Modal
+                  isOpen={verDetalles === index ? true : false}
+                  title={tarea.nombreTarea}
+                  >
+                    <div className="contenido-modal-detalles">
+
+                      {/* Ubicación */}
+                      <div className="detalle-item">
+                        <div className="detalle-icono-titulo">
+                          <span className="icono-ubicacion">📍</span>
+                          <span className="titulo-detalle">Ubicación</span>
+                        </div>
+                        <p className="valor-detalle">{tarea.ubicacionTarea}</p>
+                      </div>
+
+                      {/* Fecha */}
+                      <div className="detalle-item">
+                        <div className="detalle-icono-titulo">
+                          <span className="icono-fecha">📅</span>
+                          <span className="titulo-detalle">Fecha</span>
+                        </div>
+                        <p className="valor-detalle">{tarea.fechaTarea}</p>
+                      </div>
+
+                      {/* Hora */}
+                      <div className="detalle-item">
+                        <div className="detalle-icono-titulo">
+                          <span className="icono-hora">🕐</span>
+                          <span className="titulo-detalle">Hora</span>
+                        </div>
+                        <p className="valor-detalle">{tarea.horaTarea}</p>
+                      </div>
+
+                      {/* Descripción */}
+                      <div className="detalle-item">
+                        <div className="detalle-icono-titulo">
+                          <span className="icono-descripcion">📝</span>
+                          <span className="titulo-detalle">Descripción</span>
+                        </div>
+                        <p className="valor-detalle">
+                          {tarea.tipoTarea === 'Check-in' 
+                            ? `Recibir a Juan Pérez y familia (2 adultos, 1 niño)` 
+                            : `Despedir a los huéspedes y revisar el estado de la propiedad`
+                          }
+                        </p>
+      </div>
+                    </div>
+
+                    <div id='contenedorBotonCerrarDetalles'>
+                      <Button
+                      label='Cerrar'
+                      onClick={() => {setVerDetalles(null)}}
+                      id='botonCerrarDetalles'
+                      />
+                    </div>
+
+                  </Modal>
+              
+                )}
               </section>
             ))
           )}
