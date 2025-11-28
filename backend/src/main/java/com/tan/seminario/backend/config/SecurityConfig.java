@@ -4,6 +4,7 @@ import com.tan.seminario.backend.Entity.Token;
 import com.tan.seminario.backend.Repository.TokenRepository;
 import com.tan.seminario.backend.config.security.RoleAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -32,10 +34,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationProvider authenticationProvider) throws Exception {
+        log.info("=================================================");
+        log.info("SEGURIDAD HABILITADA - PERFIL: prod");
+        log.info("JWT Y ROLES ACTIVOS");
+        log.info("=================================================");
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers("/auth/**") // Cualquiera pueda acceder a los endpoints de autenticacion
+                        req.requestMatchers("/auth/**") // Cualquiera puede acceder a los endpoints de autenticacion
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()

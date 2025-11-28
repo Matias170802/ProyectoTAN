@@ -23,7 +23,7 @@ public class AppConfig {
     public UserDetailsService userDetailsService() {
         return email -> {
             final Usuario usuario = usuarioRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
             return org.springframework.security.core.userdetails.User.builder()
                     .username(usuario.getEmail())
                     .password(usuario.getPassword())

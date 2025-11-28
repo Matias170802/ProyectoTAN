@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.method.HandlerMethod;
@@ -56,7 +58,7 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
             RequireRoles methodAnnotation = handlerMethod.getMethodAnnotation(RequireRoles.class);
             RequireRoles classAnnotation = handlerMethod.getBeanType().getAnnotation(RequireRoles.class);
 
-            // Si no hay anotación, permitir acceso
+            // Si no hay anotación de roles, permitir acceso (solo requiere autenticación)
             if (methodAnnotation == null && classAnnotation == null) {
                 filterChain.doFilter(request, response);
                 return;
@@ -65,10 +67,19 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
             // Usar la anotación del método si existe, sino la de la clase
             RequireRoles annotation = methodAnnotation != null ? methodAnnotation : classAnnotation;
 
+            // Verificar que el usuario esté autenticado
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                log.warn("Intento de acceso sin autenticación a endpoint con roles requeridos");
+                sendUnauthorizedError(response, "Autenticación requerida");
+                return;
+            }
+
             // Extraer el token JWT del header
             final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                sendUnauthorizedError(response, "Token no proporcionado");
+                log.warn("Token no proporcionado para endpoint con roles requeridos");
+                sendUnauthorizedError(response, "Token requerido");
                 return;
             }
 
@@ -78,27 +89,33 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
             List<String> userRoles = jwtService.extractRoles(jwtToken);
             List<String> requiredRoles = Arrays.asList(annotation.value());
 
-            log.debug("Usuario tiene roles: {}", userRoles);
-            log.debug("Endpoint requiere roles: {}", requiredRoles);
+            log.debug("Validando permisos - Usuario: {} | Roles del usuario: {} | Roles requeridos: {}",
+                    authentication.getName(), userRoles, requiredRoles);
 
             // Validar permisos
             boolean hasPermission;
             if (annotation.requireAll()) {
                 // Requiere TODOS los roles
                 hasPermission = userRoles.containsAll(requiredRoles);
+                if (!hasPermission) {
+                    log.warn("Usuario {} no tiene TODOS los roles requeridos. Tiene: {}, Necesita: {}",
+                            authentication.getName(), userRoles, requiredRoles);
+                }
             } else {
                 // Requiere AL MENOS UNO de los roles
                 hasPermission = requiredRoles.stream().anyMatch(userRoles::contains);
+                if (!hasPermission) {
+                    log.warn("Usuario {} no tiene NINGUNO de los roles requeridos. Tiene: {}, Necesita al menos uno de: {}",
+                            authentication.getName(), userRoles, requiredRoles);
+                }
             }
 
             if (!hasPermission) {
-                log.warn("Usuario sin permisos suficientes. Roles del usuario: {}, Roles requeridos: {}",
-                        userRoles, requiredRoles);
-                sendForbiddenError(response, "No tiene permisos para acceder a este recurso");
+                sendForbiddenError(response, "No tiene los permisos necesarios para acceder a este recurso", requiredRoles);
                 return;
             }
 
-            // Usuario tiene los permisos necesarios
+            log.debug("Acceso autorizado para usuario: {}", authentication.getName());
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
@@ -108,20 +125,23 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
     }
 
     private void sendUnauthorizedError(HttpServletResponse response, String message) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(String.format(
-                "{\"error\": \"Unauthorized\", \"message\": \"%s\"}", message
+                "{\"error\": \"Unauthorized\", \"message\": \"%s\", \"statusCode\": 401}",
+                message
         ));
     }
 
-    private void sendForbiddenError(HttpServletResponse response, String message) throws IOException {
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+    private void sendForbiddenError(HttpServletResponse response, String message, List<String> requiredRoles) throws IOException {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(String.format(
-                "{\"error\": \"Forbidden\", \"message\": \"%s\"}", message
+                "{\"error\": \"Forbidden\", \"message\": \"%s\", \"requiredRoles\": %s, \"statusCode\": 403}",
+                message,
+                requiredRoles.toString()
         ));
     }
 }
