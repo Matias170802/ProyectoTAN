@@ -1,12 +1,11 @@
 import React from 'react';
 import {Modal, Button} from '../../../../generalComponents/index';
 import './ModalRegistrarCotizacionMoneda.css'
-import {type Props} from './ModalRegistrarCotizacionMonedaTypes'
+import {type Props} from '../../../../generalComponents/Modal/ModalTypes'
 import {useMoneda} from '../../hooks/useMoneda'
 import {type formSchemaRegistrarCotizacionMonedaType, schemaRegistrarCotizacionMoneda} from '../../models/modelRegistrarCotizacionMoneda'
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type Resolver} from 'react-hook-form';
-import { set } from 'zod';
 
 const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title, description, showCloseButton}) => {
 
@@ -17,7 +16,7 @@ const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title
     const { handleSubmit, control, formState: { errors }, reset, register } = useForm<formSchemaRegistrarCotizacionMonedaType>({
         resolver: zodResolver(schemaRegistrarCotizacionMoneda) as Resolver<formSchemaRegistrarCotizacionMonedaType>,
         defaultValues: {
-            nombreMoneda: "Selecciona una moneda"
+            nombreMoneda: "Selecciona una moneda",
         },
         mode: 'onBlur'
     });
@@ -44,7 +43,10 @@ const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title
             reset();
             setTimeout(() => {
                 setShowMensajeExito(false);
-                onClose();
+                if (onClose) {
+                    onClose();
+                }
+                
             }, 3000);
         }else {
             setShowMensajeExito(false);

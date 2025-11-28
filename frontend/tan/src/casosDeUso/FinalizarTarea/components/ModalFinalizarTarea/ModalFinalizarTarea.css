@@ -1,0 +1,86 @@
+#contenedorContenidoModal {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+#seccionDetallesTarea {
+    margin-bottom: 1rem;
+    padding-bottom: 1.5rem;
+}
+
+#tituloDetallesTarea {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.detallesTareaTexto {
+    margin: 0.8rem 0;
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+#contenedorBotones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+/* Botón Agregar Ingreso */
+#botonAgregarIngreso {
+    background-color: #fff !important;
+    color: #333 !important;
+    border: 2px solid #ddd !important;
+    padding: 0.8rem 1.2rem !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+}
+
+#botonAgregarIngreso:hover {
+    background-color: #f8f9fa !important;
+    border-color: #bbb !important;
+}
+
+/* Botón Finalizar Tarea */
+#botonFinalizarTarea {
+    background-color: #333 !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.8rem 1.2rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+}
+
+#botonFinalizarTarea:hover {
+    background-color: #555 !important;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    #contenedorBotones {
+        gap: 0.6rem;
+    }
+    
+    #botonAgregarIngreso,
+    #botonFinalizarTarea {
+        padding: 0.7rem 1rem !important;
+        font-size: 0.9rem !important;
+    }
+}

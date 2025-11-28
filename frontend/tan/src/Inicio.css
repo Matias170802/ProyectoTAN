@@ -111,18 +111,6 @@ html, body, #root {
   font-weight: 600;
 }
 
-#contenedorBotonCerrarDetalles {
-
-  display: flex;
-  justify-content: right;
-
-}
-
-#botonCerrarDetalles {
-  color: white;
-  background-color:black;
-}
-
 .contenido-modal-detalles {
   padding: 0;
   margin: 0;

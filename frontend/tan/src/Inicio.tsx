@@ -5,6 +5,7 @@ import { AppProvider } from './context/AppContext'
 import { useState } from 'react'
 import { GoInfo } from "react-icons/go";
 import { FaRegCheckCircle } from "react-icons/fa";
+import { ModalFinalizarTarea } from './casosDeUso/FinalizarTarea/components/ModalFinalizarTarea/ModalFinalizarTarea';
 
 
 
@@ -29,6 +30,7 @@ function AppContent() {
     }
   ]
   const [verDetalles, setVerDetalles] = useState<number | null>(null);
+  const [finalizarTareaSeleccionada, setFinalizarTareaSeleccionada] = useState<number | null>(null);
 
   return (
     <main className="min-h-screen bg-gray-100" id='mainPageInicio'>
@@ -72,6 +74,7 @@ function AppContent() {
                   label='Finalizar Tarea'
                   icon={<FaRegCheckCircle />}
                   id='botonFinalizaTarea'
+                  onClick={()=>{setFinalizarTareaSeleccionada(index)}}
                   />
                 </div>
 
@@ -79,6 +82,8 @@ function AppContent() {
                   <Modal
                   isOpen={verDetalles === index ? true : false}
                   title={tarea.nombreTarea}
+                  showCloseButton={true}
+                  onClose={() => {setVerDetalles(null)}}
                   >
                     <div className="contenido-modal-detalles">
 
@@ -121,19 +126,21 @@ function AppContent() {
                             : `Despedir a los huéspedes y revisar el estado de la propiedad`
                           }
                         </p>
-      </div>
-                    </div>
-
-                    <div id='contenedorBotonCerrarDetalles'>
-                      <Button
-                      label='Cerrar'
-                      onClick={() => {setVerDetalles(null)}}
-                      id='botonCerrarDetalles'
-                      />
+                      </div>
                     </div>
 
                   </Modal>
               
+                )}
+
+                {finalizarTareaSeleccionada === index && (
+                  <ModalFinalizarTarea
+                  isOpen={finalizarTareaSeleccionada === index ? true : false}
+                  onClose={() => setFinalizarTareaSeleccionada(null)}
+                  title={"Finalizar tarea: " + tarea.nombreTarea}
+                  tarea={tarea}
+                  showCloseButton={true}
+                  />
                 )}
               </section>
             ))
