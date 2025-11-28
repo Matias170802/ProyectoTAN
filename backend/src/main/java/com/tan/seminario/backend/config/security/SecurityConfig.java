@@ -1,4 +1,4 @@
-package com.tan.seminario.backend.config;
+package com.tan.seminario.backend.config.security;
 
 import com.tan.seminario.backend.Entity.Token;
 import com.tan.seminario.backend.Repository.TokenRepository;
@@ -25,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final RoleAuthorizationFilter roleAuthorizationFilter;
     private final AuthenticationProvider authenticationProvider;
     private final TokenRepository tokenRepository;
 
@@ -41,6 +42,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(roleAuthorizationFilter, JwtAuthFilter.class) // Agregar filtro de roles después del JWT
                 .logout(logout ->
                         logout.logoutUrl("auth/logout")
                                 .addLogoutHandler((request, response, authentication) -> {
@@ -51,7 +53,7 @@ public class SecurityConfig {
                                     SecurityContextHolder.clearContext();
                                 })
                 )
-                ;
+        ;
         return http.build();
     }
 
@@ -67,5 +69,3 @@ public class SecurityConfig {
         tokenRepository.save(foundToken);
     }
 }
-
-

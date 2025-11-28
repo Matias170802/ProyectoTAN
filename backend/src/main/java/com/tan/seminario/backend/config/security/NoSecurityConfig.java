@@ -1,4 +1,4 @@
-package com.tan.seminario.backend.config;
+package com.tan.seminario.backend.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

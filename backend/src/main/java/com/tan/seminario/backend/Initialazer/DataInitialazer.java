@@ -1,6 +1,9 @@
 package com.tan.seminario.backend.Initialazer;
 //clase que se encarga de inicializar los datos que se encuentran en resourses cuando inicia la app y ha cambiado algo
 
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpleado.AltaEmpleadoRequest;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpleado.AltaEmpleadoResponse;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.ExpertoABMEmpleado;
 import com.tan.seminario.backend.Entity.*;
 import com.tan.seminario.backend.Repository.*;
 import jakarta.annotation.PostConstruct;
@@ -23,9 +26,10 @@ public class DataInitialazer {
     private final RolRepository rolRepository;
     private final EmpleadoRepository empleadoRepository;
     private final EmpleadoRolRepository empleadoRolRepository;
+    private final ExpertoABMEmpleado expertoABMEmpleado;
 
     // Constructor correcto para la inyección de dependencia
-    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository, EmpleadoRepository empleadoRepository, EmpleadoRolRepository empleadoRolRepository) {
+    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository, EmpleadoRepository empleadoRepository, EmpleadoRolRepository empleadoRolRepository, ExpertoABMEmpleado expertoABMEmpleado) {
         this.estadoReservaRepository = estadoReservaRepository;
         this.tipoMovimientoRepository = tipoMovimientoRepository;
         this.tipoTareaRepository = tipoTareaRepository;
@@ -35,6 +39,7 @@ public class DataInitialazer {
         this.rolRepository = rolRepository;
         this.empleadoRepository = empleadoRepository;
         this.empleadoRolRepository = empleadoRolRepository;
+        this.expertoABMEmpleado = expertoABMEmpleado;
     }
 
     // ========================
@@ -206,5 +211,24 @@ public class DataInitialazer {
             empleadoRepository.saveAll(Arrays.asList(empleado1,empleado2,empleado3,empleado4,empleado5));
             System.out.println("Datos iniciales de Empleado insertados correctamente.");
         }
+
+        if (empleadoRepository.findByDniEmpleado("44564456").isEmpty()) {
+            // Empleado Maestro
+            AltaEmpleadoRequest empleadoRequest = AltaEmpleadoRequest.builder()
+                    .dniEmpleado("44564456")
+                    .nombreEmpleado("Mauricio")
+                    .nroTelefonoEmpleado("2615199115")
+                    .salarioEmpleado(200L)
+                    .codRoles(Arrays.asList("ROL001", "ROL002", "ROL003", "ROL004", "ROL005"))
+                    .email("mauricio@gmail.com")
+                    .password("Passw0rd!")
+                    .build();
+
+            AltaEmpleadoResponse empleadoMaestro = expertoABMEmpleado.altaEmpleado(empleadoRequest);
+        } else {
+            System.out.println("Empleado maestro ya existente!");
+        }
+
+
     }
 }

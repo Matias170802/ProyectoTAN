@@ -1,11 +1,12 @@
 package com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpleado;
 
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-
+@Builder
 @Setter
 @Getter
 public class AltaEmpleadoRequest {

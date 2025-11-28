@@ -1,5 +1,7 @@
 package com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios;
 
+import com.tan.seminario.backend.Entity.Empleado;
+import com.tan.seminario.backend.Entity.EmpleadoRol;
 import com.tan.seminario.backend.Entity.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -11,7 +13,9 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -37,6 +41,10 @@ public class JwtService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("name", user.getName());
 
+        // Extraer los roles del usuario
+        List<String> roles = extractUserRoles(user);
+        claims.put("roles", roles);
+
         return Jwts.builder()
                 .setId(user.getId().toString())
                 .setClaims(claims)
@@ -45,6 +53,24 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, getSignInKey())
                 .compact();
+    }
+
+    /**
+     * Extrae los roles activos del usuario
+     */
+    private List<String> extractUserRoles(Usuario user) {
+        if (user.getEmpleado() != null) {
+            Empleado empleado = user.getEmpleado();
+            return empleado.getEmpleadosRoles().stream()
+                    .filter(er -> er.getFechaHoraBajaEmpleadoRol() == null)
+                    .map(EmpleadoRol::getRol)
+                    .filter(rol -> rol.getFechaHoraBajaRol() == null)
+                    .map(rol -> rol.getCodRol())
+                    .distinct()
+                    .collect(Collectors.toList());
+        }
+        // Si es cliente, puede tener roles básicos
+        return List.of(); // O definir roles por defecto para clientes
     }
 
     private SecretKey getSignInKey() {
@@ -61,13 +87,30 @@ public class JwtService {
         return jwtToken.getSubject();
     }
 
+    /**
+     * Extrae los roles del token JWT
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> extractRoles(final String token) {
+        final Claims claims = Jwts.parser()
+                .verifyWith(getSignInKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        Object rolesObj = claims.get("roles");
+        if (rolesObj instanceof List) {
+            return (List<String>) rolesObj;
+        }
+        return List.of();
+    }
+
     public boolean isTokenValid(final String refreshToken, final Usuario user) {
         final String username = extractUsername(refreshToken);
         return (username.equals(user.getEmail()) && !isTokenExpired(refreshToken));
     }
 
     private boolean isTokenExpired(final String token) {
-        // Comparo las fechas para verificar si la sesion es valida
         return extractExpiration(token).before(new Date());
     }
 
