@@ -1,7 +1,8 @@
-package com.tan.seminario.backend.config.security;
+package com.tan.seminario.backend.config;
 
 import com.tan.seminario.backend.Entity.Token;
 import com.tan.seminario.backend.Repository.TokenRepository;
+import com.tan.seminario.backend.config.security.RoleAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

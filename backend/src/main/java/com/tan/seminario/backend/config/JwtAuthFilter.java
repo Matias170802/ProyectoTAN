@@ -1,4 +1,4 @@
-package com.tan.seminario.backend.config.security;
+package com.tan.seminario.backend.config;
 
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.JwtService;
 import com.tan.seminario.backend.Entity.Token;

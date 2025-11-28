@@ -12,12 +12,14 @@ import com.tan.seminario.backend.Repository.EmpleadoRepository;
 import com.tan.seminario.backend.Repository.RolRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ExpertoABMEmpleado {
@@ -28,11 +30,14 @@ public class ExpertoABMEmpleado {
 
     @Transactional
     public AltaEmpleadoResponse altaEmpleado(AltaEmpleadoRequest request) {
+        log.info("Iniciando alta de empleado: {}", request.getNombreEmpleado());
+
         // 1. Validar que tenga roles
         validarRequest(request);
 
         // 2. Generar código de empleado
         String codigoEmpleado = generarCodigoEmpleado();
+        log.info("Código generado: {}", codigoEmpleado);
 
         // 3. Validar que el DNI no exista en otro empleado
         validarDniUnico(request.getDniEmpleado());
@@ -44,6 +49,7 @@ public class ExpertoABMEmpleado {
         Empleado empleado = crearEmpleado(request, codigoEmpleado);
         asociarRolesAEmpleado(empleado, rolesValidados);
         empleado = empleadoRepository.save(empleado);
+        log.info("Empleado guardado con ID: {}", empleado.getId());
 
         // 6. Crear el usuario para el empleado
         RegisterRequest registerRequest = RegisterRequest.builder()
@@ -55,24 +61,25 @@ public class ExpertoABMEmpleado {
 
         // 7. Obtener los tokens del usuario creado
         TokenResponse tokenResponse = authService.register(registerRequest);
+        log.info("Usuario creado y tokens generados");
 
         String email = registerRequest.getEmail();
         String password = registerRequest.getPassword();
 
         //  8. TODO: Crear caja
 
-        // TODO: Asignar tokens al response
-        return construirResponse(empleado, tokenResponse, email, password);
+        // 9. Construir y retornar response
+        AltaEmpleadoResponse response = construirResponse(empleado, tokenResponse, email, password);
+        log.info("Respuesta construida exitosamente");
+
+        return response;
     }
-
-
 
     // BAJA EMPLEADO
 
     // MODIFICAR EMPLEADO
 
     // LISTAR EMPLEADOS
-
 
     // -----------------------------------
 
@@ -166,6 +173,3 @@ public class ExpertoABMEmpleado {
                 .build();
     }
 }
-
-// ABM EMPLEADO LO REALIZA LA GERENCIA -> Un empleado con el rol de gerente.
-//Si se da de baja a un empleado: codEmpleado, fechaHoraBajaEmpleado, fechaUltimoCobroSalario, empleadosRoles, empleadosRoles.fechaHoraBajaEmpleadoRol
