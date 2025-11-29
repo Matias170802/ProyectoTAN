@@ -1,0 +1,272 @@
+#pageAgregarIEFinalizarTarea {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    z-index: 9999;
+    overflow-y: auto;
+}
+
+#headerAgregarIE {
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: white;
+    position: sticky;
+    top: 0;
+}
+
+#mainPageAgregarIEFinalizarTarea {
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    #mainPageAgregarIEFinalizarTarea {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+}
+
+#contenedorDetallesTarea {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+#contenedorDetallesTarea h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 0.5rem 0;
+}
+
+#descripcionTituloDetallesTarea {
+    color: #666;
+    font-size: 0.95rem;
+    margin: 0 0 1.5rem 0;
+    font-weight: 400;
+}
+
+/* Estilos para el contenido de la tarea */
+#contenedorContenidoTarea {
+    margin-top: 1rem;
+}
+
+#contenedorContenidoTarea p {
+    margin: 0.8rem 0;
+    color: #333;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+#contenedorContenidoTarea p strong {
+    font-weight: 600;
+}
+
+/* Estilos para transacciones registradas */
+#contenedorNuevosIEAgregados {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+#contenedorNuevosIEAgregados h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 0.5rem 0;
+}
+
+#contenedorNuevosIEAgregados > p {
+    color: #666;
+    font-size: 0.95rem;
+    margin: 0 0 1.5rem 0;
+    font-weight: 400;
+}
+
+/* Estilos para los items de transacciones */
+.transaccion-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    border: 1px solid #f0f0f0;
+}
+
+.transaccion-item:last-child {
+    margin-bottom: 0;
+}
+
+.tipo-monto {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+.categoria {
+    color: #666;
+    font-size: 0.9rem;
+    background-color: #e9ecef;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+}
+
+/* Mensaje cuando no hay transacciones */
+.sin-transacciones {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #ddd;
+}
+
+/* Ajuste del grid para mejor distribución */
+#mainPageAgregarIEFinalizarTarea {
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* El contenedor de detalles ocupa la primera columna completa */
+#contenedorDetallesTarea {
+    grid-column: 1;
+    grid-row: 1 / 3; /* Ocupa ambas filas */
+}
+
+/* El formulario va en la segunda columna, primera fila */
+#contenedroFormRegistrarIE {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+/* Las transacciones van en la segunda columna, pero debajo en móvil */
+#contenedorNuevosIEAgregados {
+    grid-column: 1;
+    grid-row: 3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #mainPageAgregarIEFinalizarTarea {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        padding: 1rem;
+    }
+    
+    #contenedorDetallesTarea {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    
+    #contenedroFormRegistrarIE {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    
+    #contenedorNuevosIEAgregados {
+        grid-column: 1;
+        grid-row: 3;
+    }
+}
+
+/* Estilos para la lista de transacciones */
+.lista-transacciones {
+    margin-top: 1rem;
+}
+
+.transaccion-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    border: 1px solid #f0f0f0;
+}
+
+.transaccion-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.tipo-monto {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+.categoria {
+    color: #666;
+    font-size: 0.9rem;
+    background-color: #e9ecef;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    width: fit-content;
+}
+
+.btn-eliminar {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-eliminar:hover {
+    background-color: #c82333;
+}
+
+.btn-limpiar-todo {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.btn-limpiar-todo:hover {
+    background-color: #5a6268;
+}
+
+.sin-transacciones {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #ddd;
+}

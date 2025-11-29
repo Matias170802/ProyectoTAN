@@ -7,6 +7,7 @@ export interface PropsFinalizarTarea extends Omit<Props, 'children'> {
         horaTarea: string;
         ubicacionTarea: string;
         tipoTarea: string;
+        descripcionTarea?: string;
     };
     children?: React.ReactNode;
 }
