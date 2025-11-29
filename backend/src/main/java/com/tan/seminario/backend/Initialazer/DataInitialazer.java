@@ -228,7 +228,5 @@ public class DataInitialazer {
         } else {
             System.out.println("Empleado maestro ya existente!");
         }
-
-
     }
 }

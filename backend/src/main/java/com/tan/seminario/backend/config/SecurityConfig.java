@@ -42,15 +42,21 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers("/auth/**") // Cualquiera puede acceder a los endpoints de autenticacion
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
+                        req
+                                // Endpoints de autenticación (públicos)
+                                .requestMatchers("/auth/**").permitAll()
+
+                                // Endpoints de recuperación de credenciales (públicos)
+                                .requestMatchers("/api/credenciales/recuperar-password/**").permitAll()
+                                .requestMatchers("/api/credenciales/recuperar-email").permitAll()
+
+                                // Todos los demás endpoints requieren autenticación
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(roleAuthorizationFilter, JwtAuthFilter.class) // Agregar filtro de roles después del JWT
+                .addFilterAfter(roleAuthorizationFilter, JwtAuthFilter.class)
                 .logout(logout ->
                         logout.logoutUrl("auth/logout")
                                 .addLogoutHandler((request, response, authentication) -> {
