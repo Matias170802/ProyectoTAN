@@ -45,15 +45,12 @@ public class AuthService {
         // 1. Validar y normalizar email
         String email = validateAndNormalizeEmail(request.getEmail());
 
-        // 2. Validar contraseña
-        validatePassword(request.getPassword());
-
-        // 3. Verificar si el email existe
+        // 2. Verificar si el email existe
         if (usuarioRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException("El email ya esta registrado");
         }
 
-        // 4. Crear Usuario
+        // 3. Crear Usuario
         var user = Usuario.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -226,33 +223,4 @@ public class AuthService {
         return normalizedEmail;
     }
 
-    private void validatePassword(String password) {
-        if (password == null || password.isEmpty()) {
-            throw new IllegalArgumentException("La contraseña es obligatoria");
-        }
-
-        if (password.length() < 8) {
-            throw new IllegalArgumentException(
-                    "La contraseña debe tener al menos 8 caracteres"
-            );
-        }
-
-        if (password.length() > 128) {
-            throw new IllegalArgumentException("La contraseña es demasiado larga");
-        }
-
-        // Validar complejidad
-        boolean hasUpper = password.chars().anyMatch(Character::isUpperCase);
-        boolean hasLower = password.chars().anyMatch(Character::isLowerCase);
-        boolean hasDigit = password.chars().anyMatch(Character::isDigit);
-        boolean hasSpecial = password.chars().anyMatch(ch ->
-                "!@#$%^&*()_+-=[]{}|;:,.<>?".indexOf(ch) >= 0
-        );
-
-        if (!hasUpper || !hasLower || !hasDigit || !hasSpecial) {
-            throw new IllegalArgumentException(
-                    "La contraseña debe contener mayúsculas, minúsculas, números y caracteres especiales"
-            );
-        }
-    }
 }
