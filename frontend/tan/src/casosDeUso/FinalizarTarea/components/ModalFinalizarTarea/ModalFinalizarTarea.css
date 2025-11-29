@@ -84,3 +84,47 @@
         font-size: 0.9rem !important;
     }
 }
+
+/* ModalFinalizarTarea.css */
+#seccionTransaccionesTemporales {
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+#seccionTransaccionesTemporales h4 {
+    margin: 0 0 0.8rem 0;
+    color: #495057;
+    font-size: 1rem;
+}
+
+.lista-transacciones-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.transaccion-item-modal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: white;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.transaccion-item-modal .tipo-monto {
+    font-weight: 500;
+    color: #333;
+}
+
+.transaccion-item-modal .categoria {
+    background-color: #e9ecef;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: #495057;
+}

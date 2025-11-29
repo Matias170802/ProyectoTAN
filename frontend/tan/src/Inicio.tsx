@@ -5,7 +5,7 @@ import { AppProvider } from './context/AppContext'
 import { useState } from 'react'
 import { GoInfo } from "react-icons/go";
 import { FaRegCheckCircle } from "react-icons/fa";
-import { ModalFinalizarTarea } from './casosDeUso/FinalizarTarea/components/ModalFinalizarTarea/ModalFinalizarTarea';
+import { ModalFinalizarTarea, FormFinalizarTareaAgregarIE } from './casosDeUso/FinalizarTarea/components/index';
 
 
 

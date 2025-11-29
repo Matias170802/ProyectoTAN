@@ -7,7 +7,7 @@ import { useForm, type Resolver} from 'react-hook-form';
 import {type Props} from './FormRegistrarIngresoEgresoCajaTypes'
 import {useIngresoEgresoCaja} from '../../hooks/useIngresoEgresoCaja'
 
-const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description }) => {
+const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description, onTransaccionAgregada, modo  }) => {
     
     const [activo, setActivo] = React.useState<'transaccion' | 'comprobante'>('transaccion');
     const {tiposTransaccion, tiposMoneda, categorias, registrarIngresoEgresoCaja, errorEncontrado} = useIngresoEgresoCaja();
@@ -28,17 +28,36 @@ const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description }) 
     //const tipoTransaccionValue = watch("tipoTransaccion");
 
     const onSubmit = async (data: formSchemaRegistrarIngresoEgresoCajaType) => {
-        const exito = await registrarIngresoEgresoCaja(data);
-        console.log("Este es mi exito", exito)
-
-        if (exito) {
+        if (modo === 'temporal') {
+            // Modo temporal: solo guarda en memoria/sessionStorage
+            if (onTransaccionAgregada) {
+                onTransaccionAgregada(data);
+            }
+            
             setShowMensajeExito(true);
             reset();
             setTimeout(() => {
                 setShowMensajeExito(false);
             }, 3000);
-        }else {
-            setShowMensajeExito(false);
+            
+        } else {
+            // Modo normal: registra en backend
+            const exito = await registrarIngresoEgresoCaja(data);
+            console.log("Este es mi exito", exito)
+
+            if (exito) {
+                if (onTransaccionAgregada) {
+                    onTransaccionAgregada(data);
+                }
+                
+                setShowMensajeExito(true);
+                reset();
+                setTimeout(() => {
+                    setShowMensajeExito(false);
+                }, 3000);
+            } else {
+                setShowMensajeExito(false);
+            }
         }
     }
     
