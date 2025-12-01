@@ -3,7 +3,7 @@ import {Modal, Button} from '../../../../generalComponents/index';
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { FaRegCheckCircle } from "react-icons/fa";
 import './ModalFinalizarTarea.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useIngresoEgresoCaja } from '../../../RegistrarIngresoEgresoCaja/hooks/useIngresoEgresoCaja';
 import {type Transaccion} from './../FormFinalizarTareaAgregarIE/FormFinalizarTareaAgregarIETypes'
@@ -11,31 +11,54 @@ import {type Transaccion} from './../FormFinalizarTareaAgregarIE/FormFinalizarTa
 export const ModalFinalizarTarea: React.FC<PropsFinalizarTarea> = ({isOpen, onClose, title, description, tarea, showCloseButton}) => {
 
     const navigate = useNavigate();
+    const location = useLocation();
     const [transaccionesTemporales, setTransaccionesTemporales] = useState<[Transaccion] | []>([]);
     const {registrarIngresoEgresoCaja} = useIngresoEgresoCaja(); 
 
 
-    // Cargar transacciones temporales cuando se abre el modal
+    // Cargar transacciones temporales cuando se abre el modal O cuando se vuelve de agregar IE
     useEffect(() => {
-        if (isOpen) {
+        if (isOpen || location.state?.volviendoDeAgregarIE) {
             const transacciones = sessionStorage.getItem('transaccionesTemporales');
             if (transacciones) {
                 setTransaccionesTemporales(JSON.parse(transacciones));
             }
         }
-    }, [isOpen]);
+    }, [isOpen, location.state]);
+
+    // Escuchar cambios en sessionStorage para actualizar en tiempo real
+    useEffect(() => {
+        const handleStorageChange = () => {
+            const transacciones = sessionStorage.getItem('transaccionesTemporales');
+            if (transacciones) {
+                setTransaccionesTemporales(JSON.parse(transacciones));
+            } else {
+                setTransaccionesTemporales([]);
+            }
+        };
+
+        // Escuchar el evento storage
+        window.addEventListener('storage', handleStorageChange);
+        
+        // También escuchar un evento personalizado para cambios en la misma pestaña
+        window.addEventListener('transaccionesActualizadas', handleStorageChange);
+
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('transaccionesActualizadas', handleStorageChange);
+        };
+    }, []);
 
     const handleAgregarIE = () => {
         // Guarda la tarea en sessionStorage para pasarla a la siguiente pantalla
         sessionStorage.setItem('tareaActual', JSON.stringify(tarea));
         
+        // Guarda el estado de que el modal estaba abierto
+        sessionStorage.setItem('modalFinalizarAbierto', 'true');
+        
         // Navega a la nueva pantalla
         navigate('/finalizar-tarea/agregar-ie/1');
         
-        // Cierra el modal
-        if (onClose){
-            onClose();
-        }
     };
 
     const handleFinalizarTarea = async () => {
@@ -48,6 +71,7 @@ export const ModalFinalizarTarea: React.FC<PropsFinalizarTarea> = ({isOpen, onCl
             // 2. Limpiar sessionStorage
             sessionStorage.removeItem('transaccionesTemporales');
             sessionStorage.removeItem('tareaActual');
+            sessionStorage.removeItem('modalFinalizarAbierto');
 
             // 3. Aquí puedes agregar la lógica para finalizar la tarea
             console.log('Tarea finalizada con éxito');

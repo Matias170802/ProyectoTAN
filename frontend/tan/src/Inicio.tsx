@@ -2,10 +2,11 @@
 import './Inicio.css'
 import {Button, Modal} from './generalComponents/index'
 import { AppProvider } from './context/AppContext'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom';
 import { GoInfo } from "react-icons/go";
 import { FaRegCheckCircle } from "react-icons/fa";
-import { ModalFinalizarTarea, FormFinalizarTareaAgregarIE } from './casosDeUso/FinalizarTarea/components/index';
+import { ModalFinalizarTarea } from './casosDeUso/FinalizarTarea/components/index';
 
 
 
@@ -31,6 +32,26 @@ function AppContent() {
   ]
   const [verDetalles, setVerDetalles] = useState<number | null>(null);
   const [finalizarTareaSeleccionada, setFinalizarTareaSeleccionada] = useState<number | null>(null);
+  const location = useLocation();
+
+  // Efecto para manejar el regreso desde agregar IE
+    useEffect(() => {
+        if (location.state?.volviendoDeAgregarIE && location.state?.abrirModalFinalizar) {
+            // Buscar el índice de la tarea que se estaba finalizando
+            const tareaRegreso = location.state.tareaSeleccionada;
+            const indice = tareas.findIndex(t => 
+                t.nombreTarea === tareaRegreso.nombreTarea && 
+                t.fechaTarea === tareaRegreso.fechaTarea
+            );
+            
+            if (indice !== -1) {
+                setFinalizarTareaSeleccionada(indice);
+            }
+            
+            // Limpiar el estado para evitar que se ejecute de nuevo
+            window.history.replaceState({}, document.title);
+        }
+    }, [location.state, tareas]);
 
   return (
     <main className="min-h-screen bg-gray-100" id='mainPageInicio'>

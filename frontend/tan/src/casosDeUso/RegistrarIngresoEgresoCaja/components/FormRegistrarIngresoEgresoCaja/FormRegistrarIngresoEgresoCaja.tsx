@@ -13,22 +13,24 @@ const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description, on
     const {tiposTransaccion, tiposMoneda, categorias, registrarIngresoEgresoCaja, errorEncontrado} = useIngresoEgresoCaja();
     const [showMensajeExito, setShowMensajeExito] = useState(false);
     //*uso del zod, useForm para manejar el formulario
-    const { handleSubmit, control, formState: { errors }, reset, register, watch } = useForm<formSchemaRegistrarIngresoEgresoCajaType>({
+    const { handleSubmit, control, formState: { errors }, reset, register} = useForm<formSchemaRegistrarIngresoEgresoCajaType>({
         resolver: zodResolver(schemaRegistrarIngresoEgresoCaja) as Resolver<formSchemaRegistrarIngresoEgresoCajaType>,
         defaultValues: {
             tipoTransaccion: "Selecciona un tipo de transacción",
             categoria: "Selecciona una categoría",
-            //subcategoria: "Selecciona una subcategoría",
-            //tipoOperacion: "Selecciona un tipo de operación",
             moneda: "Selecciona una moneda", 
             descripcion: ""
         },
         mode: 'onBlur'
     });
-    //const tipoTransaccionValue = watch("tipoTransaccion");
-
+    console.log('Componente renderizado con modo:', modo);
+        console.log('Categorías recibidas del hook:', categorias);
+        console.log('Tipos transacción:', tiposTransaccion);
+        console.log('Tipos moneda:', tiposMoneda);
     const onSubmit = async (data: formSchemaRegistrarIngresoEgresoCajaType) => {
         if (modo === 'temporal') {
+            console.log('Datos del formulario:', data);
+
             // Modo temporal: solo guarda en memoria/sessionStorage
             if (onTransaccionAgregada) {
                 onTransaccionAgregada(data);
@@ -60,6 +62,8 @@ const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description, on
             }
         }
     }
+
+    console.log(categorias);
     
     return(
         
