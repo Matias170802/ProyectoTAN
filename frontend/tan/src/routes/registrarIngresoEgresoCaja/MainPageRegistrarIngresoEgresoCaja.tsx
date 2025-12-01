@@ -13,6 +13,7 @@ const MainPageRegistrarIngresoEgresoCaja: React.FC = () => {
                     <FormRegistrarIngresoEgresoCaja
                     title="Registrar Nueva Transacción"
                     description="Completa el formulario para registrar un nuevo ingreso o egreso en tu caja"
+                    modo='normal'
                     />
                 </div>
         

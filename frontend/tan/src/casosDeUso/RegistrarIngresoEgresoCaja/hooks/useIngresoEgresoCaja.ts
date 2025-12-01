@@ -6,11 +6,11 @@ import { useState } from "react";
 
 
 export const useIngresoEgresoCaja = () => {
-    //TODO: IMPLEMENTAR BUSQUEDAS DE: TIPO TRANSACCION, CATEGORIAMOVIMIENTO, SUBCATEGORIA(EMPLEADOS O INMUEBLES), TIPO OPERACION(CHECKIN, ETC)
+
     const [errorEncontrado, setErrorEncontrado] = useState<string | null>(null);
     const {data: tiposTransaccion} = useFetch<TiposTransaccionesExistentes[]>('/api/finanzas/registrarIngresoEgresoCaja/tiposTransaccion');
     const {data: tiposMoneda} = useFetch<TiposMonedasExistentes[]>('/api/finanzas/registrarIngresoEgresoCaja/tiposMoneda');
-    const {data: categorias} = useFetch<Categorias[]>('api/finanzas/registrarIngresoEgresoCaja/categorias');
+    const {data: categorias} = useFetch<Categorias[]>('/api/finanzas/registrarIngresoEgresoCaja/categorias');
     
     const registrarIngresoEgresoCaja = async (transacion: formSchemaRegistrarIngresoEgresoCajaType) => {
         try {

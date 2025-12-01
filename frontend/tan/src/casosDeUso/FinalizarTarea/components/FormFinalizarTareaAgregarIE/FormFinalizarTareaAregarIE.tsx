@@ -32,14 +32,14 @@ export const FormFinalizarTareaAgregarIE: React.FC = () => {
     // Función para manejar cuando se agrega una nueva transacción
     const handleNuevaTransaccion = (datosTransaccion: any) => {
         const nuevaTransaccion: Transaccion = {
-            id: crypto.randomUUID(), // Genera un ID único
-            tipoTransaccion: datosTransaccion.tipoTransaccion,
-            categoria: datosTransaccion.categoria,
-            monto: datosTransaccion.monto,
-            descripcion: datosTransaccion.descripcion,
-            moneda: datosTransaccion.moneda,
-            fechaCreacion: new Date()
-        };
+        id: crypto.randomUUID(),
+        tipoTransaccion: datosTransaccion.tipoTransaccion,
+        categoria: datosTransaccion.categoria,
+        monto: datosTransaccion.monto,
+        descripcion: datosTransaccion.descripcion,
+        moneda: datosTransaccion.moneda,
+        fechaCreacion: new Date()
+    };
 
         // Actualiza el estado local
         const transaccionesActualizadas = [...transacciones, nuevaTransaccion];
@@ -47,6 +47,9 @@ export const FormFinalizarTareaAgregarIE: React.FC = () => {
 
         // Guarda en sessionStorage para persistencia
         sessionStorage.setItem('transaccionesTemporales', JSON.stringify(transaccionesActualizadas));
+
+        // Dispara evento personalizado para notificar cambios
+        window.dispatchEvent(new Event('transaccionesActualizadas'));
 
         console.log('Nueva transacción agregada:', nuevaTransaccion);
     };
@@ -59,7 +62,14 @@ export const FormFinalizarTareaAgregarIE: React.FC = () => {
     };
 
     const handleVolver = () => {
-        navigate('/');
+        // Navegar de vuelta con estado que indica que venimos de agregar IE
+        navigate('/', { 
+            state: { 
+                volviendoDeAgregarIE: true,
+                abrirModalFinalizar: true,
+                tareaSeleccionada: tarea 
+            } 
+        });
     };
 
     // Función para limpiar todas las transacciones
