@@ -1,14 +1,18 @@
 import React from 'react';
 import { IoBarChart } from "react-icons/io5";
 import { MdCompareArrows, MdAttachMoney } from "react-icons/md";
+import { HiOutlineSwitchHorizontal } from "react-icons/hi";
 import {Button, List} from '../../generalComponents/index'
 import './MainPageFinanzas.css'
 import {ModalRegistrarCotizacionMoneda} from '../../casosDeUso/RegistrarCotizacionMoneda/components/index'
 import { useFinanzas } from './useFinanzas';
+import {ModalRegistrarCambioMoneda} from '../../casosDeUso/RegistrarCambioMoneda/components/ModalRegistrarCambioMoneda/ModalRegistrarCambioMoneda'
 
 const MainPageFinanzas: React.FC = () => {
 
     const [openModalRegistrarCotizacionMoneda, setOpenModalRegistrarCotizacionMoneda] = React.useState(false);
+    const [openModalRegistrarCambioMoneda, setOpenModalRegistrarCambioMoneda] = React.useState(false);
+    const [cajaMadreSeleccionada, setCajaMadreSeleccionada] = React.useState<string>("");
 
     //*estados para los filtros
     const [tipoSeleccionado, setTipoSeleccionado] = React.useState("todasLasCajas");
@@ -71,6 +75,12 @@ const MainPageFinanzas: React.FC = () => {
 
                     <div id='middleBarModalFinanzas'>
                             <h1 id='cajasEncontradasEnFiltros'>{cajasAMostrar.length} cajas encontradas</h1>
+
+                            <Button
+                            label='Cambio de Moneda'
+                            icon={<HiOutlineSwitchHorizontal />}
+                            onClick={()=>{setOpenModalRegistrarCambioMoneda(true)}}
+                            />
                     </div>
 
                     <div id='listContainer'>
@@ -94,6 +104,13 @@ const MainPageFinanzas: React.FC = () => {
                         />
                     )}
                     {/*//*elementos extras que se muetran si se presiona un determinado boton */}
+
+                    {openModalRegistrarCambioMoneda && cajaMadreSeleccionada && (
+                        <ModalRegistrarCambioMoneda 
+                            isOpen={openModalRegistrarCambioMoneda} 
+                            onClose={() => setOpenModalRegistrarCambioMoneda(false)}
+                        />    
+                    )}
                 </div>
             </div>
         </div>
