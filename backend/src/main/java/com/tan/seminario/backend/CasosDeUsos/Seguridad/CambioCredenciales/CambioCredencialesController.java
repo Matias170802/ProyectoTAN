@@ -1,6 +1,6 @@
-package com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.CambioCredenciales;
+package com.tan.seminario.backend.CasosDeUsos.Seguridad.CambioCredenciales;
 
-import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.CambioCredenciales.DTOs.*;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.CambioCredenciales.DTOs.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

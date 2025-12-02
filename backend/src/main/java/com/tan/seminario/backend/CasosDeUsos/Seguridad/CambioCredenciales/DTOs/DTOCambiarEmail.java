@@ -1,4 +1,4 @@
-package com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.CambioCredenciales.DTOs;
+package com.tan.seminario.backend.CasosDeUsos.Seguridad.CambioCredenciales.DTOs;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

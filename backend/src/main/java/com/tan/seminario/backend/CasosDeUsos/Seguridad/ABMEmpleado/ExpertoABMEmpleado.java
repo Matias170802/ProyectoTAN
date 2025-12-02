@@ -6,8 +6,10 @@ import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.AuthService;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.RegisterRequest;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.TokenResponse;
 import com.tan.seminario.backend.Entity.Empleado;
+import com.tan.seminario.backend.Entity.EmpleadoCaja;
 import com.tan.seminario.backend.Entity.EmpleadoRol;
 import com.tan.seminario.backend.Entity.Rol;
+import com.tan.seminario.backend.Repository.EmpleadoCajaRepository;
 import com.tan.seminario.backend.Repository.EmpleadoRepository;
 import com.tan.seminario.backend.Repository.RolRepository;
 import jakarta.transaction.Transactional;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,7 @@ import java.util.List;
 public class ExpertoABMEmpleado {
 
     private final EmpleadoRepository empleadoRepository;
+    private final EmpleadoCajaRepository empleadoCajaRepository;
     private final RolRepository rolRepository;
     private final AuthService authService;
 
@@ -66,30 +70,40 @@ public class ExpertoABMEmpleado {
         String email = registerRequest.getEmail();
         String password = registerRequest.getPassword();
 
-        //  8. TODO: Crear caja
+        //  8. Crear caja del empleado
+        EmpleadoCaja empleadoCaja = crearCajaEmpleado(empleado);
+        log.info("Caja creada exitosamente para el empleado con número: {}", empleadoCaja.getNroEmpleadoCaja());
 
-        // 9. Construir y retornar response
-        AltaEmpleadoResponse response = construirResponse(empleado, tokenResponse, email, password);
-        log.info("Respuesta construida exitosamente");
+        // 9. Construir y retornar respuesta
+        AltaEmpleadoResponse response = construirResponse(
+                empleado,
+                tokenResponse,
+                request.getEmail(),
+                request.getPassword()
+        );
+        log.info("Alta de empleado completada exitosamente");
 
         return response;
     }
 
-    // BAJA EMPLEADO
+    // BAJA EMPLEADO (TODO)
 
-    // MODIFICAR EMPLEADO
+    // MODIFICAR EMPLEADO (TODO)
 
-    // LISTAR EMPLEADOS
+    // LISTAR EMPLEADOS (TODO)
 
-    // -----------------------------------
+    // ============================================================
+    // MÉTODOS PRIVADOS AUXILIARES
+    //
 
-    // METODOS PRIVADOS AUXILIARES
+    // Valida que el request tenga los datos mínimos necesarios
     private void validarRequest(AltaEmpleadoRequest request) {
         if (request.getCodRoles() == null || request.getCodRoles().isEmpty()) {
             throw new IllegalArgumentException("Debe asignar al menos un rol");
         }
     }
 
+    //Genera el próximo código de empleado en formato EMPL-XXX
     private String generarCodigoEmpleado() {
         // Obtener el último código
         String ultimoCodigo = empleadoRepository.findTopByOrderByCodEmpleadoDesc()
@@ -172,4 +186,35 @@ public class ExpertoABMEmpleado {
                 .password(password)
                 .build();
     }
+
+    /**
+     * Crea la caja del empleado con número secuencial y valores iniciales
+     */
+    private EmpleadoCaja crearCajaEmpleado(Empleado empleado) {
+        Long numeroSecuencial = generarNumeroSecuencialCaja();
+
+        EmpleadoCaja empleadoCaja = new EmpleadoCaja();
+        empleadoCaja.setNroEmpleadoCaja(numeroSecuencial);
+        empleadoCaja.setNombreEmpleadoCaja(empleado.getNombreEmpleado());
+        empleadoCaja.setBalanceARS(BigDecimal.ZERO);
+        empleadoCaja.setBalanceUSD(BigDecimal.ZERO);
+        empleadoCaja.setFechaHoraAltaEmpleadoCaja(LocalDateTime.now());
+        empleadoCaja.setFechaHoraBajaEmpleadoCaja(null);
+        empleadoCaja.setEmpleado(empleado);
+
+        return empleadoCajaRepository.save(empleadoCaja);
+    }
+
+    /**
+     * Genera el próximo número secuencial para la caja del empleado
+     */
+    private Long generarNumeroSecuencialCaja() {
+        Long ultimoNumero = empleadoCajaRepository.findAll().stream()
+                .map(EmpleadoCaja::getNroEmpleadoCaja)
+                .max(Long::compareTo)
+                .orElse(0L);
+
+        return ultimoNumero + 1;
+    }
+
 }

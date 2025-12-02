@@ -1,10 +1,7 @@
 package com.tan.seminario.backend.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,8 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-/*Lombok*/
-
+@Builder
 public class EmpleadoCaja  extends Base {
 
     @Column(unique = true)
