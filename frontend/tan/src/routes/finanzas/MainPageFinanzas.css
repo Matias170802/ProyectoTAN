@@ -83,3 +83,9 @@
     border-color: #888;
 }
 
+#middleBarModalFinanzas {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
