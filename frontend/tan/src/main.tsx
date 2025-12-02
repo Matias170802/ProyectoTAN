@@ -6,12 +6,17 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {MainPageAdministrador, MainPageCliente, MainPageFinanzas, MainPageMiCaja, MainPagePerfil, MainPageReservas, MainPageRegistrarIngresoEgresoCaja} from './routes/index.ts'
 import AdministrarRolesDeUsuarioPage from './casosDeUso/AdministrarRolesDeUsuario/pages/AdministrarRolesDeUsuarioPage';
 import { Navbar } from './generalComponents/index.ts';
+import LoginPage from './routes/login/LoginPage.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <Navbar/>
       <Routes>
+         {/* Ruta pública de login */}
+        <Route path="/login" element={<LoginPage/>}/>
+
+        {/* Todas las demás rutas deberian estar protegidas */}
         <Route path="/" element={<Inicio/>}/>
         <Route path="/admin" element={<MainPageAdministrador/>}/>
         <Route path="/admin/roles" element={<AdministrarRolesDeUsuarioPage/>}/>
