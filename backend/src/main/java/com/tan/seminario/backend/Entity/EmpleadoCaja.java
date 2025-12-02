@@ -19,7 +19,6 @@ public class EmpleadoCaja  extends Base {
     @Column(unique = true)
     private Long nroEmpleadoCaja;
 
-    @Column(unique = true)
     private String nombreEmpleadoCaja;
     private BigDecimal balanceARS;
     private BigDecimal balanceUSD;
