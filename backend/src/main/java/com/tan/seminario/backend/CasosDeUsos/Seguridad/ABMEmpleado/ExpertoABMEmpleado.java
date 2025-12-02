@@ -2,16 +2,13 @@ package com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado;
 
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpleado.AltaEmpleadoRequest;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpleado.AltaEmpleadoResponse;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.BajaEmpleado.BajaEmpleadoResponse;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.Listados.DTOEmpleadoListado;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.AuthService;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.RegisterRequest;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.TokenResponse;
-import com.tan.seminario.backend.Entity.Empleado;
-import com.tan.seminario.backend.Entity.EmpleadoCaja;
-import com.tan.seminario.backend.Entity.EmpleadoRol;
-import com.tan.seminario.backend.Entity.Rol;
-import com.tan.seminario.backend.Repository.EmpleadoCajaRepository;
-import com.tan.seminario.backend.Repository.EmpleadoRepository;
-import com.tan.seminario.backend.Repository.RolRepository;
+import com.tan.seminario.backend.Entity.*;
+import com.tan.seminario.backend.Repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +18,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,7 +29,13 @@ public class ExpertoABMEmpleado {
     private final EmpleadoCajaRepository empleadoCajaRepository;
     private final RolRepository rolRepository;
     private final AuthService authService;
+    private final TokenRepository tokenRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final EmpleadoRolRepository empleadoRolRepository;
 
+    // ============================================================
+    // ALTA EMPLEADO
+    // ============================================================
     @Transactional
     public AltaEmpleadoResponse altaEmpleado(AltaEmpleadoRequest request) {
         log.info("Iniciando alta de empleado: {}", request.getNombreEmpleado());
@@ -86,11 +90,130 @@ public class ExpertoABMEmpleado {
         return response;
     }
 
-    // BAJA EMPLEADO (TODO)
+    // ============================================================
+    // BAJA EMPLEADO
+    // ============================================================
+    @Transactional
+    public BajaEmpleadoResponse bajaEmpleado(Long empleadoId) {
+        log.info("Iniciando baja lógica de empleado con ID: {}", empleadoId);
 
+        // 1. Buscar y validar empleado
+        Empleado empleado = empleadoRepository.findById(empleadoId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No se encontró el empleado con ID: " + empleadoId
+                ));
+
+        // 2. Validar que el empleado esté activo
+        if (empleado.getFechaHoraBajaEmpleado() != null) {
+            log.warn("Intento de dar de baja un empleado ya inactivo: {}", empleadoId);
+            throw new IllegalStateException(
+                    "El empleado ya fue dado de baja el: " + empleado.getFechaHoraBajaEmpleado()
+            );
+        }
+
+        LocalDateTime fechaBaja = LocalDateTime.now();
+
+        // 3. Dar de baja al empleado
+        empleado.setFechaHoraBajaEmpleado(fechaBaja);
+        empleadoRepository.save(empleado);
+        log.info("Empleado marcado como inactivo: {}", empleado.getCodEmpleado());
+
+        // 4. Dar de baja todos los roles activos del empleado
+        List<EmpleadoRol> rolesActivos = empleadoRolRepository.findAll().stream()
+                .filter(er -> er.getEmpleado().getId().equals(empleadoId))
+                .filter(er -> er.getFechaHoraBajaEmpleadoRol() == null)
+                .collect(Collectors.toList());
+
+        if (!rolesActivos.isEmpty()) {
+            rolesActivos.forEach(rol -> rol.setFechaHoraBajaEmpleadoRol(fechaBaja));
+            empleadoRolRepository.saveAll(rolesActivos);
+            log.info("Dados de baja {} roles del empleado", rolesActivos.size());
+        }
+
+        // 5. Dar de baja la caja del empleado
+        List<EmpleadoCaja> cajasActivas = empleadoCajaRepository.findAll().stream()
+                .filter(caja -> caja.getEmpleado().getId().equals(empleadoId))
+                .filter(caja -> caja.getFechaHoraBajaEmpleadoCaja() == null)
+                .collect(Collectors.toList());
+
+        if (!cajasActivas.isEmpty()) {
+            cajasActivas.forEach(caja -> caja.setFechaHoraBajaEmpleadoCaja(fechaBaja));
+            empleadoCajaRepository.saveAll(cajasActivas);
+            log.info("Dadas de baja {} cajas del empleado", cajasActivas.size());
+        }
+
+        // 6. Desactivar el usuario asociado
+        List<Usuario> usuarios = usuarioRepository.findAll().stream()
+                .filter(u -> u.getEmpleado() != null)
+                .filter(u -> u.getEmpleado().getId().equals(empleadoId))
+                .collect(Collectors.toList());
+
+        if (!usuarios.isEmpty()) {
+            usuarios.forEach(usuario -> {
+                usuario.setActivo(false);
+
+                // Revocar todos los tokens activos del usuario
+                revocarTodosLosTokensJWT(usuario);
+
+                log.info("Usuario desactivado y tokens revocados para empleado: {}",
+                        empleado.getCodEmpleado());
+            });
+            usuarioRepository.saveAll(usuarios);
+        }
+
+        log.info("Baja de empleado completada exitosamente: {}", empleado.getCodEmpleado());
+
+        // 7. Construir respuesta
+        return BajaEmpleadoResponse.builder()
+                .mensaje("Empleado dado de baja correctamente")
+                .exito(true)
+                .empleado(BajaEmpleadoResponse.DatosEmpleadoDadoDeBaja.builder()
+                        .id(empleado.getId())
+                        .codEmpleado(empleado.getCodEmpleado())
+                        .nombreEmpleado(empleado.getNombreEmpleado())
+                        .dniEmpleado(empleado.getDniEmpleado())
+                        .fechaHoraBaja(fechaBaja)
+                        .build())
+                .build();
+    }
+
+    // ============================================================
     // MODIFICAR EMPLEADO (TODO)
+    // ============================================================
 
-    // LISTAR EMPLEADOS (TODO)
+    // ============================================================
+    // LISTAR TODOS LOS EMPLEADOS
+    // ============================================================
+    public List<DTOEmpleadoListado> listarTodosLosEmpleados() {
+        log.info("Listando todos los empleados");
+
+        // Obtener todos los empleados activos
+        List<Empleado> empleados = empleadoRepository.findByFechaHoraBajaEmpleadoIsNull();
+
+        log.info("Se encontraron {} empleados activos", empleados.size());
+
+        // Mapear cada empleado a DTO
+        return empleados.stream()
+                .map(this::convertirEmpleadoADTO)
+                .collect(Collectors.toList());
+    }
+
+    // ============================================================
+    // LISTAR UN UNICO EMPLEADO POR ID
+    // ============================================================
+    public DTOEmpleadoListado listarEmpleadoPorId(Long empleadoId) {
+        log.info("Buscando empleado con ID: {}", empleadoId);
+
+        // Buscar empleado
+        Empleado empleado = empleadoRepository.findById(empleadoId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No se encontró el empleado con ID: " + empleadoId
+                ));
+
+        log.info("Empleado encontrado: {}", empleado.getCodEmpleado());
+
+        return convertirEmpleadoADTO(empleado);
+    }
 
     // ============================================================
     // MÉTODOS PRIVADOS AUXILIARES
@@ -217,4 +340,63 @@ public class ExpertoABMEmpleado {
         return ultimoNumero + 1;
     }
 
+    private void revocarTodosLosTokensJWT(Usuario usuario) {
+        List<Token> tokensActivos = tokenRepository.findAllValidIsFalseOrRevokedIsFalseByUsuario_Id(usuario.getId());
+
+        if (!tokensActivos.isEmpty()) {
+            tokensActivos.forEach(token -> {
+                token.setExpired(true);
+                token.setRevoked(true);
+            });
+            tokenRepository.saveAll(tokensActivos);
+            log.info("Revocados {} tokens del usuario: {}", tokensActivos.size(), usuario.getEmail());
+        }
+    }
+
+    //Convierte un empleado a DTO con toda la información necesaria
+    private DTOEmpleadoListado convertirEmpleadoADTO(Empleado empleado) {
+        // Obtener roles activos del empleado
+        List<EmpleadoRol> rolesActivos = empleado.getEmpleadosRoles().stream()
+                .filter(er -> er.getFechaHoraBajaEmpleadoRol() == null)
+                .filter(er -> er.getRol().getFechaHoraBajaRol() == null)
+                .collect(Collectors.toList());
+
+        List<String> codigosRoles = rolesActivos.stream()
+                .map(er -> er.getRol().getCodRol())
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<String> nombresRoles = rolesActivos.stream()
+                .map(er -> er.getRol().getNombreRol())
+                .distinct()
+                .collect(Collectors.toList());
+
+        // Obtener la caja del empleado
+        EmpleadoCaja caja = empleadoCajaRepository.findAll().stream()
+                .filter(c -> c.getEmpleado().getId().equals(empleado.getId()))
+                .filter(c -> c.getFechaHoraBajaEmpleadoCaja() == null)
+                .findFirst()
+                .orElse(null);
+
+        BigDecimal balanceARS = BigDecimal.ZERO;
+        BigDecimal balanceUSD = BigDecimal.ZERO;
+
+        if (caja != null) {
+            balanceARS = caja.getBalanceARS() != null ? caja.getBalanceARS() : BigDecimal.ZERO;
+            balanceUSD = caja.getBalanceUSD() != null ? caja.getBalanceUSD() : BigDecimal.ZERO;
+        }
+
+        // Construir y retornar DTO
+        return DTOEmpleadoListado.builder()
+                .id(empleado.getId())
+                .codEmpleado(empleado.getCodEmpleado())
+                .nombreEmpleado(empleado.getNombreEmpleado())
+                .dniEmpleado(empleado.getDniEmpleado())
+                .codigosRoles(codigosRoles)
+                .nombresRoles(nombresRoles)
+                .balanceCajaARS(balanceARS)
+                .balanceCajaUSD(balanceUSD)
+                .activo(empleado.getFechaHoraBajaEmpleado() == null)
+                .build();
+    }
 }

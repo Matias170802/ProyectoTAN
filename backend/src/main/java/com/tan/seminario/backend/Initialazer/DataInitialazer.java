@@ -10,6 +10,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -26,10 +27,11 @@ public class DataInitialazer {
     private final RolRepository rolRepository;
     private final EmpleadoRepository empleadoRepository;
     private final EmpleadoRolRepository empleadoRolRepository;
+    private final EmpleadoCajaRepository empleadoCajaRepository;
     private final ExpertoABMEmpleado expertoABMEmpleado;
 
     // Constructor correcto para la inyección de dependencia
-    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository, EmpleadoRepository empleadoRepository, EmpleadoRolRepository empleadoRolRepository, ExpertoABMEmpleado expertoABMEmpleado) {
+    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository, EmpleadoRepository empleadoRepository, EmpleadoRolRepository empleadoRolRepository, ExpertoABMEmpleado expertoABMEmpleado, EmpleadoCajaRepository empleadoCajaRepository) {
         this.estadoReservaRepository = estadoReservaRepository;
         this.tipoMovimientoRepository = tipoMovimientoRepository;
         this.tipoTareaRepository = tipoTareaRepository;
@@ -40,6 +42,7 @@ public class DataInitialazer {
         this.empleadoRepository = empleadoRepository;
         this.empleadoRolRepository = empleadoRolRepository;
         this.expertoABMEmpleado = expertoABMEmpleado;
+        this.empleadoCajaRepository = empleadoCajaRepository;
     }
 
     // ========================
@@ -209,6 +212,54 @@ public class DataInitialazer {
             Empleado empleado4 = new Empleado("44666666", "EMPL-004", "Juan", "2615111111", 200L, null, LocalDateTime.now(), null, null);
             Empleado empleado5 = new Empleado("44777777", "EMPL-005", "Lucia", "2615222222", 200L, null, LocalDateTime.now(), null, null);
             empleadoRepository.saveAll(Arrays.asList(empleado1,empleado2,empleado3,empleado4,empleado5));
+
+            // Crear cajas de empleados
+            EmpleadoCaja empleadoCaja1 = EmpleadoCaja.builder()
+                    .empleado(empleado1)
+                    .nroEmpleadoCaja(1L)
+                    .nombreEmpleadoCaja(empleado1.getNombreEmpleado())
+                    .balanceARS(BigDecimal.ZERO)
+                    .balanceUSD(BigDecimal.ZERO)
+                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
+                    .fechaHoraBajaEmpleadoCaja(null)
+                    .build();
+            EmpleadoCaja empleadoCaja2 = EmpleadoCaja.builder()
+                    .empleado(empleado2)
+                    .nroEmpleadoCaja(2L)
+                    .nombreEmpleadoCaja(empleado2.getNombreEmpleado())
+                    .balanceARS(BigDecimal.ZERO)
+                    .balanceUSD(BigDecimal.ZERO)
+                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
+                    .fechaHoraBajaEmpleadoCaja(null)
+                    .build();
+            EmpleadoCaja empleadoCaja3 = EmpleadoCaja.builder()
+                    .empleado(empleado3)
+                    .nroEmpleadoCaja(3L)
+                    .nombreEmpleadoCaja(empleado3.getNombreEmpleado())
+                    .balanceARS(BigDecimal.ZERO)
+                    .balanceUSD(BigDecimal.ZERO)
+                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
+                    .fechaHoraBajaEmpleadoCaja(null)
+                    .build();
+            EmpleadoCaja empleadoCaja4 = EmpleadoCaja.builder()
+                    .empleado(empleado4)
+                    .nroEmpleadoCaja(4L)
+                    .nombreEmpleadoCaja(empleado4.getNombreEmpleado())
+                    .balanceARS(BigDecimal.ZERO)
+                    .balanceUSD(BigDecimal.ZERO)
+                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
+                    .fechaHoraBajaEmpleadoCaja(null)
+                    .build();
+            EmpleadoCaja empleadoCaja5 = EmpleadoCaja.builder()
+                    .empleado(empleado5)
+                    .nroEmpleadoCaja(5L)
+                    .nombreEmpleadoCaja(empleado5.getNombreEmpleado())
+                    .balanceARS(BigDecimal.ZERO)
+                    .balanceUSD(BigDecimal.ZERO)
+                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
+                    .fechaHoraBajaEmpleadoCaja(null)
+                    .build();
+            empleadoCajaRepository.saveAll(Arrays.asList(empleadoCaja1, empleadoCaja2, empleadoCaja3, empleadoCaja4, empleadoCaja5));
             System.out.println("Datos iniciales de Empleado insertados correctamente.");
         }
 
