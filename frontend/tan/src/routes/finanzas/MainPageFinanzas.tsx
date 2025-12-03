@@ -81,6 +81,8 @@ const MainPageFinanzas: React.FC = () => {
                             icon={<HiOutlineSwitchHorizontal />}
                             onClick={()=>{setOpenModalRegistrarCambioMoneda(true)}}
                             />
+                            {//todo: agregar una prop al Button para que el boton se pueda enable o unabled si esta seleccionada la caja madre
+                            }
                     </div>
 
                     <div id='listContainer'>
@@ -101,11 +103,12 @@ const MainPageFinanzas: React.FC = () => {
                             description='Ingresa los valores de compra y venta para la moneda seleccionada.' 
                             onClose={() => setOpenModalRegistrarCotizacionMoneda(false)}
                             title='Registrar Cotización de Moneda'
+                            showCloseButton={true}
                         />
                     )}
                     {/*//*elementos extras que se muetran si se presiona un determinado boton */}
 
-                    {openModalRegistrarCambioMoneda && cajaMadreSeleccionada && (
+                    {openModalRegistrarCambioMoneda && (
                         <ModalRegistrarCambioMoneda 
                             isOpen={openModalRegistrarCambioMoneda} 
                             onClose={() => setOpenModalRegistrarCambioMoneda(false)}

@@ -1,7 +1,7 @@
-package com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarCotizacionMoneda;
+package com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarCotizacionMoneda;
 
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarCotizacionMoneda.DTO.DTOMonedas;
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarCotizacionMoneda.DTO.DTOCotizacionMoneda;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarCotizacionMoneda.DTO.DTOMonedas;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarCotizacionMoneda.DTO.DTOCotizacionMoneda;
 import com.tan.seminario.backend.Entity.CotizacionMonedaHoy;
 import com.tan.seminario.backend.Entity.Moneda;
 import com.tan.seminario.backend.Repository.CotizacionMonedaHoyRepository;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

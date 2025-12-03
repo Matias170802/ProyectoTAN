@@ -23,10 +23,7 @@ const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description, on
         },
         mode: 'onBlur'
     });
-    console.log('Componente renderizado con modo:', modo);
-        console.log('Categorías recibidas del hook:', categorias);
-        console.log('Tipos transacción:', tiposTransaccion);
-        console.log('Tipos moneda:', tiposMoneda);
+    
     const onSubmit = async (data: formSchemaRegistrarIngresoEgresoCajaType) => {
         if (modo === 'temporal') {
             console.log('Datos del formulario:', data);
