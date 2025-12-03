@@ -1,7 +1,7 @@
-package com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarCotizacionMoneda;
+package com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarCotizacionMoneda;
 
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarCotizacionMoneda.DTO.DTOCotizacionMoneda;
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarCotizacionMoneda.DTO.DTOMonedas;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarCotizacionMoneda.DTO.DTOCotizacionMoneda;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarCotizacionMoneda.DTO.DTOMonedas;
 import com.tan.seminario.backend.Entity.CotizacionMonedaHoy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

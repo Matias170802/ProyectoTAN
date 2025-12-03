@@ -1,9 +1,7 @@
 package com.tan.seminario.backend.CasosDeUsos.Reservas.FinalizarTarea;
 
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarIngresoEgresoCaja.DTO.DTOTransaccionARegistrar;
 import com.tan.seminario.backend.CasosDeUsos.Reservas.FinalizarTarea.DTOs.DTOTareaFinalizadaARegistrar;
 import com.tan.seminario.backend.CasosDeUsos.Reservas.FinalizarTarea.DTOs.DTOTareasARealizar;
-import com.tan.seminario.backend.Entity.Movimiento;
 import com.tan.seminario.backend.Entity.Tarea;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Reservas.FinalizarTarea.DTOs;
 
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarIngresoEgresoCaja.DTO.DTOTransaccionARegistrar;
-import com.tan.seminario.backend.Entity.Movimiento;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOTransaccionARegistrar;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

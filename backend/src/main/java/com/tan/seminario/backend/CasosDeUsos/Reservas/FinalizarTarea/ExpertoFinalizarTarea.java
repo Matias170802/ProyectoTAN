@@ -1,7 +1,7 @@
 package com.tan.seminario.backend.CasosDeUsos.Reservas.FinalizarTarea;
 
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarIngresoEgresoCaja.DTO.DTOTransaccionARegistrar;
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarIngresoEgresoCaja.ExpertoRegistrarIngresoEgresoCaja;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOTransaccionARegistrar;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.ExpertoRegistrarIngresoEgresoCaja;
 import com.tan.seminario.backend.CasosDeUsos.Reservas.FinalizarTarea.DTOs.DTOTareaFinalizadaARegistrar;
 import com.tan.seminario.backend.CasosDeUsos.Reservas.FinalizarTarea.DTOs.DTOTareasARealizar;
 import com.tan.seminario.backend.Entity.EstadoTarea;

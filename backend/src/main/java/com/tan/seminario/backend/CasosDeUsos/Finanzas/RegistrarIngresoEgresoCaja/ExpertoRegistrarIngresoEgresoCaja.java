@@ -1,9 +1,9 @@
-package com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarIngresoEgresoCaja;
+package com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja;
 
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarIngresoEgresoCaja.DTO.DTOCategoriaMovimiento;
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarIngresoEgresoCaja.DTO.DTOMoneda;
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarIngresoEgresoCaja.DTO.DTOTipoTransaccion;
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarIngresoEgresoCaja.DTO.DTOTransaccionARegistrar;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOCategoriaMovimiento;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOMoneda;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOTipoTransaccion;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOTransaccionARegistrar;
 import com.tan.seminario.backend.Entity.CategoriaMovimiento;
 import com.tan.seminario.backend.Entity.Moneda;
 import com.tan.seminario.backend.Entity.Movimiento;
