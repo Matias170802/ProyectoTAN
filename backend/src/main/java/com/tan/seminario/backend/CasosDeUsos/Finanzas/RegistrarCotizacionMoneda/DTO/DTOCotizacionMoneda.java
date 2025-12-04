@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -12,6 +14,6 @@ import lombok.Setter;
 
 public class DTOCotizacionMoneda {
     public String nombreMoneda;
-    public Long montoCompra;
-    public Long montoVenta;
+    public BigDecimal montoCompra;
+    public BigDecimal montoVenta;
 }

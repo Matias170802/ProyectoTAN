@@ -6,11 +6,11 @@ import java.math.BigDecimal;
 
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class DTOCotizacionMonedaHoy {
-    private BigDecimal montoVenta;
-    private BigDecimal montoCompra;
 
+public class DTOCambioMoneda {
+    private String tipoCambio;
+    private BigDecimal montoAConvertir;
 }

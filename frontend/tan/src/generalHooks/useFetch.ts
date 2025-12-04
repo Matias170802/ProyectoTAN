@@ -19,52 +19,48 @@ interface Params <T> {
 }
 
 //*custom hook
-export const useFetch = <T>(url: string | null) => {
+export function useFetch<T>(url: string | null) {
     const [data, setData] = useState<T | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
 
     const fetchData = useCallback(async () => {
-        
-        if (!url || url.trim() === "") {
-            console.log('useFetch: URL vacía o null, saltando petición');
-            setLoading(false);
+        if (!url) {
             setData(null);
+            setLoading(false);
             setError(null);
             return;
         }
 
-        console.log('useFetch: Realizando petición a:', url);
         setLoading(true);
         setError(null);
-
+        
         try {
             const response = await fetch(url);
-            
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
             }
-            
             const result = await response.json();
-            console.log('useFetch: Data recibida exitosamente:', result);
             setData(result);
-            
         } catch (err) {
-            console.error('useFetch: Error en la petición:', err);
-            setError(err instanceof Error ? err : new Error('Error desconocido'));
+            setError(err instanceof Error ? err : new Error('Unknown error'));
+            setData(null);
         } finally {
             setLoading(false);
         }
     }, [url]);
 
+    // Ejecutar fetchData cuando url cambie
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
-    return {
-        data,
-        loading,
-        error,
-        refetch: fetchData
-    };
-};
+    // Función refetch para llamar manualmente
+    const refetch = useCallback(() => {
+        if (url) {
+            fetchData();
+        }
+    }, [fetchData, url]);
+
+    return { data, loading, error, refetch };
+}
