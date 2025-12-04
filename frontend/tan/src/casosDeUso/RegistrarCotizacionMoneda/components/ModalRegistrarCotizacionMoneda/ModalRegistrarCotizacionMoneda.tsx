@@ -7,7 +7,7 @@ import {type formSchemaRegistrarCotizacionMonedaType, schemaRegistrarCotizacionM
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type Resolver} from 'react-hook-form';
 
-const ModalRegistrarCotizacionMoneda: React.FC<PropsRegistrarCotizacionMoneda> = ({isOpen, onClose, title, description, showCloseButton}) => {
+const ModalRegistrarCotizacionMoneda: React.FC<PropsRegistrarCotizacionMoneda> = ({isOpen, onClose, title, description, showCloseButton, onSuccess}) => {
 
     const {monedas, loading, error, registrarCotizacionMoneda, errorEncontrado, resetError} = useMoneda();
     const [showMensajeExito, setShowMensajeExito] = React.useState(false);
@@ -43,7 +43,9 @@ const ModalRegistrarCotizacionMoneda: React.FC<PropsRegistrarCotizacionMoneda> =
             reset();
             setTimeout(() => {
                 setShowMensajeExito(false);
-                if (onClose) {
+                if (onSuccess) {
+                    onSuccess(); // Llamar al callback de éxito
+                } else if (onClose) {
                     onClose();
                 }
                 
