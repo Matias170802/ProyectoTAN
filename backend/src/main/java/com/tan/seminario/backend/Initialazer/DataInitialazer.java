@@ -81,6 +81,18 @@ public class DataInitialazer {
         //inicializacion de datos estado reserva
 
         // ========================
+        // ZONA DE CREACION DE CLIENTES
+        // ========================
+        if (clienteRepository.count() == 0) {
+            Cliente cli1 = new Cliente("44000000","CLI002","Matias Anselmi",null,LocalDateTime.now());
+            Cliente cli2 = new Cliente("44000001","CLI003","Clara Mazuran",null,LocalDateTime.now());
+            Cliente cli3 = new Cliente("44000002","CLI004","Jose Anselmi",null,LocalDateTime.now());
+            Cliente cli4 = new Cliente("44000003","CLI005","Maria Mazuran",null,LocalDateTime.now());
+            Cliente cli5 = new Cliente("44000004","CLI006","Mau",null,LocalDateTime.now());
+            clienteRepository.saveAll(Arrays.asList(cli1, cli2, cli3, cli4, cli5));
+        }
+
+        // ========================
         // ZONA DE CREACION DE INMUEBLES Y RESERVAS DE PRUEBA
         // ========================
         // Crear inmuebles de ejemplo si no existen

@@ -1,4 +1,4 @@
-package com.tan.seminario.backend.CasosDeUsos.Inmuebles;
+package com.tan.seminario.backend.CasosDeUsos.Inmuebles.ABMInmueble;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

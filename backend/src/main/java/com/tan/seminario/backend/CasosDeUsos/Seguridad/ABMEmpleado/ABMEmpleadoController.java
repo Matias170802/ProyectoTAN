@@ -4,6 +4,8 @@ import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpl
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpleado.AltaEmpleadoResponse;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.BajaEmpleado.BajaEmpleadoResponse;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.Listados.DTOEmpleadoListado;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.ModificarEmpleado.DTOModificarEmpleado;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.ModificarEmpleado.DTOModificarEmpleadoResponse;
 import com.tan.seminario.backend.config.security.RequireRoles;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,8 +45,16 @@ public class ABMEmpleadoController {
     }
 
     // ============================================================
-    // MODIFICACION EMPLEADO (TODO)
+    // MODIFICACION EMPLEADO
     // ============================================================
+    @PatchMapping("/modificar/{id}")
+    public ResponseEntity<DTOModificarEmpleadoResponse> modificarEmpleado(
+            @PathVariable("id") final Long id,
+            @Valid @RequestBody final DTOModificarEmpleado request
+    ) {
+        final DTOModificarEmpleadoResponse response = service.modificarEmpleado(id, request);
+        return ResponseEntity.ok(response);
+    }
 
     // ============================================================
     // LISTAR TODOS LOS EMPLEADOS

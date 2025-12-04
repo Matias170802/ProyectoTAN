@@ -4,6 +4,8 @@ import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpl
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpleado.AltaEmpleadoResponse;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.BajaEmpleado.BajaEmpleadoResponse;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.Listados.DTOEmpleadoListado;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.ModificarEmpleado.DTOModificarEmpleado;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.ModificarEmpleado.DTOModificarEmpleadoResponse;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.AuthService;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.RegisterRequest;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.TokenResponse;
@@ -178,8 +180,74 @@ public class ExpertoABMEmpleado {
     }
 
     // ============================================================
-    // MODIFICAR EMPLEADO (TODO)
+    // MODIFICAR EMPLEADO
     // ============================================================
+    @Transactional
+    public DTOModificarEmpleadoResponse modificarEmpleado(Long empleadoId, DTOModificarEmpleado request) {
+        log.info("Iniciando modificación de empleado con ID: {}", empleadoId);
+
+        // 1. Buscar y validar empleado
+        Empleado empleado = empleadoRepository.findById(empleadoId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No se encontró el empleado con ID: " + empleadoId
+                ));
+
+        // 2. Validar que el empleado esté activo
+        if (empleado.getFechaHoraBajaEmpleado() != null) {
+            throw new IllegalStateException(
+                    "No se puede modificar un empleado inactivo. Fecha de baja: "
+                            + empleado.getFechaHoraBajaEmpleado()
+            );
+        }
+
+        // 3. Variables para rastrear cambios
+        boolean huboNombreCambiado = false;
+        String nombreAnterior = empleado.getNombreEmpleado();
+
+        // 4. Modificar DNI si se proporciona
+        if (request.getDniEmpleado() != null) {
+            validarCambioDni(empleado, request.getDniEmpleado());
+            log.info("Cambiando DNI de {} a {}", empleado.getDniEmpleado(), request.getDniEmpleado());
+            empleado.setDniEmpleado(request.getDniEmpleado());
+        }
+
+        // 5. Modificar nombre si se proporciona
+        if (request.getNombreEmpleado() != null &&
+                !request.getNombreEmpleado().equals(empleado.getNombreEmpleado())) {
+            log.info("Cambiando nombre de {} a {}", empleado.getNombreEmpleado(), request.getNombreEmpleado());
+            empleado.setNombreEmpleado(request.getNombreEmpleado());
+            huboNombreCambiado = true;
+        }
+
+        // 6. Modificar teléfono si se proporciona
+        if (request.getNroTelefonoEmpleado() != null) {
+            log.info("Cambiando teléfono de {} a {}",
+                    empleado.getNroTelefonoEmpleado(), request.getNroTelefonoEmpleado());
+            empleado.setNroTelefonoEmpleado(request.getNroTelefonoEmpleado());
+        }
+
+        // 7. Modificar salario si se proporciona
+        if (request.getSalarioEmpleado() != null) {
+            log.info("Cambiando salario de {} a {}",
+                    empleado.getSalarioEmpleado(), request.getSalarioEmpleado());
+            empleado.setSalarioEmpleado(request.getSalarioEmpleado());
+        }
+
+        // 8. Guardar cambios del empleado
+        empleado = empleadoRepository.save(empleado);
+        log.info("Empleado actualizado: {}", empleado.getCodEmpleado());
+
+        // 9. Actualizar nombre de cajas si cambió el nombre
+        if (huboNombreCambiado) {
+            actualizarNombreCajas(empleado, nombreAnterior);
+        }
+
+        // 10. Obtener roles activos
+        List<String> rolesActivos = obtenerRolesActivos(empleado);
+
+        // 11. Construir y retornar respuesta
+        return construirResponseModificacion(empleado, rolesActivos);
+    }
 
     // ============================================================
     // LISTAR TODOS LOS EMPLEADOS
@@ -217,7 +285,7 @@ public class ExpertoABMEmpleado {
 
     // ============================================================
     // MÉTODOS PRIVADOS AUXILIARES
-    //
+    // ===========================================================
 
     // Valida que el request tenga los datos mínimos necesarios
     private void validarRequest(AltaEmpleadoRequest request) {
@@ -397,6 +465,87 @@ public class ExpertoABMEmpleado {
                 .balanceCajaARS(balanceARS)
                 .balanceCajaUSD(balanceUSD)
                 .activo(empleado.getFechaHoraBajaEmpleado() == null)
+                .build();
+    }
+
+    // ============================================================
+    // MÉTODOS AUXILIARES PARA MODIFICACIÓN
+    // ============================================================
+
+    //Valida que el nuevo DNI no esté en uso por otro empleado activo
+    private void validarCambioDni(Empleado empleado, String nuevoDni) {
+        // Si el DNI no cambió, no validar
+        if (nuevoDni.equals(empleado.getDniEmpleado())) {
+            return;
+        }
+
+        // Verificar que no exista otro empleado activo con ese DNI
+        List<Empleado> empleadosConDni = empleadoRepository.findByDniEmpleado(nuevoDni)
+                .stream()
+                .filter(e -> e.getFechaHoraBajaEmpleado() == null)
+                .filter(e -> !e.getId().equals(empleado.getId())) // Excluir el empleado actual
+                .toList();
+
+        if (!empleadosConDni.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Ya existe otro empleado activo con el DNI: " + nuevoDni
+            );
+        }
+    }
+
+    /**
+     * Actualiza el nombre de todas las cajas asociadas al empleado
+     */
+    private void actualizarNombreCajas(Empleado empleado, String nombreAnterior) {
+        List<EmpleadoCaja> cajasDelEmpleado = empleadoCajaRepository.findAll().stream()
+                .filter(c -> c.getEmpleado().getId().equals(empleado.getId()))
+                .filter(c -> c.getFechaHoraBajaEmpleadoCaja() == null)
+                .toList();
+
+        if (!cajasDelEmpleado.isEmpty()) {
+            for (EmpleadoCaja caja : cajasDelEmpleado) {
+                log.info("Actualizando nombre de caja de '{}' a '{}'",
+                        caja.getNombreEmpleadoCaja(), empleado.getNombreEmpleado());
+                caja.setNombreEmpleadoCaja(empleado.getNombreEmpleado());
+            }
+            empleadoCajaRepository.saveAll(cajasDelEmpleado);
+            log.info("Actualizadas {} cajas del empleado", cajasDelEmpleado.size());
+        }
+    }
+
+    /**
+     * Obtiene la lista de códigos de roles activos del empleado
+     */
+    private List<String> obtenerRolesActivos(Empleado empleado) {
+        return empleado.getEmpleadosRoles().stream()
+                .filter(er -> er.getFechaHoraBajaEmpleadoRol() == null)
+                .map(er -> er.getRol())
+                .filter(rol -> rol.getFechaHoraBajaRol() == null)
+                .map(rol -> rol.getCodRol())
+                .distinct()
+                .toList();
+    }
+
+    /**
+     * Construye la respuesta de modificación
+     */
+    private DTOModificarEmpleadoResponse construirResponseModificacion(
+            Empleado empleado,
+            List<String> rolesActivos) {
+
+        return DTOModificarEmpleadoResponse.builder()
+                .mensaje("Empleado modificado exitosamente")
+                .exito(true)
+                .empleado(DTOModificarEmpleadoResponse.DatosEmpleadoModificado.builder()
+                        .id(empleado.getId())
+                        .codEmpleado(empleado.getCodEmpleado())
+                        .nombreEmpleado(empleado.getNombreEmpleado())
+                        .dniEmpleado(empleado.getDniEmpleado())
+                        .nroTelefonoEmpleado(empleado.getNroTelefonoEmpleado())
+                        .salarioEmpleado(empleado.getSalarioEmpleado())
+                        .rolesActivos(rolesActivos)
+                        .fechaModificacion(LocalDateTime.now())
+                        .build())
                 .build();
     }
 }

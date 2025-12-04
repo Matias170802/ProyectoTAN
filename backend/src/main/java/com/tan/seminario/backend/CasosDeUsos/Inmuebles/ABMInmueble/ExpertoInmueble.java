@@ -1,4 +1,4 @@
-package com.tan.seminario.backend.CasosDeUsos.Inmuebles;
+package com.tan.seminario.backend.CasosDeUsos.Inmuebles.ABMInmueble;
 
 import com.tan.seminario.backend.Entity.Inmueble;
 import com.tan.seminario.backend.Repository.InmuebleRepository;
