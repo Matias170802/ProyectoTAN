@@ -6,8 +6,7 @@ export const schemaRegistrarCambioMoneda = z.object({
     }),
     montoAConvertir: z.coerce
         .number({
-            required_error: "El monto es requerido",
-            invalid_type_error: "Debe ser un número válido"
+            message: "Debe ser un número válido"
         })
         .positive("El monto debe ser mayor a 0")
 }).refine((data) => {
