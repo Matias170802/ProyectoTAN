@@ -11,4 +11,8 @@ export interface Props <T = any> {
     columnas: string[];
     idField?: string; //* Nombre del campo que actúa como ID único en los items
     getVisibleActions?: (item: T) => ('info' | 'edit' | 'delete')[];
+    //*para seleccionar items de la lista
+    onItemSelect?: (item: any) => void;
+    selectedItem?: any;
+    selectableCondition?: (item: any) => boolean;
 }

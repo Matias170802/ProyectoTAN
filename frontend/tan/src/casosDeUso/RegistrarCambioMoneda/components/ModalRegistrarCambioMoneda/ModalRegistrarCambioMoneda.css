@@ -1,0 +1,370 @@
+/* ModalRegistrarCambioMoneda.css */
+
+/* Estilos para la sección de cotización */
+#contenedorCotizacionHoy {
+    background-color: #e8f5e8 !important;
+    border-radius: 8px !important;
+    padding: 1rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+#contenedorCotizacionHoy p {
+    margin: 0 0 0.8rem 0 !important;
+    font-weight: 600 !important;
+    color: #2d6a2d !important;
+    font-size: 1rem !important;
+}
+
+#contenedorValoresCotizacion {
+    display: flex !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+}
+
+/* Container principal del formulario */
+#contenedorInfoCambioMoneda {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.2rem !important;
+}
+
+/* Estilos para los contenedores de campos */
+.contenedorSelectsCambioMoneda {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+}
+
+.contenedorSelectsCambioMoneda label {
+    font-weight: 500 !important;
+    color: #333 !important;
+    font-size: 0.9rem !important;
+    margin: 0 !important;
+}
+
+/* Estilos para select */
+.contenedorSelectsCambioMoneda select {
+    padding: 0.75rem !important;
+    border: 1.5px solid #ddd !important;
+    border-radius: 8px !important;
+    font-size: 0.95rem !important;
+    background-color: white !important;
+    cursor: pointer !important;
+    transition: border-color 0.2s !important;
+    appearance: none !important;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 1rem !important;
+    padding-right: 2.5rem !important;
+}
+
+.contenedorSelectsCambioMoneda select:focus {
+    outline: none !important;
+    border-color: #666 !important;
+    box-shadow: 0 0 0 3px rgba(102, 102, 102, 0.1) !important;
+}
+
+/* Estilos para input */
+.contenedorSelectsCambioMoneda input {
+    padding: 0.75rem !important;
+    border: 1.5px solid #ddd !important;
+    border-radius: 8px !important;
+    font-size: 0.95rem !important;
+    transition: border-color 0.2s !important;
+}
+
+.contenedorSelectsCambioMoneda input:focus {
+    outline: none !important;
+    border-color: #666 !important;
+    box-shadow: 0 0 0 3px rgba(102, 102, 102, 0.1) !important;
+}
+
+/* Mensajes de error */
+p.mensajeErrorFormulario {
+    color: #dc3545 !important;
+    font-size: 0.8rem !important;
+    margin: 0.25rem 0 0 0 !important;
+    font-weight: 400 !important;
+    line-height: 1.3 !important;
+    padding: 0.2rem 0 !important;
+    background: none !important;
+    border: none !important;
+}
+
+span.mensajeErrorFormulario {
+    color: #dc3545 !important;
+    font-size: 0.8rem !important;
+    margin: 0.25rem 0 0 0 !important;
+    font-weight: 400 !important;
+    line-height: 1.3 !important;
+    padding: 0.2rem 0 !important;
+    display: block !important;
+}
+
+/* Balance disponible*/
+.balance-disponible {
+    background-color: #f8f9fa !important;
+    padding: 0.75rem !important;
+    border-radius: 6px !important;
+    border-left: 4px solid #6c757d !important;
+    margin-top: 1rem !important;
+}
+
+.balance-disponible p {
+    margin: 0 !important;
+    color: #495057 !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+}
+
+/* Estilos para los botones del modal */
+.modal-buttons {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 0.75rem !important;
+    margin-top: 1.5rem !important;
+    padding-top: 1rem !important;
+    border-top: 1px solid #e9ecef !important;
+}
+
+/* Botón cancelar */
+.modal-buttons .btn-cancelar,
+.btn-cancelar {
+    background-color: white !important;
+    color: #6c757d !important;
+    border: 1.5px solid #ddd !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    font-size: 0.9rem !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    text-decoration: none !important;
+}
+
+.modal-buttons .btn-cancelar:hover,
+.btn-cancelar:hover {
+    background-color: #f8f9fa !important;
+    border-color: #adb5bd !important;
+}
+
+/* Botón realizar cambio */
+.modal-buttons .btn-realizar-cambio,
+.btn-realizar-cambio {
+    background-color: #6c757d !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    font-size: 0.9rem !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s !important;
+}
+
+.modal-buttons .btn-realizar-cambio:hover,
+.btn-realizar-cambio:hover {
+    background-color: #5a6268 !important;
+}
+
+.modal-buttons .btn-realizar-cambio:disabled,
+.btn-realizar-cambio:disabled {
+    background-color: #adb5bd !important;
+    cursor: not-allowed !important;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    #contenedorValoresCotizacion {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+    
+    .modal-buttons {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+    
+    .modal-buttons .btn-cancelar,
+    .modal-buttons .btn-realizar-cambio,
+    .btn-cancelar,
+    .btn-realizar-cambio {
+        width: 100% !important;
+        text-align: center !important;
+    }
+    
+    /* Ajustar tamaños en móvil */
+    #contenedorCotizacionHoy p:first-child {
+        font-size: 0.95rem !important;
+    }
+    
+    #contenedorValoresCotizacion p {
+        font-size: 0.85rem !important;
+    }
+    
+    .contenedorSelectsCambioMoneda label {
+        font-size: 0.85rem !important;
+    }
+}
+
+/* Estilos adicionales para sobrescribir componentes de la librería */
+.contenedorSelectsCambioMoneda select option {
+    padding: 0.5rem !important;
+    font-size: 0.95rem !important;
+}
+
+/* Para inputs deshabilitados */
+.contenedorSelectsCambioMoneda input:disabled {
+    background-color: #f8f9fa !important;
+    color: #6c757d !important;
+    cursor: not-allowed !important;
+}
+
+/* Para selects deshabilitados */
+.contenedorSelectsCambioMoneda select:disabled {
+    background-color: #f8f9fa !important;
+    color: #6c757d !important;
+    cursor: not-allowed !important;
+}
+
+/* Mensaje sin cotización */
+#contenedorSinCotizacion {
+    margin-bottom: 1.5rem !important;
+}
+
+.mensaje-sin-cotizacion {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+    padding: 1rem !important;
+    background-color: #fff3cd !important;
+    border: 1px solid #ffeaa7 !important;
+    border-radius: 8px !important;
+    margin-bottom: 1rem !important;
+}
+
+.icono-aviso {
+    font-size: 1.2rem !important;
+    color: #856404 !important;
+    flex-shrink: 0 !important;
+}
+
+.mensaje-sin-cotizacion p {
+    margin: 0 !important;
+    color: #856404 !important;
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
+}
+
+/* Botón agregar cotización */
+.btn-agregar-cotizacion {
+    background-color: #333 !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s !important;
+}
+
+.btn-agregar-cotizacion:hover {
+    background-color: #222 !important;
+}
+
+/* Mensaje de carga */
+.mensaje-cargando {
+    text-align: center !important;
+    padding: 1rem !important;
+    color: #6c757d !important;
+    font-style: italic !important;
+    margin-bottom: 1.5rem !important;
+}
+
+/* Mensaje de error */
+.mensaje-error-cotizacion {
+    padding: 1rem !important;
+    background-color: #f8d7da !important;
+    border: 1px solid #f5c6cb !important;
+    border-radius: 8px !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.mensaje-error-cotizacion p {
+    margin: 0 !important;
+    color: #721c24 !important;
+    font-size: 0.9rem !important;
+}
+
+/* Input deshabilitado */
+input:disabled {
+    background-color: #f8f9fa !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+}
+
+#mensajeExito {
+    background-color: #e6ffed;
+    color: #1a7f37;
+    border: 1px solid #b7ebc6;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    margin-bottom: 16px;
+    font-size: 1.08rem;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(26,127,55,0.07);
+    animation: fadeIn 0.4s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+
+#mensajeError {
+    background-color: #ffeaea;
+    color: #d32f2f;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    margin-bottom: 16px;
+    font-size: 1.08rem;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(211,47,47,0.07);
+    animation: fadeIn 0.4s;
+}
+
+.resultadoCambio {
+    background-color: #f8f9fa !important;
+    padding: 0.75rem !important;
+    border-radius: 6px !important;
+    border-left: 4px solid #28a745 !important;
+    margin-top: 1rem !important;
+}
+
+.resultadoCambio p {
+    margin: 0 !important;
+    color: #155724 !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+}
+
+/* Solo cambiar el color del borde según el tipo */
+.resultadoCambio.dolares-pesos {
+    border-left-color: #2196F3 !important;
+}
+
+.resultadoCambio.dolares-pesos p {
+    color: #1565C0 !important;
+}
+
+.resultadoCambio.pesos-dolares {
+    border-left-color: #FF9800 !important;
+}
+
+.resultadoCambio.pesos-dolares p {
+    color: #E65100 !important;
+}

@@ -7,40 +7,60 @@ import { useForm, type Resolver} from 'react-hook-form';
 import {type Props} from './FormRegistrarIngresoEgresoCajaTypes'
 import {useIngresoEgresoCaja} from '../../hooks/useIngresoEgresoCaja'
 
-const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description }) => {
+const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description, onTransaccionAgregada, modo  }) => {
     
     const [activo, setActivo] = React.useState<'transaccion' | 'comprobante'>('transaccion');
     const {tiposTransaccion, tiposMoneda, categorias, registrarIngresoEgresoCaja, errorEncontrado} = useIngresoEgresoCaja();
     const [showMensajeExito, setShowMensajeExito] = useState(false);
     //*uso del zod, useForm para manejar el formulario
-    const { handleSubmit, control, formState: { errors }, reset, register, watch } = useForm<formSchemaRegistrarIngresoEgresoCajaType>({
+    const { handleSubmit, control, formState: { errors }, reset, register} = useForm<formSchemaRegistrarIngresoEgresoCajaType>({
         resolver: zodResolver(schemaRegistrarIngresoEgresoCaja) as Resolver<formSchemaRegistrarIngresoEgresoCajaType>,
         defaultValues: {
             tipoTransaccion: "Selecciona un tipo de transacción",
             categoria: "Selecciona una categoría",
-            //subcategoria: "Selecciona una subcategoría",
-            //tipoOperacion: "Selecciona un tipo de operación",
             moneda: "Selecciona una moneda", 
             descripcion: ""
         },
         mode: 'onBlur'
     });
-    //const tipoTransaccionValue = watch("tipoTransaccion");
-
+    
     const onSubmit = async (data: formSchemaRegistrarIngresoEgresoCajaType) => {
-        const exito = await registrarIngresoEgresoCaja(data);
-        console.log("Este es mi exito", exito)
+        if (modo === 'temporal') {
+            console.log('Datos del formulario:', data);
 
-        if (exito) {
+            // Modo temporal: solo guarda en memoria/sessionStorage
+            if (onTransaccionAgregada) {
+                onTransaccionAgregada(data);
+            }
+            
             setShowMensajeExito(true);
             reset();
             setTimeout(() => {
                 setShowMensajeExito(false);
             }, 3000);
-        }else {
-            setShowMensajeExito(false);
+            
+        } else {
+            // Modo normal: registra en backend
+            const exito = await registrarIngresoEgresoCaja(data);
+            console.log("Este es mi exito", exito)
+
+            if (exito) {
+                if (onTransaccionAgregada) {
+                    onTransaccionAgregada(data);
+                }
+                
+                setShowMensajeExito(true);
+                reset();
+                setTimeout(() => {
+                    setShowMensajeExito(false);
+                }, 3000);
+            } else {
+                setShowMensajeExito(false);
+            }
         }
     }
+
+    console.log(categorias);
     
     return(
         

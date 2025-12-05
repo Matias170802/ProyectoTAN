@@ -1,6 +1,5 @@
 package com.tan.seminario.backend.CasosDeUsos.Reservas.CancelarReserva;
 
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarCotizacionMoneda.ExpertoRegistrarCotizacionMoneda;
 import com.tan.seminario.backend.Entity.EstadoReserva;
 import com.tan.seminario.backend.Entity.Reserva;
 import com.tan.seminario.backend.Repository.EstadoReservaRepository;

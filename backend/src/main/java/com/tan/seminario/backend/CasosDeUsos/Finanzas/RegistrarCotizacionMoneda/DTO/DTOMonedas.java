@@ -1,4 +1,4 @@
-package com.tan.seminario.backend.CasosDeUsos.Finanzas.CURegistrarCotizacionMoneda.DTO;
+package com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarCotizacionMoneda.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
