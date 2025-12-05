@@ -102,15 +102,16 @@ span.mensajeErrorFormulario {
     display: block !important;
 }
 
-/* Estilos para el balance disponible */
-#contenedorInfoCambioMoneda > div:last-of-type {
+/* Balance disponible*/
+.balance-disponible {
     background-color: #f8f9fa !important;
     padding: 0.75rem !important;
     border-radius: 6px !important;
     border-left: 4px solid #6c757d !important;
+    margin-top: 1rem !important;
 }
 
-#contenedorInfoCambioMoneda > div:last-of-type p {
+.balance-disponible p {
     margin: 0 !important;
     color: #495057 !important;
     font-size: 0.85rem !important;
@@ -334,4 +335,36 @@ input:disabled {
     text-align: center;
     box-shadow: 0 2px 8px rgba(211,47,47,0.07);
     animation: fadeIn 0.4s;
+}
+
+.resultadoCambio {
+    background-color: #f8f9fa !important;
+    padding: 0.75rem !important;
+    border-radius: 6px !important;
+    border-left: 4px solid #28a745 !important;
+    margin-top: 1rem !important;
+}
+
+.resultadoCambio p {
+    margin: 0 !important;
+    color: #155724 !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+}
+
+/* Solo cambiar el color del borde según el tipo */
+.resultadoCambio.dolares-pesos {
+    border-left-color: #2196F3 !important;
+}
+
+.resultadoCambio.dolares-pesos p {
+    color: #1565C0 !important;
+}
+
+.resultadoCambio.pesos-dolares {
+    border-left-color: #FF9800 !important;
+}
+
+.resultadoCambio.pesos-dolares p {
+    color: #E65100 !important;
 }

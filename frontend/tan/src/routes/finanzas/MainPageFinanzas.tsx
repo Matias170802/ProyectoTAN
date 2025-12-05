@@ -7,23 +7,50 @@ import './MainPageFinanzas.css'
 import {ModalRegistrarCotizacionMoneda} from '../../casosDeUso/RegistrarCotizacionMoneda/components/index'
 import { useFinanzas } from './useFinanzas';
 import {ModalRegistrarCambioMoneda} from '../../casosDeUso/RegistrarCambioMoneda/components/ModalRegistrarCambioMoneda/ModalRegistrarCambioMoneda'
+import {type Caja} from '../finanzas/typesFinanzas'
 
 const MainPageFinanzas: React.FC = () => {
 
     const [openModalRegistrarCotizacionMoneda, setOpenModalRegistrarCotizacionMoneda] = React.useState(false);
     const [openModalRegistrarCambioMoneda, setOpenModalRegistrarCambioMoneda] = React.useState(false);
-    const [cajaMadreSeleccionada, setCajaMadreSeleccionada] = React.useState<string>("");
+    const [cajaMadreSeleccionada, setCajaMadreSeleccionada] = React.useState<Caja | null>(null);
 
     //*estados para los filtros
     const [tipoSeleccionado, setTipoSeleccionado] = React.useState("todasLasCajas");
     const [ordenSeleccionado, setOrdenSeleccionado] = React.useState("Movimiento más reciente");
     const [textoBuscado, setTextoBuscado] = React.useState("");
 
-    const { obtenerCajasFiltradas, loadingCajas } = useFinanzas();
+    const { obtenerCajasFiltradas, loadingCajas, refetchCajas } = useFinanzas();
     const columnas = ["nombre", "tipo", "balanceARS", "balanceUSD", "ultimoMovimiento"];
 
     //*buscamos las cajas para mostrarlas
     const cajasAMostrar = obtenerCajasFiltradas(tipoSeleccionado, ordenSeleccionado, textoBuscado);
+
+    //* Función para manejar la selección de caja
+    const handleCajaSelect = (caja: any) => {
+        // Solo permitir selección si es tipo "Otro"
+        if (caja.tipo === "Otro") {
+            setCajaMadreSeleccionada(caja);
+        } else {
+            setCajaMadreSeleccionada(null);
+        }
+    };
+
+    //* Función para verificar si una caja es seleccionable
+    const isCajaSeleccionable = (caja: any) => {
+        return caja.tipo === "Otro";
+    };
+
+    //* Función para manejar el cierre del modal de cambio moneda
+    const handleCerrarModalCambioMoneda = () => {
+        setOpenModalRegistrarCambioMoneda(false);
+        setCajaMadreSeleccionada(null); // Limpiar selección
+        
+        if (refetchCajas) {
+            refetchCajas();
+        }
+    };
+
 
     return(
         <div className="App">
@@ -80,9 +107,9 @@ const MainPageFinanzas: React.FC = () => {
                             label='Cambio de Moneda'
                             icon={<HiOutlineSwitchHorizontal />}
                             onClick={()=>{setOpenModalRegistrarCambioMoneda(true)}}
+                            hidden={cajaMadreSeleccionada == null}
                             />
-                            {//todo: agregar una prop al Button para que el boton se pueda enable o unabled si esta seleccionada la caja madre
-                            }
+                            
                     </div>
 
                     <div id='listContainer'>
@@ -92,6 +119,9 @@ const MainPageFinanzas: React.FC = () => {
                         showActions={false}
                         emptyMessage='No se encontraron cajas que coincidan con los filtros.'
                         loadingItems={loadingCajas}
+                        onItemSelect={handleCajaSelect}
+                        selectedItem={cajaMadreSeleccionada}
+                        selectableCondition={isCajaSeleccionable}
                         />
                     </div>
 
@@ -108,10 +138,11 @@ const MainPageFinanzas: React.FC = () => {
                     )}
                     {/*//*elementos extras que se muetran si se presiona un determinado boton */}
 
-                    {openModalRegistrarCambioMoneda && (
+                    {openModalRegistrarCambioMoneda && cajaMadreSeleccionada !== null && (
                         <ModalRegistrarCambioMoneda 
                             isOpen={openModalRegistrarCambioMoneda} 
-                            onClose={() => setOpenModalRegistrarCambioMoneda(false)}
+                            onClose={handleCerrarModalCambioMoneda}
+                            cajaMadre={cajaMadreSeleccionada}
                         />    
                     )}
                 </div>

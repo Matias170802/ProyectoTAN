@@ -9,6 +9,7 @@ import com.tan.seminario.backend.Repository.CotizacionMonedaHoyRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class ExpertoRegistrarCambioMoneda {
             //el valor que me viene de cambioMoneda.MontoAConvertir es en dolares
             for (CajaMadre cajaMadre: cajaMadreAModificar) {
                 BigDecimal balanceARSActual = cajaMadre.getBalanceTotalARS();
-                BigDecimal nuevoBalanceARS = balanceARSActual.add(cambioMoneda.getMontoAConvertir().multiply(cotizacionAUtilizar.getMontoCompra()));
+                BigDecimal nuevoBalanceARS = balanceARSActual.add(cambioMoneda.getMontoAConvertir().multiply(cotizacionAUtilizar.getMontoVenta()));
 
                 BigDecimal nuevoBalanceUSD = cajaMadre.getBalanceTotalUSD().subtract(cambioMoneda.getMontoAConvertir());
 
@@ -64,10 +65,11 @@ public class ExpertoRegistrarCambioMoneda {
                 BigDecimal balanceARSActual = cajaMadre.getBalanceTotalARS();
                 BigDecimal nuevoBalanceARS = balanceARSActual.subtract(cambioMoneda.getMontoAConvertir());
 
-                BigDecimal nuevoBalanceUSD = cajaMadre.getBalanceTotalUSD().add(cambioMoneda.getMontoAConvertir().divide(cotizacionAUtilizar.getMontoCompra()));
+                BigDecimal nuevoBalanceUSD = cajaMadre.getBalanceTotalUSD().add(cambioMoneda.getMontoAConvertir().divide(cotizacionAUtilizar.getMontoCompra(), 2,  RoundingMode.HALF_UP));
 
                 cajaMadre.setBalanceTotalARS(nuevoBalanceARS);
                 cajaMadre.setBalanceTotalUSD(nuevoBalanceUSD);
+
             }
         }
 

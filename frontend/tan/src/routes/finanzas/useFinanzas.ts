@@ -2,7 +2,7 @@ import { useFetch } from "@/generalHooks/useFetch"
 import { type Caja } from "./typesFinanzas"
 
 export const useFinanzas = () => {
-    const { data: cajasData, loading: loadingCajas, error: errorCajas } = useFetch<Caja[]>('/api/finanzas');
+    const { data: cajasData, loading: loadingCajas, error: errorCajas, refetch} = useFetch<Caja[]>('/api/finanzas');
 
     //* Filtros por tipo
     const filtrosPorTipo: Record<string, (caja: Caja) => boolean> = {
@@ -52,6 +52,7 @@ export const useFinanzas = () => {
         cajasData,
         loadingCajas,
         errorCajas,
-        obtenerCajasFiltradas
+        obtenerCajasFiltradas,
+        refetchCajas: refetch
     };
 }
