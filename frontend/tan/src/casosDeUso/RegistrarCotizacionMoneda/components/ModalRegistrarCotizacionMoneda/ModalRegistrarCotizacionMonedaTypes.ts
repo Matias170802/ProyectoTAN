@@ -4,5 +4,5 @@ export interface PropsRegistrarCotizacionMoneda {
     title: string;
     description: string;
     showCloseButton?: boolean;
-    onSuccess: () => void;
+    onSuccess?: () => void;
 }

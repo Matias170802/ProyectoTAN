@@ -6,12 +6,12 @@ import { type formSchemaRegistrarCambioMonedaType, schemaRegistrarCambioMoneda }
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRegistrarCambioMoneda } from '../../hooks/useRegistrarCambioMoneda';
 import { MdAttachMoney } from "react-icons/md";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {default as ModalRegistrarCotizacionMoneda} from '../../../RegistrarCotizacionMoneda/components/ModalRegistrarCotizacionMoneda/ModalRegistrarCotizacionMoneda'
 
-export const ModalRegistrarCambioMoneda: React.FC<ProposModalRegistrarCambioMoneda> = ({isOpen, onClose}) => {
+export const ModalRegistrarCambioMoneda: React.FC<ProposModalRegistrarCambioMoneda> = ({isOpen, onClose, cajaMadre}) => {
 
-    const {handleSubmit, control, formState: { errors }, reset, register, watch} = useForm<formSchemaRegistrarCambioMonedaType>({
+    const {handleSubmit, control, formState: { errors }, reset, register, watch, setError, clearErrors} = useForm<formSchemaRegistrarCambioMonedaType>({
         resolver: zodResolver(schemaRegistrarCambioMoneda) as Resolver<formSchemaRegistrarCambioMonedaType>,
         defaultValues: {
             tipoCambio: "seleccioneUnTipoDeCambio"
@@ -19,12 +19,76 @@ export const ModalRegistrarCambioMoneda: React.FC<ProposModalRegistrarCambioMone
         mode: 'onBlur'
     })
     const watchTipoCambio = watch("tipoCambio", "seleccioneUnTipoDeCambio");
+    const watchMontoAConvertir = watch("montoAConvertir");
     const tipoCambioParaHook = watchTipoCambio !== "seleccioneUnTipoDeCambio" ? watchTipoCambio : undefined;
     const {cotizacionMonedaHoy, loading, errorCotizacionHoy, refreshCotizacion, registrarCambioMoneda, errorEncontrado} = useRegistrarCambioMoneda(tipoCambioParaHook);
     const [abrirModalCotizacionMoneda, setAbrirModalCotizacionMoneda] = useState(false);
     const [showMensajeExito, setShowMensajeExito] = useState(false);
 
+
+    //* Validación en tiempo real del balance
+    useEffect(() => {
+
+        console.log('useEffect validación ejecutándose:', {
+        watchTipoCambio,
+        watchMontoAConvertir,
+        cajaMadre,
+        condicion1: watchTipoCambio !== "seleccioneUnTipoDeCambio",
+        condicion2: !!watchMontoAConvertir,
+        condicion3: !!cajaMadre,
+        todasLasCondiciones: watchTipoCambio !== "seleccioneUnTipoDeCambio" && watchMontoAConvertir && cajaMadre
+    });
+        if (watchTipoCambio !== "seleccioneUnTipoDeCambio" && watchMontoAConvertir && cajaMadre) {
+            const monto = Number(watchMontoAConvertir);
+            
+            if (watchTipoCambio === "dolaresAPesos") {
+                //* Convertir dólares a pesos - verificar balance USD
+                if (monto > cajaMadre.balanceUSD) {
+                    setError("montoAConvertir", {
+                        type: "manual",
+                        message: `El monto no puede ser mayor al balance disponible ($USD ${cajaMadre.balanceUSD})`
+                    });
+                } else {
+                    clearErrors("montoAConvertir");
+                }
+            } else if (watchTipoCambio === "pesosADolares") {
+                //* Convertir pesos a dólares - verificar balance ARS
+                if (monto > cajaMadre.balanceARS) {
+                    setError("montoAConvertir", {
+                        type: "manual", 
+                        message: `El monto no puede ser mayor al balance disponible ($ARS ${cajaMadre.balanceARS})`
+                    });
+                } else {
+                    clearErrors("montoAConvertir");
+                }
+            }
+        }
+    }, [watchMontoAConvertir, watchTipoCambio, cajaMadre, setError, clearErrors]);
+
+    //* Función para obtener el balance disponible
+    const getBalanceDisponible = () => {
+        if (!cajaMadre) return 0;
+        return watchTipoCambio === "dolaresAPesos" ? cajaMadre.balanceUSD : cajaMadre.balanceARS;
+    };
+
+    //* Función para obtener la moneda del balance
+    const getMonedaBalance = () => {
+        return watchTipoCambio === "dolaresAPesos" ? "USD" : "ARS";
+    };
+
     const onSubmit = async (data: formSchemaRegistrarCambioMonedaType) => {
+        // Validación final antes del submit
+        const monto = Number(data.montoAConvertir);
+        const balanceDisponible = getBalanceDisponible();
+        
+        if (monto > balanceDisponible) {
+            setError("montoAConvertir", {
+                type: "manual",
+                message: `El monto no puede ser mayor al balance disponible ($${getMonedaBalance()} ${balanceDisponible})`
+            });
+            return;
+        }
+
         const exito = await registrarCambioMoneda(data);
         console.log("Este es mi exito", exito)
 
@@ -36,9 +100,8 @@ export const ModalRegistrarCambioMoneda: React.FC<ProposModalRegistrarCambioMone
                 if (onClose) {
                     onClose();
                 }
-                
             }, 3000);
-        }else {
+        } else {
             setShowMensajeExito(false);
         }
     }
@@ -129,16 +192,28 @@ export const ModalRegistrarCambioMoneda: React.FC<ProposModalRegistrarCambioMone
                                 step="0.01"
                                 placeholder="0.00"
                                 disabled={watchTipoCambio === "seleccioneUnTipoDeCambio"}
+                                max={getBalanceDisponible()}
                                 {...register("montoAConvertir")}
                             />
                             {errors.montoAConvertir && <p className='mensajeErrorFormulario'>{errors.montoAConvertir.message}</p>}
                         </div>
 
                         {watchTipoCambio !== "seleccioneUnTipoDeCambio" && cotizacionMonedaHoy && (
-                            <div>
-                                <p>Balance disponible: {watchTipoCambio === "dolaresAPesos" ? "US$50..." : "$ARS 12,345..."}</p>
+                            <div className="balance-disponible">
+                                <p>Balance disponible: {watchTipoCambio === "dolaresAPesos" ? `$USD ${cajaMadre.balanceUSD}` : `$ARS ${cajaMadre.balanceARS}`}</p>
                             </div>
                         )}
+
+                        {watchTipoCambio !== "seleccioneUnTipoDeCambio" && watchMontoAConvertir > 0 && watchMontoAConvertir <= getBalanceDisponible() && cotizacionMonedaHoy && (
+                            <div className={`resultadoCambio ${watchTipoCambio === "dolaresAPesos" ? "dolares-pesos" : "pesos-dolares"}`}>
+                                <p>Resultado del Cambio: {watchTipoCambio === "dolaresAPesos" ? 
+                                    `$ARS ${(Number(watchMontoAConvertir) * cotizacionMonedaHoy.montoVenta).toFixed(2)}` : 
+                                    `$USD ${(Number(watchMontoAConvertir) / cotizacionMonedaHoy.montoCompra).toFixed(2)}`
+                                }
+                                </p>
+                            </div>
+                        )}
+
                     </section>
 
                     <div className='modal-buttons'>
@@ -154,7 +229,8 @@ export const ModalRegistrarCambioMoneda: React.FC<ProposModalRegistrarCambioMone
                             disabled={
                                 watchTipoCambio === "seleccioneUnTipoDeCambio" || 
                                 !cotizacionMonedaHoy ||
-                                loading
+                                loading ||
+                                Object.keys(errors).length > 0
                             }
                             label='Realizar Cambio'
                         />

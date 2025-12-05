@@ -92,3 +92,39 @@
     margin-right: 0.7rem;
     vertical-align: middle;
 }
+
+/* Estilos para selección de items */
+.list-item-selectable {
+    transition: background-color 0.2s ease, border-left 0.2s ease;
+    cursor: pointer;
+}
+
+.list-item-selectable:hover {
+    background-color: #f8f9fa !important;
+}
+
+.list-item-selectable:hover td {
+    background-color: #f8f9fa;
+}
+
+.list-item-selected {
+    background-color: #e3f2fd !important;
+    border-left: 4px solid #2196f3;
+}
+
+.list-item-selected td {
+    background-color: #e3f2fd !important;
+}
+
+.list-item-selected:hover {
+    background-color: #bbdefb !important;
+}
+
+.list-item-selected:hover td {
+    background-color: #bbdefb !important;
+}
+
+.list-item-not-selectable {
+    opacity: 0.7;
+    cursor: default !important;
+}
