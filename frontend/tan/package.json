@@ -25,6 +25,7 @@
     "moment": "^2.30.1",
     "react": "^19.1.0",
     "react-big-calendar": "^1.19.2",
+    "react-date-range": "^2.0.1",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.62.0",
     "react-icons": "^5.5.0",
