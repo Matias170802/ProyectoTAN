@@ -22,9 +22,7 @@ public class InmuebleCaja  extends Base{
 
     private Long nroInmuebleCaja;
 
-    @Column (unique = true)
     private String nombreInmuebleCaja;
-
     private BigDecimal balanceTotalARS;
     private BigDecimal balanceTotalUSD;
     private LocalDateTime fechaHoraAltaInmuebleCaja;
