@@ -4,6 +4,7 @@ package com.tan.seminario.backend.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /*Lombok*/
@@ -18,8 +19,8 @@ import java.time.LocalDate;
 
 public class CotizacionMonedaHoy extends Base{
 
-    private Long montoCompra;
-    private Long montoVenta;
+    private BigDecimal montoCompra;
+    private BigDecimal montoVenta;
     private LocalDate fechaCotizacionMoneda;
 
     @ManyToOne

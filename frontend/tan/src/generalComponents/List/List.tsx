@@ -1,8 +1,20 @@
 import './List.css'
 import {type Props} from './List.ts'
 
-const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete, onItemEdit, onItemInfo, emptyMessage, showActions = true, columnas, idField = 'id', getVisibleActions, actionsPosition = 'right'}: Props<T>) => {
+const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete, onItemEdit, onItemInfo, emptyMessage, showActions = true, columnas, idField = 'id', getVisibleActions, loadingItems, onItemSelect, selectedItem, selectableCondition}: Props<T>) => {
     
+    //* en el caso de que la lista este cargando
+    if (loadingItems) {
+        return (
+            <section className='contenedor-lista'>
+                <div className="lista-cargando">
+                    <div className="spinner"></div>
+                    Cargando items...
+                </div>
+            </section>
+        );
+    }
+
     //* en el caso de que la lista de items sea vacia
     if (items.length === 0) {
         return (
@@ -21,7 +33,7 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
 
     //*FUNCIÓN PARA OBTENER EL VALOR DE UNA COLUMNA
     const getColumnValue = (item: T, columnKey: string) => {
-        const value = columnKey.split('.').reduce((obj, key) => obj?.[key], item);
+        const value = columnKey.split('.').reduce((obj, key) => obj?.[key], item);    
         return value !== undefined && value !== null ? String(value) : '-';
     };
 
@@ -32,6 +44,47 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
         
         return nuevaColumnaConMayusculaPrimeraLetra;
     }
+
+    //* Función para determinar si un item está seleccionado
+    const isItemSelected = (item: T): boolean => {
+        if (!selectedItem) return false;
+        return getItemId(item) === getItemId(selectedItem);
+    };
+
+    //* Función para determinar si un item es seleccionable
+    const isItemSelectable = (item: T): boolean => {
+        return selectableCondition ? selectableCondition(item) : true;
+    };
+
+    //* Función para generar las clases CSS del row
+    const getRowClasses = (item: T): string => {
+        let classes = 'tabla-row';
+        
+        if (isItemSelectable(item)) {
+            classes += ' list-item-selectable';
+            if (isItemSelected(item)) {
+                classes += ' list-item-selected';
+            }
+        } else {
+            classes += ' list-item-not-selectable';
+        }
+        
+        return classes;
+    };
+
+    //* Función para manejar el click en un row
+    const handleRowClick = (item: T) => {
+        // Si hay función de selección y el item es seleccionable
+        if (onItemSelect && isItemSelectable(item)) {
+            onItemSelect(item);
+        }
+        
+        // También llamar a onItemClick si existe (para mantener compatibilidad)
+        if (onItemClick) {
+            onItemClick(item);
+        }
+    };
+    
     //*funcion para renderizar los botones de accion
     const renderActionButtons = (item: T) => {
     if (!showActions) return null;
@@ -119,11 +172,12 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                 {items.map((item, index) => (
                     <tr
                         key={getItemId(item) || index}
-                        className='tabla-row'
-                        onClick={() => onItemClick?.(item)}
+                        className={getRowClasses(item)}
+                        onClick={() => handleRowClick(item)}
+                        style={{
+                            cursor: isItemSelectable(item) ? 'pointer' : 'default'
+                        }}
                     >
-                        {actionsPosition === 'left' && renderActionButtons(item)}
-
                         {/* celdas de datos*/}
                         {columnas.map((columna) => (
                             <td key={columna} className="tabla-cell">

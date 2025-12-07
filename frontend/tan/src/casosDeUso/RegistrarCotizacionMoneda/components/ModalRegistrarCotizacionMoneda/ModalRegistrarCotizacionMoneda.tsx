@@ -1,13 +1,13 @@
 import React from 'react';
 import {Modal, Button} from '../../../../generalComponents/index';
 import './ModalRegistrarCotizacionMoneda.css'
-import {type Props} from './ModalRegistrarCotizacionMonedaTypes'
+import {type PropsRegistrarCotizacionMoneda} from './ModalRegistrarCotizacionMonedaTypes'
 import {useMoneda} from '../../hooks/useMoneda'
 import {type formSchemaRegistrarCotizacionMonedaType, schemaRegistrarCotizacionMoneda} from '../../models/modelRegistrarCotizacionMoneda'
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type Resolver} from 'react-hook-form';
 
-const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title, description, showCloseButton}) => {
+const ModalRegistrarCotizacionMoneda: React.FC<PropsRegistrarCotizacionMoneda> = ({isOpen, onClose, title, description, showCloseButton, onSuccess}) => {
 
     const {monedas, loading, error, registrarCotizacionMoneda, errorEncontrado, resetError} = useMoneda();
     const [showMensajeExito, setShowMensajeExito] = React.useState(false);
@@ -16,7 +16,7 @@ const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title
     const { handleSubmit, control, formState: { errors }, reset, register } = useForm<formSchemaRegistrarCotizacionMonedaType>({
         resolver: zodResolver(schemaRegistrarCotizacionMoneda) as Resolver<formSchemaRegistrarCotizacionMonedaType>,
         defaultValues: {
-            nombreMoneda: "Selecciona una moneda"
+            nombreMoneda: "Selecciona una moneda",
         },
         mode: 'onBlur'
     });
@@ -43,10 +43,15 @@ const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title
             reset();
             setTimeout(() => {
                 setShowMensajeExito(false);
-                onClose();
+                if (onSuccess) {
+                    onSuccess(); // Llamar al callback de éxito
+                } else if (onClose) {
+                    onClose();
+                }
+                
             }, 3000);
         }else {
-            
+            setShowMensajeExito(false);
         }
     }
 
@@ -78,7 +83,7 @@ const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title
                 </select>
 
                 {errors.nombreMoneda && (
-                    <span className="error">{errors.nombreMoneda.message}</span>
+                    <p className="mensajeErrorFormulario">{errors.nombreMoneda.message}</p>
                 )}
 
 
@@ -87,7 +92,7 @@ const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title
                         <label>Monto Compra en ARG</label>
                         <input type='number' {...register("montoCompra")} placeholder='0.00'/>
                         {errors.montoCompra && (
-                            <span className="error">{errors.montoCompra.message}</span>
+                            <p className="mensajeErrorFormulario">{errors.montoCompra.message}</p>
                         )}
                     </div>
 
@@ -95,7 +100,7 @@ const ModalRegistrarCotizacionMoneda: React.FC<Props> = ({isOpen, onClose, title
                         <label>Monto Venta en ARG</label>
                         <input type='number' {...register("montoVenta")} placeholder='0.00'/>
                         {errors.montoVenta && (
-                            <span className="error">{errors.montoVenta.message}</span>
+                            <p className="mensajeErrorFormulario">{errors.montoVenta.message}</p>
                         )}
                     </div>
                 </div>

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 
 //*definimos los tipos que vamos a recibir
 type Data <T> = T | null;
@@ -19,42 +19,48 @@ interface Params <T> {
 }
 
 //*custom hook
-export const useFetch = <T> (url:string, options: FetchOptions = {}): Params <T> => {
-	const [data, setData] = useState<Data<T>> (null)
-	const [loading, setLoading] = useState(true)
-	const [error, setError] = useState<ErrorType> (null)
-	
-	useEffect( () => {
-		setLoading(true)
+export function useFetch<T>(url: string | null) {
+    const [data, setData] = useState<T | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<Error | null>(null);
 
-        //*defino la funcion que me hace la peticion al back
-		const fetchData = async () => {
-			try {
-				const response = await fetch(url, {
-                    method: options.method || 'GET',
-                    headers: options.headers,
-                    body: options.body ? JSON.stringify(options.body) : null,
-                });
-				
-				if (!response.ok) {
-					throw new Error("Error en la peticion")
-				}
-				
-				//*paso la respuesta que me devolvio la api a formato json
-				const jsonData: T = await response.json();
-				setData(jsonData)
-				setError(null)
+    const fetchData = useCallback(async () => {
+        if (!url) {
+            setData(null);
+            setLoading(false);
+            setError(null);
+            return;
+        }
 
-			} catch (err) {
-				setError(err as Error)
-			} finally { 
-				setLoading(false)
-			}
-		}
-		
-		//*llamo a la funcion que me realiza la peticion
-		fetchData();
-	}, [url])
-	
-	return {data, loading, error}
+        setLoading(true);
+        setError(null);
+        
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+            }
+            const result = await response.json();
+            setData(result);
+        } catch (err) {
+            setError(err instanceof Error ? err : new Error('Unknown error'));
+            setData(null);
+        } finally {
+            setLoading(false);
+        }
+    }, [url]);
+
+    // Ejecutar fetchData cuando url cambie
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    // Función refetch para llamar manualmente
+    const refetch = useCallback(() => {
+        if (url) {
+            fetchData();
+        }
+    }, [fetchData, url]);
+
+    return { data, loading, error, refetch };
 }

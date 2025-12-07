@@ -50,13 +50,13 @@
 }
 
 .modal-title {
-    width: 100%;
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin: 0;
-    color: #1e293b;
-    display: block;
+    width: 100% !important;
+    text-align: center !important;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    color: #1e293b !important;
+    display: block !important;
 }
 
 .botonCerrarOpcion {
@@ -82,10 +82,11 @@
 
 
 .modal-description {
-    font-size: 0.95rem; /* tamaño más controlado */
-    line-height: 1.4;  /* mejor legibilidad */
-    color: #64748b;
-    margin-bottom: 16px;
+    font-weight: 400 !important; /* Normal, no bold */
+    font-size: 0.95rem !important;
+    color: #64748b !important;
+    margin-bottom: 16px !important;
+    line-height: 1.4 !important;
 }
 
 

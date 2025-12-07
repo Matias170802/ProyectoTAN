@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface EstadoTareaRepository extends JpaRepository<EstadoTarea, Long> {
-    List<EstadoTarea> findByNombreEstadoTarea(String nombreEstadoTarea);
+    EstadoTarea findByNombreEstadoTarea(String nombreEstadoTarea);
 }

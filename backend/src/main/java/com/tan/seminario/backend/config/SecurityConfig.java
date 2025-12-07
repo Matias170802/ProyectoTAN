@@ -2,7 +2,9 @@ package com.tan.seminario.backend.config;
 
 import com.tan.seminario.backend.Entity.Token;
 import com.tan.seminario.backend.Repository.TokenRepository;
+import com.tan.seminario.backend.config.security.RoleAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -17,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -25,22 +28,35 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final RoleAuthorizationFilter roleAuthorizationFilter;
     private final AuthenticationProvider authenticationProvider;
     private final TokenRepository tokenRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationProvider authenticationProvider) throws Exception {
+        log.info("=================================================");
+        log.info("SEGURIDAD HABILITADA - PERFIL: prod");
+        log.info("JWT Y ROLES ACTIVOS");
+        log.info("=================================================");
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers("/auth/**") // Cualquiera pueda acceder a los endpoints de autenticacion
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
+                        req
+                                // Endpoints de autenticación (públicos)
+                                .requestMatchers("/auth/**").permitAll()
+
+                                // Endpoints de recuperación de credenciales (públicos)
+                                .requestMatchers("/api/credenciales/recuperar-password/**").permitAll()
+                                .requestMatchers("/api/credenciales/recuperar-email").permitAll()
+
+                                // Todos los demás endpoints requieren autenticación
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(roleAuthorizationFilter, JwtAuthFilter.class)
                 .logout(logout ->
                         logout.logoutUrl("auth/logout")
                                 .addLogoutHandler((request, response, authentication) -> {
@@ -51,7 +67,7 @@ public class SecurityConfig {
                                     SecurityContextHolder.clearContext();
                                 })
                 )
-                ;
+        ;
         return http.build();
     }
 
@@ -67,5 +83,3 @@ public class SecurityConfig {
         tokenRepository.save(foundToken);
     }
 }
-
-

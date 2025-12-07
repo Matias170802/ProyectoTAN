@@ -1,12 +1,16 @@
 package com.tan.seminario.backend.Initialazer;
 //clase que se encarga de inicializar los datos que se encuentran en resourses cuando inicia la app y ha cambiado algo
 
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpleado.AltaEmpleadoRequest;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpleado.AltaEmpleadoResponse;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.ExpertoABMEmpleado;
 import com.tan.seminario.backend.Entity.*;
 import com.tan.seminario.backend.Repository.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -23,9 +27,11 @@ public class DataInitialazer {
     private final RolRepository rolRepository;
     private final EmpleadoRepository empleadoRepository;
     private final EmpleadoRolRepository empleadoRolRepository;
+    private final EmpleadoCajaRepository empleadoCajaRepository;
+    private final ExpertoABMEmpleado expertoABMEmpleado;
 
     // Constructor correcto para la inyección de dependencia
-    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository, EmpleadoRepository empleadoRepository, EmpleadoRolRepository empleadoRolRepository) {
+    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository, EmpleadoRepository empleadoRepository, EmpleadoRolRepository empleadoRolRepository, ExpertoABMEmpleado expertoABMEmpleado, EmpleadoCajaRepository empleadoCajaRepository) {
         this.estadoReservaRepository = estadoReservaRepository;
         this.tipoMovimientoRepository = tipoMovimientoRepository;
         this.tipoTareaRepository = tipoTareaRepository;
@@ -35,6 +41,8 @@ public class DataInitialazer {
         this.rolRepository = rolRepository;
         this.empleadoRepository = empleadoRepository;
         this.empleadoRolRepository = empleadoRolRepository;
+        this.expertoABMEmpleado = expertoABMEmpleado;
+        this.empleadoCajaRepository = empleadoCajaRepository;
     }
 
     // ========================
@@ -73,6 +81,18 @@ public class DataInitialazer {
         //inicializacion de datos estado reserva
 
         // ========================
+        // ZONA DE CREACION DE CLIENTES
+        // ========================
+        if (clienteRepository.count() == 0) {
+            Cliente cli1 = new Cliente("44000000","CLI002","Matias Anselmi",null,LocalDateTime.now());
+            Cliente cli2 = new Cliente("44000001","CLI003","Clara Mazuran",null,LocalDateTime.now());
+            Cliente cli3 = new Cliente("44000002","CLI004","Jose Anselmi",null,LocalDateTime.now());
+            Cliente cli4 = new Cliente("44000003","CLI005","Maria Mazuran",null,LocalDateTime.now());
+            Cliente cli5 = new Cliente("44000004","CLI006","Mau",null,LocalDateTime.now());
+            clienteRepository.saveAll(Arrays.asList(cli1, cli2, cli3, cli4, cli5));
+        }
+
+        // ========================
         // ZONA DE CREACION DE INMUEBLES Y RESERVAS DE PRUEBA
         // ========================
         // Crear inmuebles de ejemplo si no existen
@@ -108,7 +128,7 @@ public class DataInitialazer {
             System.out.println("Reservas e inmuebles de prueba insertados correctamente.");
         }
         // ========================
-        // FIN ZONA DE CREACION DE INMUEBLES Y RESERVAS DE PRUEBA
+        // FIN ZONA DE CREACION DE INMUEBLES Y RESERVAS DE PRU  EBA
         // ========================
 
         //inicializacion de datos tipo movimiento
@@ -138,7 +158,6 @@ public class DataInitialazer {
         //inicializacion de datos Tipo tarea
 
         //inicializacion de datos estado tarea
-
         if (estadoTareaRepository.count() == 0) {
             EstadoTarea estadoTarea1 = new EstadoTarea( "EST001", "Asignada", null, LocalDateTime.now());
             EstadoTarea estadoTarea2 = new EstadoTarea( "EST002", "Anulada", null, LocalDateTime.now());
@@ -172,8 +191,9 @@ public class DataInitialazer {
             CategoriaMovimiento categoriaMovimiento3 = new CategoriaMovimiento( "CAT003", "Cancelacion Reserva", LocalDateTime.now(), null);
             CategoriaMovimiento categoriaMovimiento4 = new CategoriaMovimiento( "CAT004", "Rendicion a Inmueble", LocalDateTime.now(), null);
             CategoriaMovimiento categoriaMovimiento5 = new CategoriaMovimiento( "CAT005", "Rendicion de Empleado", LocalDateTime.now(), null);
+            CategoriaMovimiento categoriaMovimiento6 = new CategoriaMovimiento( "CAT006", "Otros", LocalDateTime.now(), null);
 
-            categoriaMovimientoRepository.saveAll(Arrays.asList(categoriaMovimiento1, categoriaMovimiento2, categoriaMovimiento3, categoriaMovimiento4, categoriaMovimiento5));
+            categoriaMovimientoRepository.saveAll(Arrays.asList(categoriaMovimiento1, categoriaMovimiento2, categoriaMovimiento3, categoriaMovimiento4, categoriaMovimiento5, categoriaMovimiento6));
             System.out.println("Datos iniciales de CategoriaMovimiento insertados correctamente.");
         } else {
             System.out.println("La base de datos ya contiene datos de CategoriaMovimiento, no se inicializaron nuevos datos.");
@@ -198,13 +218,78 @@ public class DataInitialazer {
 
         //Iniciacion de Empleado maestro
         if (empleadoRepository.count() == 0) {
-            Empleado empleado1 = new Empleado("44310665","Empl001","Matias","2615199115", 200L,null,LocalDateTime.now(),null,null);
-            Empleado empleado2 = new Empleado("44000000","Empl002","Mauri","2615199115", 200L,null,LocalDateTime.now(),null,null);
-            Empleado empleado3 = new Empleado("44555555", "Empl003", "Clara", "2615000000", 200L, null, LocalDateTime.now(), null, null);
-            Empleado empleado4 = new Empleado("44666666", "Empl004", "Juan", "2615111111", 200L, null, LocalDateTime.now(), null, null);
-            Empleado empleado5 = new Empleado("44777777", "Empl005", "Lucia", "2615222222", 200L, null, LocalDateTime.now(), null, null);
+            Empleado empleado1 = new Empleado("44310665","EMPL-001","Matias","2615199115", 200L,null,LocalDateTime.now(),null,null);
+            Empleado empleado2 = new Empleado("44000000","EMPL-002","Mauri","2615199115", 200L,null,LocalDateTime.now(),null,null);
+            Empleado empleado3 = new Empleado("44555555", "EMPL-003", "Clara", "2615000000", 200L, null, LocalDateTime.now(), null, null);
+            Empleado empleado4 = new Empleado("44666666", "EMPL-004", "Juan", "2615111111", 200L, null, LocalDateTime.now(), null, null);
+            Empleado empleado5 = new Empleado("44777777", "EMPL-005", "Lucia", "2615222222", 200L, null, LocalDateTime.now(), null, null);
             empleadoRepository.saveAll(Arrays.asList(empleado1,empleado2,empleado3,empleado4,empleado5));
+
+            // Crear cajas de empleados
+            EmpleadoCaja empleadoCaja1 = EmpleadoCaja.builder()
+                    .empleado(empleado1)
+                    .nroEmpleadoCaja(1L)
+                    .nombreEmpleadoCaja(empleado1.getNombreEmpleado())
+                    .balanceARS(BigDecimal.ZERO)
+                    .balanceUSD(BigDecimal.ZERO)
+                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
+                    .fechaHoraBajaEmpleadoCaja(null)
+                    .build();
+            EmpleadoCaja empleadoCaja2 = EmpleadoCaja.builder()
+                    .empleado(empleado2)
+                    .nroEmpleadoCaja(2L)
+                    .nombreEmpleadoCaja(empleado2.getNombreEmpleado())
+                    .balanceARS(BigDecimal.ZERO)
+                    .balanceUSD(BigDecimal.ZERO)
+                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
+                    .fechaHoraBajaEmpleadoCaja(null)
+                    .build();
+            EmpleadoCaja empleadoCaja3 = EmpleadoCaja.builder()
+                    .empleado(empleado3)
+                    .nroEmpleadoCaja(3L)
+                    .nombreEmpleadoCaja(empleado3.getNombreEmpleado())
+                    .balanceARS(BigDecimal.ZERO)
+                    .balanceUSD(BigDecimal.ZERO)
+                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
+                    .fechaHoraBajaEmpleadoCaja(null)
+                    .build();
+            EmpleadoCaja empleadoCaja4 = EmpleadoCaja.builder()
+                    .empleado(empleado4)
+                    .nroEmpleadoCaja(4L)
+                    .nombreEmpleadoCaja(empleado4.getNombreEmpleado())
+                    .balanceARS(BigDecimal.ZERO)
+                    .balanceUSD(BigDecimal.ZERO)
+                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
+                    .fechaHoraBajaEmpleadoCaja(null)
+                    .build();
+            EmpleadoCaja empleadoCaja5 = EmpleadoCaja.builder()
+                    .empleado(empleado5)
+                    .nroEmpleadoCaja(5L)
+                    .nombreEmpleadoCaja(empleado5.getNombreEmpleado())
+                    .balanceARS(BigDecimal.ZERO)
+                    .balanceUSD(BigDecimal.ZERO)
+                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
+                    .fechaHoraBajaEmpleadoCaja(null)
+                    .build();
+            empleadoCajaRepository.saveAll(Arrays.asList(empleadoCaja1, empleadoCaja2, empleadoCaja3, empleadoCaja4, empleadoCaja5));
             System.out.println("Datos iniciales de Empleado insertados correctamente.");
+        }
+
+        if (empleadoRepository.findByDniEmpleado("44564456").isEmpty()) {
+            // Empleado Maestro
+            AltaEmpleadoRequest empleadoRequest = AltaEmpleadoRequest.builder()
+                    .dniEmpleado("44564456")
+                    .nombreEmpleado("Mauricio")
+                    .nroTelefonoEmpleado("2615199115")
+                    .salarioEmpleado(200L)
+                    .codRoles(Arrays.asList("ROL001", "ROL002", "ROL003", "ROL004", "ROL005"))
+                    .email("mauricio@gmail.com")
+                    .password("Passw0rd!")
+                    .build();
+
+            AltaEmpleadoResponse empleadoMaestro = expertoABMEmpleado.altaEmpleado(empleadoRequest);
+        } else {
+            System.out.println("Empleado maestro ya existente!");
         }
     }
 }
