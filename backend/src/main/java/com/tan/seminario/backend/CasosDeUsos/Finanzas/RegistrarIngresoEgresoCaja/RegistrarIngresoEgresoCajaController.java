@@ -7,6 +7,7 @@ import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja
 import com.tan.seminario.backend.Entity.Movimiento;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +23,10 @@ public class RegistrarIngresoEgresoCajaController {
     }
 
     @PostMapping
-    public ResponseEntity<Movimiento> registrarIngresoEgresoCaja(@RequestBody DTOTransaccionARegistrar transaccionARegistrar){
-        Movimiento nuevoMovimiento = expertoRegistrarIngresoEgresoCaja.registrarMovimiento(transaccionARegistrar);
+    public ResponseEntity<Movimiento> registrarIngresoEgresoCaja(@RequestBody DTOTransaccionARegistrar transaccionARegistrar, Authentication authentication){
+
+        String username = authentication.getName();
+        Movimiento nuevoMovimiento = expertoRegistrarIngresoEgresoCaja.registrarMovimiento(transaccionARegistrar, username);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoMovimiento);
     }
 

@@ -2,6 +2,8 @@ package com.tan.seminario.backend.CasosDeUsos.Inicio.DTOInicio;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -13,5 +15,6 @@ public class DTOTarea {
     private String descripcionTarea;
     private String ubicacionTarea;
     private String tipoTarea;
-    private String fechaYHoraTarea;
+    private LocalDateTime fechaYHoraTarea;
+    private Long nroTarea;
 }
