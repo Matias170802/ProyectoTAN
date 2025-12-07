@@ -15,15 +15,13 @@ import java.time.LocalDateTime;
 
 public class DTOTarea {
     private String nombreTarea;
+    private Long nroTarea;
     private String descripcionTarea;
-    private LocalDateTime fechaHoraAsignacionTarea;
-    private LocalDateTime fechaHoraInicioTarea;
-    private LocalDateTime fechaHoraFinTarea;
+
 
     private String codEmpleado;
 
     private String codReserva;
 
     private String codTipoTarea;
-    private String nombreTipoTarea;
 }

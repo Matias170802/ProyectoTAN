@@ -20,11 +20,10 @@ public class AsignarCheckInOutController {
     @PostMapping("/asignarCheckIn")
     public ResponseEntity<?> asignarCheckInOut(@RequestBody DTOTarea dtoTarea){
         try{
-            String respuesta = experto.;
+            String respuesta = experto.asignarCheckInOut(dtoTarea);
             return ResponseEntity.ok(respuesta);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of());
         }
-    }
     }
 }
