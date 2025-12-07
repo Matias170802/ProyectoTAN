@@ -35,6 +35,33 @@
     background: #fff;
 }
 
+/* Estilos para columna de acciones sticky en la izquierda */
+.actions-header {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    background: #fafafa;
+    min-width: 140px;
+    width: 140px;
+}
+
+.actions-cell {
+    position: sticky;
+    left: 0;
+    z-index: 9;
+    background: #fff;
+    min-width: 140px;
+    width: 140px;
+}
+
+.tabla-row:hover .actions-cell {
+    background: #f8f9fa;
+}
+
+.list-item-selected .actions-cell {
+    background: #e3f2fd;
+}
+
 .lista-tabla .tipo-empleado {
     background: #e3edff;
     color: #377dff;

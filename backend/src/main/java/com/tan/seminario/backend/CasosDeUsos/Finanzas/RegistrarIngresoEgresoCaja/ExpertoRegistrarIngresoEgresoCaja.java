@@ -79,7 +79,9 @@ public class ExpertoRegistrarIngresoEgresoCaja {
         CategoriaMovimiento categoriaMovimientoSeleccionada = categoriaMovimientoRepository.findBynombreCategoriaMovimiento(transaccionARegistrar.getCategoria());
 
         //TODO: FALTA RELACIONAR CON EL EMPLEADOCAJA QUE TIENE LA SESION ACTIVA
-        Movimiento nuevoMovimiento = Movimiento.builderConNumero(movimientoRepository)
+
+        Movimiento nuevoMovimiento = Movimiento.builder()
+                .nroMovimiento(Movimiento.generarProximoNumero(movimientoRepository))
                 .moneda(monedaSeleccionada)
                 .descripcionMovimiento(transaccionARegistrar.getDescripcion())
                 .montoMovimiento(transaccionARegistrar.getMonto())

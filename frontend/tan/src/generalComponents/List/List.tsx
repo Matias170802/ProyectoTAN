@@ -1,7 +1,7 @@
 import './List.css'
 import {type Props} from './List.ts'
 
-const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete, onItemEdit, onItemInfo, emptyMessage, showActions = true, columnas, idField = 'id', getVisibleActions, loadingItems, onItemSelect, selectedItem, selectableCondition}: Props<T>) => {
+const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete, onItemEdit, onItemInfo, emptyMessage, showActions = true, actionsPosition, columnas, idField = 'id', getVisibleActions, loadingItems, onItemSelect, selectedItem, selectableCondition}: Props<T>) => {
     
     //* en el caso de que la lista este cargando
     if (loadingItems) {
@@ -145,7 +145,7 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
 };
 
     return (
-    <section className='contenedor-lista'>
+    <section className='contenedor-lista' style={{ overflowX: 'auto' }}>
         <table className="lista-tabla">
             
             {/*encabezado tabla*/}
@@ -178,6 +178,7 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                             cursor: isItemSelectable(item) ? 'pointer' : 'default'
                         }}
                     >
+                        {actionsPosition === 'left' && renderActionButtons(item)}
                         {/* celdas de datos*/}
                         {columnas.map((columna) => (
                             <td key={columna} className="tabla-cell">

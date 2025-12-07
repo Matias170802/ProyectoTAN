@@ -44,7 +44,7 @@ public class ExpertoAMTarea {
                 nombreTarea = tipoTareas.get(0).getNombreTipoTarea();
             }
 
-            List<EstadoTarea> estadoTipoTareas = estadoTareaRepository.findByNombreEstadoTarea("Asignada");
+            EstadoTarea estadoTipoTarea = estadoTareaRepository.findByNombreEstadoTarea("Asignada");
             // Creamos la Nueva Tarea
             Tarea tarea = new Tarea();
             tarea.setNombreTarea(nombreTarea);
@@ -53,7 +53,7 @@ public class ExpertoAMTarea {
             }
             tarea.setFechaHoraAsignacionTarea(LocalDateTime.now());
 
-            tarea.setEstadoTarea(estadoTipoTareas.get(0));
+            tarea.setEstadoTarea(estadoTipoTarea);
             tarea.setEmpleado(empleados.get(0));
             tarea.setReserva(reservas.get(0));
             tarea.setTipoTarea(tipoTareas.get(0));
