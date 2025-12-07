@@ -61,9 +61,34 @@ public class ExpertoAMTarea {
             return "Tarea creada";
         }else{
             //Modificacion
+            String nombreTarea = dtoTarea.getNombreTarea();
+            String descripcionTarea = dtoTarea.getDescripcionTarea();
+
+            String codEmpleado = dtoTarea.getCodEmpleado();
+            String codReserva = dtoTarea.getCodReserva();
+            String codTipoTarea = dtoTarea.getCodTipoTarea();
+
+            //Busquedas
+            List<Empleado> empleados = empleadoRepository.findByCodEmpleado(codEmpleado);
+            if (empleados.isEmpty()) {throw new RuntimeException("No se encuentra el Empleado con el Codigo: " + codEmpleado);}
+            List<Reserva> reservas = reservaRepository.findByCodReserva(codReserva);
+            if (reservas.isEmpty()) {throw new RuntimeException("No se encuentra la Reserva con el Codigo: " + codReserva);}
+            List<TipoTarea> tipoTareas = tipoTareaRepository.findByCodTipoTarea(codTipoTarea);
+            if (tipoTareas.isEmpty()) {throw new RuntimeException("No se encuentra el Tipo de Tarea con el Codigo: " + codTipoTarea);}
+
+            if (nombreTarea == null){
+                nombreTarea = tipoTareas.get(0).getNombreTipoTarea();
+            }
+
+            tareasModificacion.get(0).setNombreTarea(nombreTarea);
+            tareasModificacion.get(0).setDescripcionTarea(descripcionTarea);
+            tareasModificacion.get(0).setEmpleado(empleados.get(0));
+            tareasModificacion.get(0).setReserva(reservas.get(0));
+            tareasModificacion.get(0).setTipoTarea(tipoTareas.get(0));
+            tareasModificacion.get(0).setFechaHoraAsignacionTarea(LocalDateTime.now());
+
+            tareaRepository.save(tareasModificacion.get(0));
+            return "Tarea modificada";
         }
-
-
-        return "Terminar";
     }
 }
