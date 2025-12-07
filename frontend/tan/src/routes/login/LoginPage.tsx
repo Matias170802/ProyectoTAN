@@ -24,7 +24,7 @@ const LoginPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Verificar si ya existe una sesión activa
+  //* Verificar si ya existe una sesión activa
   useEffect(() => {
     const accessToken = sessionStorage.getItem('access_token') || localStorage.getItem('access_token');
     if (accessToken) {
@@ -88,7 +88,7 @@ const LoginPage: React.FC = () => {
 
       const data: LoginResponse = await response.json();
 
-      // Guardar tokens según la preferencia del usuario
+      //* Guardar tokens según la preferencia del usuario
       if (rememberMe) {
         localStorage.setItem('access_token', data.access_token);
         localStorage.setItem('refresh_token', data.refresh_token);
