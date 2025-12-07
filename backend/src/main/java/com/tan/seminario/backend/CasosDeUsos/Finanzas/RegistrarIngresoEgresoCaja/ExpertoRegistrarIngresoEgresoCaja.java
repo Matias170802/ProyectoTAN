@@ -4,14 +4,8 @@ import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja
 import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOMoneda;
 import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOTipoTransaccion;
 import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOTransaccionARegistrar;
-import com.tan.seminario.backend.Entity.CategoriaMovimiento;
-import com.tan.seminario.backend.Entity.Moneda;
-import com.tan.seminario.backend.Entity.Movimiento;
-import com.tan.seminario.backend.Entity.TipoMovimiento;
-import com.tan.seminario.backend.Repository.CategoriaMovimientoRepository;
-import com.tan.seminario.backend.Repository.MonedaRepository;
-import com.tan.seminario.backend.Repository.MovimientoRepository;
-import com.tan.seminario.backend.Repository.TipoMovimientoRepository;
+import com.tan.seminario.backend.Entity.*;
+import com.tan.seminario.backend.Repository.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,12 +17,16 @@ public class ExpertoRegistrarIngresoEgresoCaja {
     private final MonedaRepository monedaRepository;
     private final CategoriaMovimientoRepository categoriaMovimientoRepository;
     private final MovimientoRepository movimientoRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final EmpleadoCajaRepository empleadoCajaRepository;
 
-    public ExpertoRegistrarIngresoEgresoCaja(TipoMovimientoRepository tipoMovimientoRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, MovimientoRepository movimientoRepository)  {
+    public ExpertoRegistrarIngresoEgresoCaja(TipoMovimientoRepository tipoMovimientoRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, MovimientoRepository movimientoRepository, UsuarioRepository usuarioRepository, EmpleadoCajaRepository empleadoCajaRepository)  {
         this.tipoMovimientoRepository = tipoMovimientoRepository;
         this.monedaRepository = monedaRepository;
         this.categoriaMovimientoRepository = categoriaMovimientoRepository;
         this.movimientoRepository = movimientoRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.empleadoCajaRepository = empleadoCajaRepository;
     }
 
     public List<DTOTipoTransaccion> buscarTiposTransaccion() {
@@ -73,12 +71,15 @@ public class ExpertoRegistrarIngresoEgresoCaja {
         return categoriaMovimientoAEnviar;
     }
 
-    public Movimiento registrarMovimiento (DTOTransaccionARegistrar transaccionARegistrar) {
+    public Movimiento registrarMovimiento (DTOTransaccionARegistrar transaccionARegistrar, String username) {
         Moneda monedaSeleccionada = monedaRepository.findBynombreMoneda(transaccionARegistrar.getMoneda());
         TipoMovimiento tipoMovimientoSeleccionado = tipoMovimientoRepository.findBynombreTipoMovimiento(transaccionARegistrar.getTipoTransaccion());
         CategoriaMovimiento categoriaMovimientoSeleccionada = categoriaMovimientoRepository.findBynombreCategoriaMovimiento(transaccionARegistrar.getCategoria());
+        Usuario usuarioActivo = usuarioRepository.findByEmail(username).get();
+        Empleado empleadoActivo = usuarioActivo.getEmpleado();
 
-        //TODO: FALTA RELACIONAR CON EL EMPLEADOCAJA QUE TIENE LA SESION ACTIVA
+        EmpleadoCaja cajaEmpleadoActivo = empleadoCajaRepository.findByEmpleado_FechaHoraBajaEmpleadoCajaIsNull(empleadoActivo);
+        
         Movimiento nuevoMovimiento = Movimiento.builderConNumero(movimientoRepository)
                 .moneda(monedaSeleccionada)
                 .descripcionMovimiento(transaccionARegistrar.getDescripcion())
@@ -86,6 +87,7 @@ public class ExpertoRegistrarIngresoEgresoCaja {
                 .fechaMovimiento(LocalDateTime.now())
                 .categoriaMovimiento(categoriaMovimientoSeleccionada)
                 .tipoMovimiento(tipoMovimientoSeleccionado)
+                .empleadoCaja(cajaEmpleadoActivo)
                 .build();
 
         movimientoRepository.save(nuevoMovimiento);
