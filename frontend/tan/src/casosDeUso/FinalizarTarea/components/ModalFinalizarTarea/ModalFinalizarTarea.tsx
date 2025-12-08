@@ -14,7 +14,7 @@ export const ModalFinalizarTarea: React.FC<PropsFinalizarTarea> = ({isOpen, onCl
     const location = useLocation();
     const [transaccionesTemporales, setTransaccionesTemporales] = useState<[Transaccion] | []>([]);
     const {registrarIngresoEgresoCaja} = useIngresoEgresoCaja(); 
-
+    const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
 
     // Cargar transacciones temporales cuando se abre el modal O cuando se vuelve de agregar IE
     useEffect(() => {
@@ -63,24 +63,23 @@ export const ModalFinalizarTarea: React.FC<PropsFinalizarTarea> = ({isOpen, onCl
 
     const handleFinalizarTarea = async () => {
         try {
-            // 1. Registrar todas las transacciones temporales en el backend
-            for (const transaccion of transaccionesTemporales) {
-                await registrarIngresoEgresoCaja(transaccion);
+            const response = await fetch(`/api/tareas/finalizar/${tarea.nroTarea}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    tareaFinalizadaARegistrar: {
+                        nroTarea: tarea.nroTarea,
+                        movimientosARegistrar: transaccionesTemporales
+                    }
+                })
+            })
+
+            if (response.ok) {
+                alert('Tarea finalizada con éxito');
             }
-
-            // 2. Limpiar sessionStorage
-            sessionStorage.removeItem('transaccionesTemporales');
-            sessionStorage.removeItem('tareaActual');
-            sessionStorage.removeItem('modalFinalizarAbierto');
-
-            // 3. Aquí puedes agregar la lógica para finalizar la tarea
-            console.log('Tarea finalizada con éxito');
-            
-            // 4. Cerrar modal
-            onClose?.();
-            
-            // 5. Opcional: Mostrar mensaje de éxito
-            alert('Tarea finalizada con éxito');
             
         } catch (error) {
             console.error('Error al finalizar tarea:', error);
@@ -101,7 +100,15 @@ export const ModalFinalizarTarea: React.FC<PropsFinalizarTarea> = ({isOpen, onCl
                 <section id='seccionDetallesTarea'>
                     <p id='tituloDetallesTarea'>Detalles de la tarea:</p>
                     <p className='detallesTareaTexto'>Ubicación: {tarea.ubicacionTarea}</p>
-                    <p className='detallesTareaTexto'>Fecha y hora: {tarea.fechaTarea}, {tarea.horaTarea}</p>
+                    <p className='detallesTareaTexto'>
+                        Fecha y hora: {tarea.fechaYHoraTarea.toLocaleDateString('es-AR', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })}
+                    </p>
                 </section>
 
                 {/* Mostrar transacciones temporales */}

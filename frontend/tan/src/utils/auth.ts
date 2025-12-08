@@ -1,4 +1,4 @@
-// Utilidades para manejar autenticación
+//* Utilidades para manejar autenticación
 
 export const getAccessToken = (): string | null => {
   return sessionStorage.getItem('access_token') || localStorage.getItem('access_token');
