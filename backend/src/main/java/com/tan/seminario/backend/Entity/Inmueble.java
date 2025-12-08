@@ -22,9 +22,7 @@ public class Inmueble  extends Base {
     @Column(unique = true)
     private String codInmueble;
 
-    @Column(unique = true)
     private String nombreInmueble;
-
     private Integer cantidadBaños;
     private Integer cantidadDormitorios;
     private Integer capacidad;
