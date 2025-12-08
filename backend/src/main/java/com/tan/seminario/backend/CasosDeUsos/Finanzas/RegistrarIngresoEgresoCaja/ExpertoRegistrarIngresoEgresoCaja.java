@@ -79,7 +79,7 @@ public class ExpertoRegistrarIngresoEgresoCaja {
         Empleado empleadoActivo = usuarioActivo.getEmpleado();
 
         EmpleadoCaja cajaEmpleadoActivo = empleadoCajaRepository.findByEmpleado_FechaHoraBajaEmpleadoCajaIsNull(empleadoActivo);
-        
+
         Movimiento nuevoMovimiento = Movimiento.builderConNumero(movimientoRepository)
                 .moneda(monedaSeleccionada)
                 .descripcionMovimiento(transaccionARegistrar.getDescripcion())
