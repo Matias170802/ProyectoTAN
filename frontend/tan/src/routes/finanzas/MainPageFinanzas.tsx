@@ -2,17 +2,20 @@ import React from 'react';
 import { IoBarChart } from "react-icons/io5";
 import { MdCompareArrows, MdAttachMoney } from "react-icons/md";
 import { HiOutlineSwitchHorizontal } from "react-icons/hi";
+import { FaMoneyBillTransfer } from "react-icons/fa6";
 import {Button, List} from '../../generalComponents/index'
 import './MainPageFinanzas.css'
 import {ModalRegistrarCotizacionMoneda} from '../../casosDeUso/RegistrarCotizacionMoneda/components/index'
 import { useFinanzas } from './useFinanzas';
 import {ModalRegistrarCambioMoneda} from '../../casosDeUso/RegistrarCambioMoneda/components/ModalRegistrarCambioMoneda/ModalRegistrarCambioMoneda'
+import {ModalPagarSueldos} from '../../casosDeUso/PagarSueldos/components/ModalPagarSueldos'
 import {type Caja} from '../finanzas/typesFinanzas'
 
 const MainPageFinanzas: React.FC = () => {
 
     const [openModalRegistrarCotizacionMoneda, setOpenModalRegistrarCotizacionMoneda] = React.useState(false);
     const [openModalRegistrarCambioMoneda, setOpenModalRegistrarCambioMoneda] = React.useState(false);
+    const [openModalPagarSueldos, setOpenModalPagarSueldos] = React.useState(false);
     const [cajaMadreSeleccionada, setCajaMadreSeleccionada] = React.useState<Caja | null>(null);
 
     //*estados para los filtros
@@ -50,6 +53,11 @@ const MainPageFinanzas: React.FC = () => {
             refetchCajas();
         }
     };
+
+    const obtenerCajaMadre = () => {
+        const cajaMadre =  cajasAMostrar.find(caja => caja.tipo === "Otro");
+        return cajaMadre || ({} as Caja);
+    } 
 
 
     return(
@@ -109,6 +117,12 @@ const MainPageFinanzas: React.FC = () => {
                             onClick={()=>{setOpenModalRegistrarCambioMoneda(true)}}
                             hidden={cajaMadreSeleccionada == null}
                             />
+
+                            <Button
+                            label='Pagar Sueldos'
+                            icon={<FaMoneyBillTransfer />}
+                            onClick={()=>{setOpenModalPagarSueldos(true)}}
+                            />
                             
                     </div>
 
@@ -144,6 +158,15 @@ const MainPageFinanzas: React.FC = () => {
                             onClose={handleCerrarModalCambioMoneda}
                             cajaMadre={cajaMadreSeleccionada}
                         />    
+                    )}
+
+                    {openModalPagarSueldos && (
+                        <ModalPagarSueldos
+                        cajaMadre={obtenerCajaMadre()}
+                        isOpen={openModalPagarSueldos}
+                        onClose={() => setOpenModalPagarSueldos(false)}
+                        showCloseButton={true}
+                        />
                     )}
                 </div>
             </div>
