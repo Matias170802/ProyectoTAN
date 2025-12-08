@@ -9,5 +9,5 @@ import java.util.List;
 public interface EmpleadoCajaRepository extends JpaRepository<EmpleadoCaja, Long> {
 
     List<EmpleadoCaja> findEmpleadoCajaByFechaHoraBajaEmpleadoCajaIsNull();
-    EmpleadoCaja findByEmpleado_FechaHoraBajaEmpleadoCajaIsNull(Empleado empleado);
+    EmpleadoCaja findByEmpleadoAndFechaHoraBajaEmpleadoCajaIsNull(Empleado empleado);
 }
