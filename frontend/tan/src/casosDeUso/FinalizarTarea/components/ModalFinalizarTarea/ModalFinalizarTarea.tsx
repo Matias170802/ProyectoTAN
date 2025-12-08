@@ -14,7 +14,7 @@ export const ModalFinalizarTarea: React.FC<PropsFinalizarTarea> = ({isOpen, onCl
     const location = useLocation();
     const [transaccionesTemporales, setTransaccionesTemporales] = useState<[Transaccion] | []>([]);
     const {registrarIngresoEgresoCaja} = useIngresoEgresoCaja(); 
-
+    const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
 
     // Cargar transacciones temporales cuando se abre el modal O cuando se vuelve de agregar IE
     useEffect(() => {
@@ -67,6 +67,7 @@ export const ModalFinalizarTarea: React.FC<PropsFinalizarTarea> = ({isOpen, onCl
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     tareaFinalizadaARegistrar: {
