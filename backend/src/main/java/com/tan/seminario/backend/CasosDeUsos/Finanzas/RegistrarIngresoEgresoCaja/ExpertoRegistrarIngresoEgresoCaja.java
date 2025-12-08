@@ -78,7 +78,7 @@ public class ExpertoRegistrarIngresoEgresoCaja {
         Usuario usuarioActivo = usuarioRepository.findByEmail(username).get();
         Empleado empleadoActivo = usuarioActivo.getEmpleado();
 
-        EmpleadoCaja cajaEmpleadoActivo = empleadoCajaRepository.findByEmpleado_FechaHoraBajaEmpleadoCajaIsNull(empleadoActivo);
+        EmpleadoCaja cajaEmpleadoActivo = empleadoCajaRepository.findByEmpleadoAndFechaHoraBajaEmpleadoCajaIsNull(empleadoActivo);
 
         Movimiento nuevoMovimiento = Movimiento.builderConNumero(movimientoRepository)
                 .moneda(monedaSeleccionada)

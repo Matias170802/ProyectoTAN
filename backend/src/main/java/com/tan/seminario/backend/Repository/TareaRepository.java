@@ -11,6 +11,6 @@ public interface TareaRepository extends JpaRepository <Tarea, Long>{
 
     List<Tarea> findTareaByEstadoTarea(EstadoTarea estadoTarea);
     Tarea findTareaByNombreTarea(String nombreTarea);
-    List<Tarea> findTareaByEstadoTarea_Empleado(EstadoTarea estadoTarea, Empleado empleado);
+    List<Tarea> findTareaByEstadoTareaAndEmpleado(EstadoTarea estadoTarea, Empleado empleado);
     Tarea findTareaByNroTarea(Long nroTarea);
 }

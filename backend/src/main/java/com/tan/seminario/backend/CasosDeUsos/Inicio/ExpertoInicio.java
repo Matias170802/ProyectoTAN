@@ -38,7 +38,7 @@ public class ExpertoInicio {
         EstadoTarea estadoTareaABuscar = estadoTareaRepository.findByNombreEstadoTarea("Asignada");
 
         //busco las tareas relacionadas al estado Asignada
-        List<Tarea> tareasEncontradasARealizar = tareaRepository.findTareaByEstadoTarea_Empleado(estadoTareaABuscar, empleadoActual);
+        List<Tarea> tareasEncontradasARealizar = tareaRepository.findTareaByEstadoTareaAndEmpleado(estadoTareaABuscar, empleadoActual);
 
         List<DTOTarea> dtos = new java.util.ArrayList<>();
 
