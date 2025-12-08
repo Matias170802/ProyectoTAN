@@ -157,6 +157,141 @@ html, body, #root {
   opacity: 0.7;
 }
 
+/* Estilos para el estado de carga */
+.textoLoading {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin: 2rem 0;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    border-left: 4px solid #007bff;
+    box-shadow: 0 2px 10px rgba(0, 123, 255, 0.1);
+    animation: pulseLoading 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseLoading {
+    0% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.02); }
+    100% { opacity: 0.6; transform: scale(1); }
+}
+
+/* Estilos para el estado sin tareas */
+#textoSinTareas {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin: 3rem 0;
+    padding: 2.5rem 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 15px;
+    border: 2px dashed #dee2e6;
+    position: relative;
+    overflow: hidden;
+}
+
+#textoSinTareas::before {
+    content: "📋";
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+    opacity: 0.6;
+}
+
+#textoSinTareas::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transform: rotate(45deg);
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+/* Estilos para el estado de error */
+.textoError {
+    text-align: center;
+    font-size: 1rem;
+    color: #dc3545;
+    background: linear-gradient(135deg, #f8d7da 0%, #ffffff 100%);
+    border: 1px solid #f5c6cb;
+    border-left: 4px solid #dc3545;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);
+    position: relative;
+    animation: slideInError 0.5s ease-out;
+}
+
+.textoError::before {
+    content: "⚠️";
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+}
+
+@keyframes slideInError {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .textoLoading, 
+    #textoSinTareas, 
+    .textoError {
+        margin: 1.5rem 0;
+        padding: 1.5rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    #textoSinTareas::before {
+        font-size: 2.5rem;
+        margin-bottom: 0.8rem;
+    }
+}
+
+/* Variante con modo oscuro */
+@media (prefers-color-scheme: dark) {
+    .textoLoading {
+        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+        color: #e2e8f0;
+        border-left-color: #4299e1;
+    }
+
+    #textoSinTareas {
+        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+        color: #e2e8f0;
+        border-color: #4a5568;
+    }
+
+    .textoError {
+        background: linear-gradient(135deg, #742a2a 0%, #1a202c 100%);
+        color: #fed7d7;
+        border-color: #e53e3e;
+    }
+}
+
 
 
 

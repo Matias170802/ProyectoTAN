@@ -46,6 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (request.getServletPath().contains("/auth")) {
             filterChain.doFilter(request, response);
             return;
+
         }
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -95,38 +96,27 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
 
             // Cargar usuario
-            final UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-            final Optional<Usuario> user = usuarioRepository.findByEmail(userDetails.getUsername());
+            // Cargar solo UserDetails, no Usuario
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
 
-            if (user.isEmpty()) {
-                log.warn("Usuario no encontrado: {}", userEmail);
-                sendUnauthorizedError(response, "Usuario no encontrado");
-                return;
-            }
-
-            // Verificar que el usuario esté activo
-            if (!user.get().getActivo()) {
-                log.warn("Cuenta inactiva para usuario: {}", userEmail);
-                sendUnauthorizedError(response, "Cuenta inactiva");
-                return;
-            }
-
-            // Validar firma del token
-            final boolean isTokenValid = jwtService.isTokenValid(jwtToken, user.get());
-            if (!isTokenValid) {
-                log.warn("Firma del token inválida para usuario: {}", userEmail);
+            // ✔ Validar firma del token usando el UserDetails
+            if (!jwtService.isTokenValid(jwtToken, userDetails)) {
                 sendUnauthorizedError(response, "Token inválido");
                 return;
             }
 
-            // Token válido - autenticar usuario
-            log.debug("Usuario autenticado correctamente: {}", userEmail);
-            final var authToken = new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    null,
-                    userDetails.getAuthorities()
+            // ✔ Autenticación lista
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+
+            authToken.setDetails(
+                    new WebAuthenticationDetailsSource().buildDetails(request)
             );
-            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
         } catch (Exception e) {
