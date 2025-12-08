@@ -8,11 +8,11 @@ interface Empleado {
 }
 
 
-export const usePagarSueldos = () => {
+export const usePagarSueldos = (dniEmpleado: string) => {
 
     const {data: empleados, loading: loadingEmpleados, refetch: refetchEmpleados, error: errorEmpleados} = useFetch<Empleado[]>('/api/finanzas/pagarSueldos');
 
-
+    const {}
     return {
         empleados,
         loadingEmpleados,
