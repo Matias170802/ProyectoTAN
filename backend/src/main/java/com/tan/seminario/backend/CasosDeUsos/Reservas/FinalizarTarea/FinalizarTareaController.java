@@ -4,6 +4,7 @@ import com.tan.seminario.backend.CasosDeUsos.Reservas.FinalizarTarea.DTOs.DTOTar
 import com.tan.seminario.backend.Entity.Tarea;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,8 +18,10 @@ public class FinalizarTareaController {
     }
 
     @PostMapping
-    public ResponseEntity<Tarea> finalizarTarea(@RequestBody DTOTareaFinalizadaARegistrar tareaFinalizadaARegistrar) {
-        Tarea nuevaTarea = expertoFinalizarTarea.finalizarTarea(tareaFinalizadaARegistrar);
+    public ResponseEntity<Tarea> finalizarTarea(@RequestBody DTOTareaFinalizadaARegistrar tareaFinalizadaARegistrar, Authentication authentication) {
+
+        String username = authentication.getName();
+        Tarea nuevaTarea = expertoFinalizarTarea.finalizarTarea(tareaFinalizadaARegistrar, username);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaTarea);
     }
 }

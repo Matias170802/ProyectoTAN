@@ -22,14 +22,14 @@ public class ExpertoFinalizarTarea {
         this.expertoRegistrarIngresoEgresoCaja = expertoRegistrarIngresoEgresoCaja;
     }
 
-    public Tarea finalizarTarea(DTOTareaFinalizadaARegistrar tareaFinalizadaARegistrar) {
+    public Tarea finalizarTarea(DTOTareaFinalizadaARegistrar tareaFinalizadaARegistrar, String username) {
 
         Tarea tareaAFinalizar = tareaRepository.findTareaByNroTarea(tareaFinalizadaARegistrar.getNroTarea());
 
         tareaAFinalizar.setEstadoTarea(estadoTareaRepository.findByNombreEstadoTarea("Finalizada"));
 
         for (DTOTransaccionARegistrar movimiento: tareaFinalizadaARegistrar.getMovimientosARegistrar()) {
-            Movimiento movimientoRegistrado = expertoRegistrarIngresoEgresoCaja.registrarMovimiento(movimiento);
+            Movimiento movimientoRegistrado = expertoRegistrarIngresoEgresoCaja.registrarMovimiento(movimiento, username);
 
             movimientoRegistrado.setTarea(tareaAFinalizar);
         }
