@@ -25,7 +25,7 @@ export const useFinanzas = () => {
         tipoSeleccionado: string,
         ordenSeleccionado: string,
         textoBuscado: string
-    ) => {
+    ): Caja[] => {
         let resultado = cajasData || [];
         console.log("Cajas antes de filtrar:", resultado);
 
@@ -48,11 +48,17 @@ export const useFinanzas = () => {
         return resultado;
     };
 
+    const obtenerCajaMadre = (): Caja | null => {
+        const cajas = cajasData || [];
+        return cajas.find(caja => caja.tipo === "Otro") || null;
+    };
+
     return {
         cajasData,
         loadingCajas,
         errorCajas,
         obtenerCajasFiltradas,
+        obtenerCajaMadre,
         refetchCajas: refetch
     };
 }

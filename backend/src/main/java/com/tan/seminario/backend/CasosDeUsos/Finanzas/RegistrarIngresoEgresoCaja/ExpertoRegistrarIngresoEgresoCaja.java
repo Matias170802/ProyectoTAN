@@ -80,7 +80,7 @@ public class ExpertoRegistrarIngresoEgresoCaja {
 
         EmpleadoCaja cajaEmpleadoActivo = empleadoCajaRepository.findByEmpleadoAndFechaHoraBajaEmpleadoCajaIsNull(empleadoActivo);
 
-        Movimiento nuevoMovimiento = Movimiento.builderConNumero(movimientoRepository)
+        Movimiento nuevoMovimiento = Movimiento.builder()
                 .moneda(monedaSeleccionada)
                 .descripcionMovimiento(transaccionARegistrar.getDescripcion())
                 .montoMovimiento(transaccionARegistrar.getMonto())
@@ -88,6 +88,7 @@ public class ExpertoRegistrarIngresoEgresoCaja {
                 .categoriaMovimiento(categoriaMovimientoSeleccionada)
                 .tipoMovimiento(tipoMovimientoSeleccionado)
                 .empleadoCaja(cajaEmpleadoActivo)
+                .nroMovimiento(Movimiento.generarProximoNumero(movimientoRepository))
                 .build();
 
         movimientoRepository.save(nuevoMovimiento);
