@@ -169,6 +169,7 @@ const MainPageFinanzas: React.FC = () => {
                                 label='Pagar Sueldos'
                                 icon={<FaMoneyBillTransfer />}
                                 onClick={()=>{setOpenModalPagarSueldos(true)}}
+                                hidden={obtenerCajaMadre() == null}
                                 />
                             </div>    
                     </div>
