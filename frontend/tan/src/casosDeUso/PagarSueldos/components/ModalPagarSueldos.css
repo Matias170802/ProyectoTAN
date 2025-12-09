@@ -253,3 +253,151 @@ div#contenedorSueldoEmpleado p {
     color: #222 !important;
     font-size: 1rem !important;
 }
+
+/* Mensaje de balance insuficiente - estilo sutil */
+#mensajeErrorBalanceInsuficiente {
+    background-color: #fff8e1;
+    color: #f57c00;
+    border: 1px solid #ffcc02;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(245, 124, 0, 0.08);
+    animation: fadeIn 0.4s;
+    display: block;
+}
+
+/* Icono sutil antes del texto */
+#mensajeErrorBalanceInsuficiente::before {
+    content: "⚠️ ";
+    opacity: 0.8;
+    margin-right: 0.3rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #mensajeErrorBalanceInsuficiente {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        margin: 0.8rem 0;
+    }
+}
+
+/* Mensajes de éxito y error para pagar sueldo */
+#mensajeExitoPagarSueldo {
+    background-color: #e6ffed;
+    color: #1a7f37;
+    border: 1px solid #b7ebc6;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    margin-bottom: 16px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(26,127,55,0.07);
+    animation: fadeIn 0.4s;
+}
+
+#mensajeExitoPagarSueldo::before {
+    content: "✅ ";
+    margin-right: 0.5rem;
+}
+
+#mensajeErrorPagarSueldo {
+    background-color: #ffeaea;
+    color: #d32f2f;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    margin-bottom: 16px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(211,47,47,0.07);
+    animation: fadeIn 0.4s;
+}
+
+#mensajeErrorPagarSueldo::before {
+    content: "❌ ";
+    margin-right: 0.5rem;
+}
+
+/* Mensaje de balance insuficiente - estilo sutil */
+#mensajeErrorBalanceInsuficiente {
+    background-color: #fff8e1;
+    color: #f57c00;
+    border: 1px solid #ffcc02;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(245, 124, 0, 0.08);
+    animation: fadeIn 0.4s;
+    display: block;
+}
+
+#mensajeErrorBalanceInsuficiente::before {
+    content: "⚠️ ";
+    opacity: 0.8;
+    margin-right: 0.3rem;
+}
+
+/* Estado de carga en el botón */
+#botonPagarSueldo:disabled {
+    background-color: #ccc !important;
+    color: #666 !important;
+    cursor: not-allowed !important;
+}
+
+#botonPagarSueldo[aria-busy="true"] {
+    position: relative;
+    pointer-events: none;
+}
+
+#botonPagarSueldo[aria-busy="true"]::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 1s ease infinite;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Animación fadeIn ya existente */
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(-10px);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0);
+    }
+}
+
+/* Responsive para los mensajes */
+@media (max-width: 768px) {
+    #mensajeExitoPagarSueldo,
+    #mensajeErrorPagarSueldo,
+    #mensajeErrorBalanceInsuficiente {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        margin: 0.8rem 0;
+    }
+}

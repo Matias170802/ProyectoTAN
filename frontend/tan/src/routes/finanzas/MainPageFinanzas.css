@@ -124,3 +124,7 @@
     opacity: 0.7;
 }
 
+#contenedroBotonesAccionesFinanzas {
+    display: flex;
+    justify-content: space-between;
+}

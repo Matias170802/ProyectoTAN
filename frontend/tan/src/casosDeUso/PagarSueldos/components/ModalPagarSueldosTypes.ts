@@ -8,4 +8,5 @@ export interface PropsModalPagarSueldos extends Omit<Props, 'children'>  {
     onClose: () => void,
     showCloseButton: boolean,
     children?: React.ReactNode;
+    refetchCajas?: () => void;
 }
