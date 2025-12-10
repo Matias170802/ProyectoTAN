@@ -1,3 +1,4 @@
+import type { Caja } from '@/routes/finanzas/typesFinanzas';
 import {type Props} from '../../../generalComponents/Modal/ModalTypes'
 
 export interface PropsModalRealizarRendicion extends Omit<Props, 'children'>  {
@@ -7,4 +8,5 @@ export interface PropsModalRealizarRendicion extends Omit<Props, 'children'>  {
     showCloseButton: boolean,
     children?: React.ReactNode;
     refetchCajas?: () => void;
+    cajaMadre: Caja | null;
 }

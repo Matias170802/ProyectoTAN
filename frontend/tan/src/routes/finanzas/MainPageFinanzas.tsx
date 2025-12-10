@@ -236,6 +236,7 @@ const MainPageFinanzas: React.FC = () => {
                         onClose={() => setOpenModalRealizarRendicion(false)}
                         showCloseButton={true}
                         refetchCajas={refetchCajas}
+                        cajaMadre={obtenerCajaMadre()}
                         />
                     )}
                 </div>

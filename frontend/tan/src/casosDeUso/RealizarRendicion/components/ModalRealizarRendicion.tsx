@@ -5,9 +5,9 @@ import { type PropsModalRealizarRendicion } from './ModalRealizarRendicionTypes'
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRealizarRendicion } from '../hooks/useRealizarRendicion';
 import {schemaRealizarRendicion, type formSchemaRealizarRendicionType} from '../models/modelRealizarRendicion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export const ModalRealizarRendicion: React.FC<PropsModalRealizarRendicion> = ({isOpen, onClose, children, showCloseButton, refetchCajas}) => {
+export const ModalRealizarRendicion: React.FC<PropsModalRealizarRendicion> = ({isOpen, onClose, children, showCloseButton, refetchCajas, cajaMadre}) => {
 
     const {handleSubmit, control, formState: { errors }, reset, register, watch, setError, clearErrors} = useForm({
         resolver: zodResolver(schemaRealizarRendicion) as Resolver<formSchemaRealizarRendicionType>,
@@ -34,7 +34,7 @@ export const ModalRealizarRendicion: React.FC<PropsModalRealizarRendicion> = ({i
     } = useRealizarRendicion(watchTipoRendicion, entidadSeleccionada);
     const [mensajeExito, setMensajeExito] = useState<string>('');
     const [mensajeError, setMensajeError] = useState<string>('');
-
+    const [loading, setLoading] = useState(false);
 
     const empleadoSeleccionado = () => {
         return empleados?.find(emp => emp.dniEmpleado === watchEmpleadoSeleccionado);
@@ -44,9 +44,119 @@ export const ModalRealizarRendicion: React.FC<PropsModalRealizarRendicion> = ({i
         return inmuebles?.find(inm => inm.codInmueble === watchInmuebleSeleccionado);
     }
 
-    console.log("Inmuebles" , inmuebles)
+    const onSubmit = async (data: formSchemaRealizarRendicionType) => {
+    try {
+        setLoading(true); // Agregar este estado
+        setMensajeError('');
+        setMensajeExito('');
 
-    const onSubmit = async (data: any) => {}
+        // Validaciones previas
+        if (!balance) {
+            setMensajeError('No se puede proceder sin información del balance');
+            return;
+        }
+
+        // Determinar el identificador según el tipo de rendición
+        let identificador: string;
+        let nombreEntidad: string;
+
+        if (data.tipoRendicion === 'RendicionEmpleado') {
+            if (!data.empleadoSeleccionado || data.empleadoSeleccionado === 'seleccioneUnEmpleado') {
+                setMensajeError('Debe seleccionar un empleado');
+                return;
+            }
+            identificador = data.empleadoSeleccionado;
+            nombreEntidad = empleadoSeleccionado()?.nombreEmpleado || 'Empleado';
+        } else if (data.tipoRendicion === 'RendicionInmueble') {
+            if (!data.inmuebleSeleccionado || data.inmuebleSeleccionado === 'seleccioneUnInmueble') {
+                setMensajeError('Debe seleccionar un inmueble');
+                return;
+            }
+            identificador = data.inmuebleSeleccionado;
+            nombreEntidad = inmuebleSeleccionado()?.nombreInmueble || 'Inmueble';
+        } else {
+            setMensajeError('Debe seleccionar un tipo de rendición válido');
+            return;
+        }
+
+        // Verificar balance suficiente para inmuebles
+        if (data.tipoRendicion === 'RendicionInmueble' && cajaMadre) {
+            const insuficienteARS = balance.balanceARS && balance.balanceARS > (cajaMadre.balanceARS ?? 0);
+            const insuficienteUSD = balance.balanceUSD && balance.balanceUSD > (cajaMadre.balanceUSD ?? 0);
+            
+            if (insuficienteARS || insuficienteUSD) {
+                setMensajeError('No hay balance suficiente en la caja madre para realizar esta rendición');
+                return;
+            }
+        }
+
+        // Obtener token
+        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+
+        // Preparar el body con la estructura correcta
+        const requestBody = {
+            rendicion: {
+                balanceARS: balance.balanceARS,
+                balanceUSD: balance.balanceUSD
+            }
+        };
+
+        console.log("🚀 Enviando rendición:", {
+            identificador,
+            body: requestBody,
+            url: `/api/finanzas/realizarRendicion/${identificador}`
+        });
+
+        // Realizar la petición POST
+        const response = await fetch(`/api/finanzas/realizarRendicion/${identificador}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        const result = await response.json();
+        console.log("Este es el resultado del back rendición:", result);
+        console.log("este es el response.ok rendición:", response.ok);
+        console.log("Este es el result.codigo rendición:", result.codigo);
+        
+        // Manejar errores del backend
+        if (!response.ok) {
+            console.log("Este es el mensaje del error del back rendición:", result.mensaje);
+            throw new Error(result.mensaje || result.message || 'Error al realizar la rendición');
+        }
+
+        // Éxito
+        setMensajeExito(`Rendición realizada exitosamente para ${nombreEntidad}`);
+        console.log("✅ Rendición completada exitosamente");
+        
+        // Refrescar datos
+        if (refetchCajas) {
+            await refetchCajas();
+        }
+        
+        // Refrescar balance local
+        if (refetchBalance) {
+            await refetchBalance();
+        }
+        
+        // Cerrar modal después de un tiempo
+        setTimeout(() => {
+            reset();
+            setMensajeExito('');
+            setMensajeError('');
+            onClose();
+        }, 2500);
+
+    } catch (error) {
+        console.error('❌ Error al realizar rendición:', error);
+        setMensajeError(error instanceof Error ? error.message : 'Error al procesar la rendición');
+    } finally {
+        setLoading(false);
+    }
+};
 
     return (
         <Modal
@@ -113,27 +223,66 @@ export const ModalRealizarRendicion: React.FC<PropsModalRealizarRendicion> = ({i
 
                 </section>
 
-                {balance && (watchEmpleadoSeleccionado !== "seleccioneUnEmpleado" || watchInmuebleSeleccionado!== "seleccioneUnInmueble") && !loadingBalance && (
-                    <section id='contenedorBalanceCaja'>
+                {balance && (watchEmpleadoSeleccionado !== "seleccioneUnEmpleado") && !loadingBalance && (
+                    <section key="balance-empleado" id='contenedorBalanceCaja'>
+                        <p>Caja {empleadoSeleccionado()?.nombreEmpleado}</p>
+                        {balance.balanceARS !== null && (
+                            <span key="ars-empleado">Balance: $ARS {balance?.balanceARS.toFixed(2)}</span>
+                        )}
 
-                    <p>Caja {watchEmpleadoSeleccionado !== "seleccioneUnEmpleado" ? empleadoSeleccionado()?.nombreEmpleado : inmuebleSeleccionado()?.nombreInmueble}</p>
-                    {balance.balanceARS !== null && (
-                        <span>Balance: $ARS {balance?.balanceARS.toFixed(2)}</span>
-                    )}
-
-                    {balance.balanceUSD !== null && (
-                        <span>Balance: $USD {balance?.balanceUSD.toFixed(2)}</span>
-                    )}
-                    
+                        {balance.balanceUSD !== null && (
+                            <span key="usd-empleado">Balance: $USD {balance?.balanceUSD.toFixed(2)}</span>
+                        )}
                     </section>
                 )}
-                
+
+                {balance && (watchInmuebleSeleccionado !== "seleccioneUnInmueble") && !loadingBalance && cajaMadre && (
+                    <section key="balance-inmueble" id='contenedorBalanceCajaInmueble'>
+                        <p>Total a pagar a Inmueble: {inmuebleSeleccionado()?.nombreInmueble}</p>
+                        {balance.balanceUSD !== null && (
+                            <span key="usd-inmueble">$USD {balance?.balanceUSD.toFixed(2)}</span>
+                        )}
+
+                        <div key="caja-madre" id='balanceCajaMadre'>
+                            <p>Balance Caja Madre:</p>
+                            <span key="usd-madre">$USD {cajaMadre.balanceUSD?.toFixed(2) || 0}</span>
+
+                            {balance?.balanceUSD && balance.balanceUSD > (cajaMadre.balanceUSD ?? 0) && (
+                                <span key="error-usd" className='mensajeErrorSinBalance'>
+                                    No hay balance suficiente en la caja madre para realizar esta rendición en USD.
+                                </span>
+                            )}
+                        </div>
+                    </section>
+                )}     
+
+                {errorBalance && !loadingBalance && (
+                    <div className="mensajeErrorSinBalance">
+                        {errorBalance.message}
+                    </div>
+                )}
 
                 <section id='contenedorBotonesRealizarRendicion'>
 
                     <Button
-                    label='Confirmar'
-                    id='botonConfirmarRendicion'
+                        label={loading ? 'Procesando...' : 'Confirmar'}
+                        id='botonConfirmarRendicion'
+                        disabled={
+                            loading || // ← AGREGAR
+                            loadingBalance || 
+                            watchTipoRendicion === "SeleccioneUnTipoRendicion" ||
+                            (watchTipoRendicion === 'RendicionEmpleado' && (
+                                watchEmpleadoSeleccionado === "seleccioneUnEmpleado" || !balance
+                            )) ||
+                            (watchTipoRendicion === 'RendicionInmueble' && (
+                                watchInmuebleSeleccionado === "seleccioneUnInmueble" || 
+                                !balance || 
+                                (cajaMadre && balance && (
+                                    (balance.balanceARS !== null && balance.balanceARS > (cajaMadre.balanceARS ?? 0)) ||
+                                    (balance.balanceUSD !== null && balance.balanceUSD > (cajaMadre.balanceUSD ?? 0))
+                                ))
+                            ))
+                        }
                     />
 
                 </section>

@@ -1,8 +1,10 @@
+/* ModalRealizarRendicion.css - VERSIÓN MINIMALISTA */
+
 #formRealizarRendicion {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -13,234 +15,196 @@
     margin-bottom: 1rem;
 }
 
-/* Selector de tipo de rendición */
-#selectTipoRendicion {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 2px solid #bcbcbc;
-    border-radius: 8px;
-    font-size: 1rem;
-    background: #fff;
-    color: #222;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-#selectTipoRendicion:focus {
-    border-color: #888;
-}
-
-#selectTipoRendicion option:first-child {
-    color: #757575;
-    font-style: italic;
-}
-
-/* Selectores de empleado e inmueble */
+/* Selectores - diseño más minimalista */
+#selectTipoRendicion,
 #selectEmpleadoRendicion,
 #selectInmuebleRendicion {
     width: 100%;
-    padding: 0.8rem 1rem;
-    border: 2px solid #bcbcbc;
-    border-radius: 8px;
-    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 0.95rem;
     background: #fff;
-    color: #222;
+    color: #333;
     outline: none;
-    transition: border-color 0.2s;
-    margin-top: 0.5rem;
+    transition: all 0.2s ease;
 }
 
+#selectTipoRendicion:focus,
 #selectEmpleadoRendicion:focus,
 #selectInmuebleRendicion:focus {
-    border-color: #888;
+    border-color: #666;
+    box-shadow: 0 0 0 3px rgba(102, 102, 102, 0.1);
 }
 
+#selectTipoRendicion option:first-child,
 #selectEmpleadoRendicion option:first-child,
 #selectInmuebleRendicion option:first-child {
-    color: #757575;
+    color: #999;
     font-style: italic;
 }
 
-/* Mensajes de error para empleados/inmuebles sin balance */
+/* Balance containers - diseño minimalista */
+#contenedorBalanceCaja,
+#contenedorBalanceCajaInmueble {
+    background: #fafafa;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+#contenedorBalanceCaja p,
+#contenedorBalanceCajaInmueble p {
+    margin: 0 0 0.5rem 0 !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+    font-size: 1rem !important;
+}
+
+#contenedorBalanceCaja span,
+#contenedorBalanceCajaInmueble span {
+    display: block;
+    margin: 0.25rem 0 !important;
+    font-weight: 400 !important;
+    color: #666 !important;
+    font-size: 0.9rem !important;
+}
+
+/* Balance de caja madre - más compacto */
+#balanceCajaMadre {
+    background: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-top: 1rem;
+}
+
+#balanceCajaMadre p {
+    margin: 0 0 0.5rem 0 !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+    font-size: 0.95rem !important;
+}
+
+#balanceCajaMadre span {
+    display: inline-block !important;
+    margin: 0 1rem 0.25rem 0 !important;
+    font-weight: 400 !important;
+    color: #666 !important;
+    font-size: 0.85rem !important;
+}
+
+/* Mensaje de error - más sutil */
 .mensajeErrorSinBalance {
     background-color: #fff8e1;
-    color: #f57c00;
+    color: #e65100;
     border: 1px solid #ffcc02;
-    border-radius: 8px;
-    padding: 0.7rem 1.2rem;
-    margin: 0.5rem 0;
-    font-size: 0.95rem;
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    margin: 0.75rem 0;
+    font-size: 0.85rem;
     font-weight: 500;
-    text-align: center;
-    box-shadow: 0 2px 6px rgba(245, 124, 0, 0.08);
-    animation: fadeIn 0.4s;
-}
-
-.mensajeErrorSinBalance::before {
-    content: "⚠️ ";
-    opacity: 0.8;
-    margin-right: 0.3rem;
-}
-
-/* Contenedor del balance - similar al sueldo del otro modal */
-#contenedorBalanceCaja {
+    text-align: left;
     display: flex;
-    flex-direction: column;
-    padding: 0.8rem 1rem;
-    background: #f0f8ff;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    margin: 1rem 0;
+    align-items: center;
     gap: 0.5rem;
 }
 
-#contenedorBalanceCaja p {
-    margin: 0 !important;
-    font-weight: 600 !important;
-    color: #222 !important;
-    font-size: 1.1rem !important;
-    padding: 0 !important;
+.mensajeErrorSinBalance::before {
+    content: "⚠️";
+    font-size: 0.9rem;
+    opacity: 0.8;
 }
 
-#contenedorBalanceCaja span {
-    margin: 0 !important;
-    font-weight: 500 !important;
-    color: #444 !important;
-    font-size: 1rem !important;
-    padding: 0.2rem 0 !important;
-}
-
-/* Contenedor de botones */
-#contenedorBotonesRealizarRendicion {
-    display: flex;
-    justify-content: right;
-    margin-top: 15px;
-}
-
-/* Botón confirmar - mismo estilo que el botón pagar sueldo */
-#botonConfirmarRendicion {
-    background-color: black !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 8px !important;
-    font-size: 1rem !important;
-    font-weight: 500 !important;
-    cursor: pointer !important;
-    transition: background-color 0.2s !important;
-    min-width: 150px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-}
-
-#botonConfirmarRendicion:hover:not(:disabled) {
-    background-color: rgb(187, 187, 187) !important;
-    color: white !important;
-}
-
-#botonConfirmarRendicion:disabled {
-    background-color: #ccc !important;
-    color: #666 !important;
-    cursor: not-allowed !important;
-}
-
-/* Mensajes de éxito y error para realizar rendición */
+/* Mensajes de estado - más discretos */
 #mensajeExitoRendicion {
-    background-color: #e6ffed;
-    color: #1a7f37;
-    border: 1px solid #b7ebc6;
-    border-radius: 8px;
-    padding: 0.7rem 1.2rem;
-    margin-bottom: 16px;
-    font-size: 1rem;
+    background-color: #f0f9f0;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
     font-weight: 500;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(26,127,55,0.07);
-    animation: fadeIn 0.4s;
-}
-
-#mensajeExitoRendicion::before {
-    content: "✅ ";
-    margin-right: 0.5rem;
 }
 
 #mensajeErrorRendicion {
-    background-color: #ffeaea;
+    background-color: #fef7f7;
     color: #d32f2f;
     border: 1px solid #f5c6cb;
-    border-radius: 8px;
-    padding: 0.7rem 1.2rem;
-    margin-bottom: 16px;
-    font-size: 1rem;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
     font-weight: 500;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(211,47,47,0.07);
-    animation: fadeIn 0.4s;
 }
 
-#mensajeErrorRendicion::before {
-    content: "❌ ";
-    margin-right: 0.5rem;
+/* Botón - diseño minimalista */
+#contenedorBotonesRealizarRendicion {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
 }
 
-/* Estados de carga */
-.estadoCargaRendicion {
-    text-align: center;
-    padding: 1rem;
-    color: #666;
-    font-style: italic;
-    font-size: 1rem;
+#botonConfirmarRendicion {
+    background-color: #333 !important;
+    color: white !important;
+    padding: 0.75rem 2rem !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    min-width: 120px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
-/* Estado de carga en el botón */
-#botonConfirmarRendicion[aria-busy="true"] {
-    position: relative;
-    pointer-events: none;
+#botonConfirmarRendicion:hover:not(:disabled) {
+    background-color: #555 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-#botonConfirmarRendicion[aria-busy="true"]::after {
-    content: "";
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    margin: auto;
-    border: 2px solid transparent;
-    border-top-color: #ffffff;
-    border-radius: 50%;
-    animation: spin 1s ease infinite;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+#botonConfirmarRendicion:disabled {
+    background-color: #e0e0e0 !important;
+    color: #999 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
-/* Animación fadeIn */
-@keyframes fadeIn {
-    from { 
-        opacity: 0; 
-        transform: translateY(-10px);
-    }
-    to { 
-        opacity: 1; 
-        transform: translateY(0);
-    }
-}
-
-@keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-/* Responsive */
+/* Responsive - más compacto */
 @media (max-width: 768px) {
-    #contenedorBalanceCaja {
-        padding: 0.6rem 0.8rem;
-        margin: 0.8rem 0;
+    #formRealizarRendicion {
+        gap: 1rem;
+    }
+    
+    #contenedorBalanceCaja,
+    #contenedorBalanceCajaInmueble {
+        padding: 0.75rem;
+        margin: 0.75rem 0;
+    }
+    
+    #balanceCajaMadre {
+        padding: 0.6rem 0.75rem;
+    }
+    
+    #balanceCajaMadre span {
+        display: block !important;
+        margin: 0.2rem 0 !important;
     }
     
     #contenedorBotonesRealizarRendicion {
-        flex-direction: column;
-        gap: 0.5rem;
+        margin-top: 1rem;
+        padding-top: 0.75rem;
     }
     
     #botonConfirmarRendicion {
@@ -248,29 +212,40 @@
         min-width: auto !important;
     }
 
-    #selectTipoRendicion,
-    #selectEmpleadoRendicion,
-    #selectInmuebleRendicion {
-        padding: 0.7rem 0.8rem;
-        font-size: 0.95rem;
-    }
-
-    .mensajeErrorSinBalance,
-    #mensajeExitoRendicion,
-    #mensajeErrorRendicion {
-        padding: 0.6rem 1rem;
-        font-size: 0.9rem;
-        margin: 0.6rem 0;
+    .mensajeErrorSinBalance {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
     }
 }
 
-/* Estados especiales - cuando no hay balance suficiente */
-.sinBalanceSuficiente #contenedorBalanceCaja {
-    border-color: #d32f2f !important;
-    background-color: #ffeaea !important;
+/* Eliminar espaciado innecesario */
+#contenedorBalanceCaja > *:last-child,
+#contenedorBalanceCajaInmueble > *:last-child {
+    margin-bottom: 0 !important;
 }
 
-.sinBalanceSuficiente #contenedorBalanceCaja p,
-.sinBalanceSuficiente #contenedorBalanceCaja span {
-    color: #d32f2f !important;
+#balanceCajaMadre > *:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* Estado de hover sutil para contenedores */
+#contenedorBalanceCaja:hover,
+#contenedorBalanceCajaInmueble:hover {
+    border-color: #d0d0d0;
+    transition: border-color 0.2s ease;
+}
+
+/* Estilo para separador visual sutil */
+#balanceCajaMadre {
+    position: relative;
+}
+
+#balanceCajaMadre::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 1rem;
+    right: 1rem;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e0e0e0, transparent);
 }
