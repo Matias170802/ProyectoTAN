@@ -7,9 +7,12 @@ import com.tan.seminario.backend.CasosDeUsos.Inmuebles.ABMInmueble.DTOs.Listados
 import com.tan.seminario.backend.CasosDeUsos.Inmuebles.ABMInmueble.DTOs.ModificarInmueble.DTOModificarInmuebleRequest;
 import com.tan.seminario.backend.CasosDeUsos.Inmuebles.ABMInmueble.DTOs.ModificarInmueble.DTOModificarInmuebleResponse;
 import com.tan.seminario.backend.Entity.Cliente;
+import com.tan.seminario.backend.Entity.EstadoReserva;
 import com.tan.seminario.backend.Entity.Inmueble;
+import com.tan.seminario.backend.Entity.Reserva;
 import com.tan.seminario.backend.Repository.ClienteRepository;
 import com.tan.seminario.backend.Repository.InmuebleRepository;
+import com.tan.seminario.backend.Repository.ReservaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +30,7 @@ public class ExpertoInmueble {
 
     private final InmuebleRepository inmuebleRepository;
     private final ClienteRepository clienteRepository;
-
-//    public ExpertoInmueble(InmuebleRepository inmuebleRepository) {
-//        this.inmuebleRepository = inmuebleRepository;
-//    }
+    private final ReservaRepository reservaRepository;
 
     // ============================================================
     // ALTA INMUEBLE
@@ -93,16 +93,19 @@ public class ExpertoInmueble {
             );
         }
 
+        // 3. Validar que no tenga reservas activas o futuras
+        validarReservasActivasOFuturas(inmueble);
+
         LocalDateTime fechaBaja = LocalDateTime.now();
 
-        // 3. Dar de baja al inmueble
+        // 4. Dar de baja al inmueble
         inmueble.setFechaHoraBajaInmueble(fechaBaja);
         inmuebleRepository.save(inmueble);
         log.info("Inmueble marcado como inactivo: {}", inmueble.getCodInmueble());
 
         log.info("Baja de inmueble completada exitosamente: {}", inmueble.getCodInmueble());
 
-        // 4. Construir respuesta
+        // 5. Construir respuesta
         return DTOBajaInmuebleResponse.builder()
                 .mensaje("Inmueble dado de baja correctamente")
                 .exito(true)
@@ -296,6 +299,62 @@ public class ExpertoInmueble {
         }
     }
 
+    /**
+     * Valida que el inmueble no tenga reservas activas o futuras (excepto canceladas)
+     */
+    private void validarReservasActivasOFuturas(Inmueble inmueble) {
+        LocalDateTime ahora = LocalDateTime.now();
+
+        // Obtener todas las reservas del inmueble
+        List<Reserva> reservasDelInmueble = reservaRepository.findByInmueble(inmueble);
+
+        // Filtrar reservas que estén en curso o sean futuras
+        List<Reserva> reservasProblematicas = reservasDelInmueble.stream()
+                .filter(reserva -> {
+                    EstadoReserva estado = reserva.getEstadoReserva();
+                    String nombreEstado = estado != null ? estado.getNombreEstadoReserva() : "";
+
+                    // Ignorar reservas canceladas o finalizadas
+                    if ("Cancelada".equalsIgnoreCase(nombreEstado) ||
+                            "Finalizada".equalsIgnoreCase(nombreEstado)) {
+                        return false;
+                    }
+
+                    // Verificar si la reserva está en curso o es futura
+                    LocalDateTime fechaFin = reserva.getFechaHoraFinReserva();
+                    return fechaFin != null && fechaFin.isAfter(ahora);
+                })
+                .collect(Collectors.toList());
+
+        if (!reservasProblematicas.isEmpty()) {
+            log.warn("Intento de dar de baja inmueble {} con {} reservas activas/futuras",
+                    inmueble.getCodInmueble(), reservasProblematicas.size());
+
+            // Construir mensaje con detalles de las reservas
+            StringBuilder mensaje = new StringBuilder(
+                    "No se puede dar de baja el inmueble porque tiene reservas activas o futuras. Reservas: ");
+
+            for (int i = 0; i < reservasProblematicas.size(); i++) {
+                Reserva r = reservasProblematicas.get(i);
+                mensaje.append(r.getCodReserva())
+                        .append(" (")
+                        .append(r.getEstadoReserva().getNombreEstadoReserva())
+                        .append(", hasta ")
+                        .append(r.getFechaHoraFinReserva())
+                        .append(")");
+
+                if (i < reservasProblematicas.size() - 1) {
+                    mensaje.append(", ");
+                }
+            }
+
+            throw new IllegalStateException(mensaje.toString());
+        }
+
+        log.info("Validación exitosa: el inmueble {} no tiene reservas activas o futuras",
+                inmueble.getCodInmueble());
+    }
+
     private Inmueble crearInmueble(DTOAltaInmuebleRequest request, String codigoInmueble, Cliente cliente) {
         Inmueble inmueble = new Inmueble();
         inmueble.setCodInmueble(codigoInmueble);
@@ -340,7 +399,6 @@ public class ExpertoInmueble {
                 .activo(inmueble.getFechaHoraBajaInmueble() == null)
                 .build();
     }
-
 
     // METODO DEL MATI
     public List<DTOInmueble> obtenerInmuebles() {
