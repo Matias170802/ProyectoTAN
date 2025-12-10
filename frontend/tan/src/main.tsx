@@ -8,6 +8,10 @@ import AdministrarRolesDeUsuarioPage from './casosDeUso/AdministrarRolesDeUsuari
 import { Navbar } from './generalComponents/index.ts';
 import { FormFinalizarTareaAgregarIE } from './casosDeUso/FinalizarTarea/components/FormFinalizarTareaAgregarIE/FormFinalizarTareaAregarIE.tsx';
 
+<<<<<<< HEAD
+=======
+import LoginPage from './routes/login/LoginPage.tsx';
+>>>>>>> 351db2d96a8aeee2f824b73e725c5446b85fe889
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
