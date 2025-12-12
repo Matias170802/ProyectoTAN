@@ -46,7 +46,7 @@ export const ModalRealizarRendicion: React.FC<PropsModalRealizarRendicion> = ({i
 
     const onSubmit = async (data: formSchemaRealizarRendicionType) => {
     try {
-        setLoading(true); // Agregar este estado
+        setLoading(true);
         setMensajeError('');
         setMensajeExito('');
 
@@ -95,10 +95,8 @@ export const ModalRealizarRendicion: React.FC<PropsModalRealizarRendicion> = ({i
 
         // Preparar el body con la estructura correcta
         const requestBody = {
-            rendicion: {
-                balanceARS: balance.balanceARS,
-                balanceUSD: balance.balanceUSD
-            }
+            balanceARS: balance.balanceARS,
+            balanceUSD: balance.balanceUSD
         };
 
         console.log("🚀 Enviando rendición:", {
@@ -117,43 +115,39 @@ export const ModalRealizarRendicion: React.FC<PropsModalRealizarRendicion> = ({i
             body: JSON.stringify(requestBody)
         });
 
-        const result = await response.json();
+        const result = await response.text();
         console.log("Este es el resultado del back rendición:", result);
         console.log("este es el response.ok rendición:", response.ok);
-        console.log("Este es el result.codigo rendición:", result.codigo);
         
         // Manejar errores del backend
         if (!response.ok) {
-            console.log("Este es el mensaje del error del back rendición:", result.mensaje);
-            throw new Error(result.mensaje || result.message || 'Error al realizar la rendición');
+            console.log("Este es el mensaje del error del back rendición:", result);
+            throw new Error(result || 'Error al realizar la rendición');
         }
 
-        // Éxito
-        setMensajeExito(`Rendición realizada exitosamente para ${nombreEntidad}`);
+        // ✅ ÉXITO - Mostrar mensaje y luego cerrar
         console.log("✅ Rendición completada exitosamente");
         
-        // Refrescar datos
+        // Mostrar mensaje de éxito
+        setMensajeExito(`Rendición realizada exitosamente para ${nombreEntidad}`);
+        setLoading(false);
+        
+        // Refrescar datos en background
         if (refetchCajas) {
-            await refetchCajas();
+            refetchCajas(); // Sin await para no bloquear
         }
         
-        // Refrescar balance local
-        if (refetchBalance) {
-            await refetchBalance();
-        }
-        
-        // Cerrar modal después de un tiempo
+        // Cerrar modal después de mostrar el mensaje
         setTimeout(() => {
             reset();
             setMensajeExito('');
             setMensajeError('');
             onClose();
-        }, 2500);
+        }, 2000); // 2 segundos para que el usuario vea el mensaje
 
     } catch (error) {
         console.error('❌ Error al realizar rendición:', error);
         setMensajeError(error instanceof Error ? error.message : 'Error al procesar la rendición');
-    } finally {
         setLoading(false);
     }
 };
@@ -181,6 +175,7 @@ export const ModalRealizarRendicion: React.FC<PropsModalRealizarRendicion> = ({i
                 <section id='contenedorSelects'>
 
                     <div>
+                        <label>Tipo Rendicion</label>
                         <select {...register('tipoRendicion')} id='selectTipoRendicion'>
                             <option value={"SeleccioneUnTipoRendicion"}>Seleccione Un Tipo Rendicion</option>
                             <option value="RendicionInmueble">Rendición Inmueble</option>
@@ -201,7 +196,12 @@ export const ModalRealizarRendicion: React.FC<PropsModalRealizarRendicion> = ({i
                     )}
 
                     <div>
+                        {watchTipoRendicion !== "SeleccioneUnTipoRendicion" && (empleados || inmuebles) && (
+                            <label>{watchTipoRendicion == "RendicionEmpleado" ? "Empleado" : "Inmueble" }</label>
+                        )}
+                    
                         {watchTipoRendicion === 'RendicionInmueble' && inmuebles && inmuebles !== null && (
+                            
                             <select {...register('inmuebleSeleccionado')} id='selectInmuebleRendicion'>
                                 <option value={"seleccioneUnInmueble"}>Seleccione un Inmueble</option>
                                 {inmuebles.map((inmueble) => {
@@ -268,7 +268,7 @@ export const ModalRealizarRendicion: React.FC<PropsModalRealizarRendicion> = ({i
                         label={loading ? 'Procesando...' : 'Confirmar'}
                         id='botonConfirmarRendicion'
                         disabled={
-                            loading || // ← AGREGAR
+                            loading || 
                             loadingBalance || 
                             watchTipoRendicion === "SeleccioneUnTipoRendicion" ||
                             (watchTipoRendicion === 'RendicionEmpleado' && (

@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hibernate.type.descriptor.java.CoercionHelper.toDouble;
 
@@ -55,31 +56,43 @@ public class ExpertoRealizarRendicion {
     public List<DTOEmpleados> buscarEmpleados() {
         List<Empleado> empleadosActivos = empleadoRepository.findByFechaHoraBajaEmpleadoIsNull();
 
-        //elimino los empleados que no tienen balance para rendir
-        for (Empleado empleado: empleadosActivos) {
-            EmpleadoCaja cajaEmpleado = empleadoCajaRepository.findByEmpleadoAndFechaHoraBajaEmpleadoCajaIsNull(empleado);
+        // Stream para filtrar empleados que puedan rendir
+        List<Empleado> empleadosConBalance = empleadosActivos.stream()
+                .filter(empleado -> {
+                    EmpleadoCaja cajaEmpleado =
+                            empleadoCajaRepository.findByEmpleadoAndFechaHoraBajaEmpleadoCajaIsNull(empleado);
 
-            if (cajaEmpleado.getBalanceARS().compareTo(BigDecimal.ZERO) <= 0 || cajaEmpleado.getBalanceUSD().compareTo(BigDecimal.ZERO) <= 0) {
-                empleadosActivos.remove(empleado);
-            }
-        }
+                    // Si no tiene caja → afuera
+                    if (cajaEmpleado == null) {
+                        return false;
+                    }
 
-        //si ninguno puede rendir
-        if (empleadosActivos.isEmpty()) {
+                    boolean tieneARS = cajaEmpleado.getBalanceARS() != null
+                            && cajaEmpleado.getBalanceARS().compareTo(BigDecimal.ZERO) > 0;
+
+                    boolean tieneUSD = cajaEmpleado.getBalanceUSD() != null
+                            && cajaEmpleado.getBalanceUSD().compareTo(BigDecimal.ZERO) > 0;
+
+                    // Debe tener ARS positivo o USD positivo
+                    return tieneARS || tieneUSD;
+                })
+                .toList();
+
+        // Si ninguno puede rendir
+        if (empleadosConBalance.isEmpty()) {
             return null;
         }
 
-        List<DTOEmpleados> dtos = new java.util.ArrayList<>();
-
-        for (Empleado empleado: empleadosActivos) {
-            DTOEmpleados dto = DTOEmpleados.builder()
-                    .nombreEmpleado(empleado.getNombreEmpleado())
-                    .dniEmpleado(empleado.getDniEmpleado())
-                    .build();
-        }
-
-        return dtos;
+        // Map a DTOs
+        return empleadosConBalance.stream()
+                .map(empleado -> DTOEmpleados.builder()
+                        .nombreEmpleado(empleado.getNombreEmpleado())
+                        .dniEmpleado(empleado.getDniEmpleado())
+                        .build()
+                )
+                .toList();
     }
+
 
     public List<DTOInmuebles> buscarInmuebles() {
         List<Inmueble> inmueblesActivos = inmuebleRepository.findByFechaHoraBajaInmuebleIsNull();
@@ -133,7 +146,7 @@ public class ExpertoRealizarRendicion {
         List<Reserva> reservasARendir = reservaRepository.findByEstadoReservaAndRendidaAInmuebleIsFalseAndInmueble(estadoReserva, inmuebleSeleccionado);
 
         if (reservasARendir.isEmpty()) {
-            throw new RuntimeException("N" +
+            throw new RuntimeException(
                     "No hay reservas para rendir");
         }
 
@@ -195,12 +208,14 @@ public class ExpertoRealizarRendicion {
         //busco si es un inmueble el que hace la rendicion
         Inmueble inmuebleSeleccionado = inmuebleRepository.findByCodInmueble(identificador);
 
+        log.info("Inmueble seleccionado: " + inmuebleSeleccionado);
+
         //si no es un inmueble registro la rendicion al epmleado
         if (inmuebleSeleccionado == null ) {
             Empleado empleadoSeleccionado = empleadoRepository.findByDniEmpleado(identificador).get();
 
             //busco cataegoria movimiento
-            CategoriaMovimiento categoriaMovimiento = categoriaMovimientoRepository.findBynombreCategoriaMovimientoAndFechaHoraBajaCategoriaMovimientoIsNull("Rendicion a Empleado");
+            CategoriaMovimiento categoriaMovimiento = categoriaMovimientoRepository.findBynombreCategoriaMovimientoAndFechaHoraBajaCategoriaMovimientoIsNull("Rendicion de Empleado");
 
             //busco la caja del empleado
             EmpleadoCaja cajaEmpleado = empleadoCajaRepository.findByEmpleadoAndFechaHoraBajaEmpleadoCajaIsNull(empleadoSeleccionado);
@@ -234,6 +249,12 @@ public class ExpertoRealizarRendicion {
                         .build();
 
                 movimientoRepository.save(movimiento2);
+
+                cajaMadre.setBalanceTotalARS(rendicion.getBalanceARS().add(cajaMadre.getBalanceTotalARS()));
+                cajaMadreRepository.save(cajaMadre);
+
+                cajaEmpleado.setBalanceARS(BigDecimal.ZERO);
+                empleadoCajaRepository.save(cajaEmpleado);
             }
 
             if (rendicion.getBalanceUSD().compareTo(BigDecimal.ZERO)>0) {
@@ -263,6 +284,12 @@ public class ExpertoRealizarRendicion {
                         .build();
 
                 movimientoRepository.save(movimiento2);
+
+                cajaMadre.setBalanceTotalUSD(rendicion.getBalanceUSD().add(cajaMadre.getBalanceTotalUSD()));
+                cajaMadreRepository.save(cajaMadre);
+
+                cajaEmpleado.setBalanceUSD(BigDecimal.ZERO);
+                empleadoCajaRepository.save(cajaEmpleado);
             }
         }
 
@@ -273,9 +300,13 @@ public class ExpertoRealizarRendicion {
             //busco la caja del inmueble
             InmuebleCaja cajaInmueble = inmuebleCajaRepository.findByInmuebleAndFechaHoraBajaInmuebleCajaIsNull(inmuebleSeleccionado);
 
+            log.info("Caja inmueble encontrada", cajaInmueble);
             // busco la ctaegoria movimiento
             CategoriaMovimiento categoriaMovimiento = categoriaMovimientoRepository.findBynombreCategoriaMovimientoAndFechaHoraBajaCategoriaMovimientoIsNull("Rendicion a Inmueble");
 
+            log.info("Categoria movimiento encontrada", categoriaMovimiento);
+
+            log.info("balance usd:" + rendicion.getBalanceUSD());
             //creo los movimientos
             Movimiento movimiento1 = Movimiento.builder()
                     .montoMovimiento(toDouble(rendicion.getBalanceUSD()))
@@ -301,6 +332,12 @@ public class ExpertoRealizarRendicion {
                     .build();
 
             movimientoRepository.save(movimiento2);
+
+            //actualizo el balande en USD del inmueble
+            cajaInmueble.setBalanceTotalUSD(rendicion.getBalanceUSD().add(cajaInmueble.getBalanceTotalUSD()));
+            cajaInmueble.setBalanceTotalARS(BigDecimal.ZERO);
+
+            inmuebleCajaRepository.save(cajaInmueble);
 
             //busco las reservas del inmueble que rendi
 
