@@ -27,4 +27,8 @@ public class InmuebleCaja  extends Base{
     private BigDecimal balanceTotalUSD;
     private LocalDateTime fechaHoraAltaInmuebleCaja;
     private LocalDateTime fechaHoraBajaInmuebleCaja;
+
+    @OneToOne
+    @JoinColumn(name = "idInmueble", nullable = false)
+    private Inmueble inmueble;
 }

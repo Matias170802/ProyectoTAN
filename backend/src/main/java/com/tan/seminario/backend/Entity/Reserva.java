@@ -35,6 +35,7 @@ public class Reserva  extends Base {
     private Double totalMontoSenia;
     private String plataformaOrigen;//Airbnb Booking etc
     private String descripcionReserva;
+    private Boolean rendidaAInmueble;
 
     @ManyToOne
     @JoinColumn(name = "idInmueble", nullable = false)

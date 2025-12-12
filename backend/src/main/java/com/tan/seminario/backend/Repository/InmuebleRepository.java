@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface InmuebleRepository extends JpaRepository<Inmueble, Long> {
     Inmueble findByCodInmueble(String codInmueble);
+    List<Inmueble> findByFechaHoraBajaInmuebleIsNull();
 }
