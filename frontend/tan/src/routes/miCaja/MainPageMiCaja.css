@@ -1,5 +1,123 @@
+/* Layout principal */
+#mainPageMiCaja {
+    padding: 30px 60px 30px 30px;
+}
+
+#mainPageMiCaja > h2 {
+    font-size: 30px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 20px;
+}
+
+/* Contenedor de balances */
+#contenedorBalances {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+/* Tarjetas de balance */
+#balanceARS,
+#balanceUSD {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#balanceARS h3,
+#balanceUSD h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111;
+    margin: 0 0 8px 0;
+}
+
+#balanceARS > p:nth-of-type(1),
+#balanceUSD > p:nth-of-type(1) {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 16px 0;
+}
+
+#balanceARS > p:nth-of-type(2),
+#balanceUSD > p:nth-of-type(2) {
+    font-size: 36px;
+    font-weight: 700;
+    color: #16a34a;
+    margin: 0 0 8px 0;
+    display: inline-block;
+}
+
+#balanceARS.negative > p:nth-of-type(2),
+#balanceUSD.negative > p:nth-of-type(2) {
+    color: #dc2626;
+}
+
+#balanceARS > p:nth-of-type(2)::after,
+#balanceUSD > p:nth-of-type(2)::after {
+    content: 'Positivo';
+    display: inline-block;
+    margin-left: 12px;
+    padding: 4px 12px;
+    background: #dcfce7;
+    color: #16a34a;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 12px;
+    vertical-align: middle;
+}
+
+#balanceARS.negative > p:nth-of-type(2)::after,
+#balanceUSD.negative > p:nth-of-type(2)::after {
+    content: 'Negativo';
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+#balanceARS > p:nth-of-type(3),
+#balanceUSD > p:nth-of-type(3) {
+    font-size: 14px;
+    color: #666;
+    margin: 12px 0 0 0;
+}
+
+/* Sección de movimientos */
+#contenedorDeMovimientos {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#contenedorDeMovimientos header {
+    margin-bottom: 8px;
+}
+
+#contenedorDeMovimientos header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111;
+    margin: 0;
+}
+
+#contenedorDeMovimientos header h2 + p {
+    font-size: 14px;
+    color: #666;
+    margin: 4px 0 0 0;
+}
+
+/* Contenedor de filtros */
+#contenedorDeFiltros {
+    margin: 24px 0;
+    display: flex;
+    align-items: center;
+}
+
 /* Contenedor tipo "segmented control" */
-.filterSeg{
+.filterSeg {
     display: inline-flex;
     gap: 8px;
     background: #f0f0f0;
@@ -10,7 +128,7 @@
 }
 
 /* Botones */
-.filterBtn{
+.filterBtn {
     background: transparent;
     border: none;
     padding: 8px 16px;
@@ -23,8 +141,8 @@
     outline: none;
 }
 
-/* Estado activo (like the image) */
-.filterBtn.active{
+/* Estado activo */
+.filterBtn.active {
     background: #fff;
     color: #111;
     box-shadow: 0 1px 0 rgba(0,0,0,0.06);
@@ -32,6 +150,23 @@
 }
 
 /* Hover para no-activos */
-.filterBtn:not(.active):hover{
+.filterBtn:not(.active):hover {
     background: rgba(0,0,0,0.03);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #contenedorBalances {
+        grid-template-columns: 1fr;
+    }
+    
+    main {
+        padding: 24px 16px;
+    }
+    
+    #balanceARS,
+    #balanceUSD,
+    #contenedorDeMovimientos {
+        padding: 24px;
+    }
 }

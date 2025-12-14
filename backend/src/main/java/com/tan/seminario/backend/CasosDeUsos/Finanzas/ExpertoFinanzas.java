@@ -1,19 +1,16 @@
 package com.tan.seminario.backend.CasosDeUsos.Finanzas;
 
-import com.tan.seminario.backend.Entity.CajaMadre;
-import com.tan.seminario.backend.Entity.EmpleadoCaja;
-import com.tan.seminario.backend.Entity.InmuebleCaja;
-import com.tan.seminario.backend.Entity.Movimiento;
-import com.tan.seminario.backend.Repository.CajaMadreRepository;
-import com.tan.seminario.backend.Repository.EmpleadoCajaRepository;
-import com.tan.seminario.backend.Repository.InmuebleCajaRepository;
-import com.tan.seminario.backend.Repository.MovimientoRepository;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.DTOFinanzas.DTOBalance;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.DTOFinanzas.DTOMovimientos;
+import com.tan.seminario.backend.Entity.*;
+import com.tan.seminario.backend.Repository.*;
 import org.springframework.stereotype.Service;
 import com.tan.seminario.backend.CasosDeUsos.Finanzas.DTOFinanzas.DTOCajas;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ExpertoFinanzas {
@@ -22,16 +19,19 @@ public class ExpertoFinanzas {
     private final EmpleadoCajaRepository empleadoCajaRepository;
     private final InmuebleCajaRepository inmuebleCajaRepository;
     private final MovimientoRepository movimientoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public ExpertoFinanzas(CajaMadreRepository cajaMadreRepository,
                            EmpleadoCajaRepository empleadoCajaRepository,
                            InmuebleCajaRepository inmuebleCajaRepository,
-                           MovimientoRepository movimientoRepository) {
+                           MovimientoRepository movimientoRepository,
+                           UsuarioRepository usuarioRepository) {
 
         this.cajaMadreRepository = cajaMadreRepository;
         this.empleadoCajaRepository = empleadoCajaRepository;
         this.inmuebleCajaRepository = inmuebleCajaRepository;
         this.movimientoRepository = movimientoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
 
@@ -90,5 +90,55 @@ public class ExpertoFinanzas {
         }
 
         return cajasAEnviar;
+    }
+
+    public List<DTOMovimientos> buscarMovimientos (String username) {
+
+        //busco el empleado mediante el usuario que tiene iniciada sesion
+        Usuario usuarioActivo = usuarioRepository.findByEmail(username).get();
+        Empleado empleadoActivo = usuarioActivo.getEmpleado();
+
+        //busco la caja del empleado
+        EmpleadoCaja cajaEmpleadoActivo = empleadoCajaRepository.findByEmpleadoAndFechaHoraBajaEmpleadoCajaIsNull(empleadoActivo);
+
+        //busco los movimientos relacionados a esa caja
+        List<Movimiento> movimientos = movimientoRepository
+                .findByEmpleadoCajaOrderByFechaMovimientoDesc(cajaEmpleadoActivo)
+                .orElseThrow(() -> new RuntimeException(
+                        "No hay movimientos registrados en la caja seleccionada"
+                ));
+
+        //creo el list de dtos para enviar
+        List<DTOMovimientos> dtos = new ArrayList<>();
+
+        for (Movimiento movimiento: movimientos) {
+            DTOMovimientos dto = DTOMovimientos.builder()
+                    .fechaMovimiento(movimiento.getFechaMovimiento())
+                    .montoMovimiento(movimiento.getMontoMovimiento())
+                    .categoriaMovimiento(movimiento.getCategoriaMovimiento().getNombreCategoriaMovimiento())
+                    .tipoMovimiento(movimiento.getTipoMovimiento().getNombreTipoMovimiento())
+                    .descripcionMovimiento(movimiento.getDescripcionMovimiento())
+                    .build();
+
+            dtos.add(dto);
+        }
+
+        return dtos;
+    }
+
+    public DTOBalance buscarBalance(String username) {
+        //busco el empleado mediante el usuario que tiene iniciada sesion
+        Usuario usuarioActivo = usuarioRepository.findByEmail(username).get();
+        Empleado empleadoActivo = usuarioActivo.getEmpleado();
+
+        //busco la caja del empleado
+        EmpleadoCaja cajaEmpleadoActivo = empleadoCajaRepository.findByEmpleadoAndFechaHoraBajaEmpleadoCajaIsNull(empleadoActivo);
+
+        DTOBalance dtoBalance = DTOBalance.builder()
+                .balanceARS(cajaEmpleadoActivo.getBalanceARS())
+                .balanceUSD(cajaEmpleadoActivo.getBalanceUSD())
+                .build();
+
+        return dtoBalance;
     }
 }

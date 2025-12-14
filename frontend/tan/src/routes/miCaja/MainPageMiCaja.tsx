@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import {List} from '../../generalComponents/index';
 import { useMainPageMiCaja } from './useMainPageMiCaja';
+import './MainPageMiCaja.css'
 
 const MainPageMiCaja: React.FC = () => {
 
@@ -18,61 +19,60 @@ const MainPageMiCaja: React.FC = () => {
 
 
     return(
-        <div>
-            <main>
-                <section id="contenedorBalances">
-                    <div id="balanceARS">
-                        <h3>Balance en Pesos</h3>
-                        <p>Tu saldo actual en ARS</p>
-                        <p>${}</p>
+        <div id='mainPageMiCaja'>
+            <h2>Mi Caja</h2>
+            <section id="contenedorBalances">
+                <div id="balanceARS" className={balance?.balanceARS && balance.balanceARS < 0 ? 'negative' : 'positive'}>
+                    <h3>Balance en Pesos</h3>
+                    <p>Tu saldo actual en ARS</p>
+                    <p>${balance?.balanceARS}</p>
 
+                </div>
+
+                <div id="balanceUSD" className={balance?.balanceUSD && balance.balanceUSD < 0 ? 'negative' : 'positive'}>
+                    <h3>Balance en Dólares</h3>
+                    <p>Tu saldo actual en USD</p>
+                    <p>$USD{balance?.balanceUSD}</p>
+                </div>
+            </section>
+
+            <section id="contenedorDeMovimientos">
+                <header>
+                    <h2>Historial de Movimientos</h2>
+                </header>
+
+                <div id='contenedorDeFiltros'>
+                    <div className="filterSeg">
+                        <button
+                            className={`filterBtn ${filter === 'todas' ? 'active' : ''}`}
+                            onClick={() => setFilter('todas')}
+                            type="button"
+                        >
+                            Todas
+                        </button>
+                        <button
+                            className={`filterBtn ${filter === 'ingresos' ? 'active' : ''}`}
+                            onClick={() => setFilter('ingresos')}
+                            type="button"
+                        >
+                            Ingresos
+                        </button>
+                        <button
+                            className={`filterBtn ${filter === 'egresos' ? 'active' : ''}`}
+                            onClick={() => setFilter('egresos')}
+                            type="button"
+                        >
+                            Egresos
+                        </button>
                     </div>
-
-                    <div id="balanceUSD">
-                        <h3>Balance en Dolares</h3>
-                        <p>Tu saldo actual en USD</p>
-                        <p>$USD{}</p>
-                    </div>
-                </section>
-
-                <section id="contenedorDeMovimientos">
-                    <header>
-                        <h2>Historial de Movimientos</h2>
-                    </header>
-
-                    <div id='contenedorDeFiltros'>
-                        <div className="filterSeg">
-                            <button
-                                className={`filterBtn ${filter === 'todas' ? 'active' : ''}`}
-                                onClick={() => setFilter('todas')}
-                                type="button"
-                            >
-                                Todas
-                            </button>
-                            <button
-                                className={`filterBtn ${filter === 'ingresos' ? 'active' : ''}`}
-                                onClick={() => setFilter('ingresos')}
-                                type="button"
-                            >
-                                Ingresos
-                            </button>
-                            <button
-                                className={`filterBtn ${filter === 'egresos' ? 'active' : ''}`}
-                                onClick={() => setFilter('egresos')}
-                                type="button"
-                            >
-                                Egresos
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <List
-                    columnas={columnas}
-                    items={movimientos ?? []}
-                    loadingItems={loadingMovimientos}
-                    />
-                </section>
-            </main>
+                </div>
+                
+                <List
+                columnas={columnas}
+                items={filteredMovimientos}
+                loadingItems={loadingMovimientos}
+                />
+            </section>
         </div>
     )
 }
