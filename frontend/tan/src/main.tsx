@@ -5,8 +5,11 @@ import Inicio from './Inicio.tsx'
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import {MainPageAdministrador, MainPageCliente, MainPageFinanzas, MainPageMiCaja, MainPagePerfil, MainPageReservas, MainPageRegistrarIngresoEgresoCaja, MainPageGerencia, LoginPage} from './routes/index.ts'
 import AdministrarRolesDeUsuarioPage from './casosDeUso/AdministrarRolesDeUsuario/pages/AdministrarRolesDeUsuarioPage';
-import { Navbar } from './generalComponents/index.ts';
+import { NavbarUniversal } from './generalComponents/index.ts';
+import { UserProvider } from './context/UserContext';
 import { FormFinalizarTareaAgregarIE } from './casosDeUso/FinalizarTarea/components/FormFinalizarTareaAgregarIE/FormFinalizarTareaAregarIE.tsx';
+import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/Layout';
 
 function AppRouter() {
   const location = useLocation();
@@ -15,23 +18,25 @@ function AppRouter() {
 
   return (
     <>
-      {!hideNavbar && <Navbar />}
+      {!hideNavbar && <NavbarUniversal />}
       <Routes>
         {/* Ruta pública de login */}
         <Route path="/login" element={<LoginPage/>}/>
 
-        {/* Todas las demás rutas deberian estar protegidas */}
-        <Route path="/" element={<Inicio/>}/>
-        <Route path="/admin" element={<MainPageAdministrador/>}/>
-        <Route path="/admin/roles" element={<AdministrarRolesDeUsuarioPage/>}/>
-        <Route path="/cliente" element={<MainPageCliente/>}/>
-        <Route path="/finanzas" element={<MainPageFinanzas/>}/>
-        <Route path="/gerencia" element={<MainPageGerencia/>}/>
-        <Route path="/micaja" element={<MainPageMiCaja/>}/>
-        <Route path="/perfil" element={<MainPagePerfil/>}/>
-        <Route path="/reservas" element={<MainPageReservas/>}/>
-        <Route path="/registrarIngresoEgresoCaja" element={<MainPageRegistrarIngresoEgresoCaja/>}/>
-        <Route path="/finalizar-tarea/agregar-ie/:tareaId" element={<FormFinalizarTareaAgregarIE />} />
+        {/* Rutas protegidas dentro del Layout */}
+        <Route element={<ProtectedRoute><Layout/></ProtectedRoute>}>
+          <Route index element={<Inicio/>} />
+          <Route path="admin" element={<ProtectedRoute allowedRoles={["ADMIN_SISTEMA"]}><MainPageAdministrador/></ProtectedRoute>} />
+          <Route path="admin/roles" element={<ProtectedRoute allowedRoles={["ADMIN_SISTEMA"]}><AdministrarRolesDeUsuarioPage/></ProtectedRoute>} />
+          <Route path="cliente" element={<MainPageCliente/>} />
+          <Route path="finanzas" element={<ProtectedRoute allowedRoles={["FINANZAS","ADMIN_FINANZAS","ADMINISTRADOR_FINANCIERO"]}><MainPageFinanzas/></ProtectedRoute>} />
+          <Route path="gerencia" element={<ProtectedRoute allowedRoles={["GERENCIA"]}><MainPageGerencia/></ProtectedRoute>} />
+          <Route path="micaja" element={<MainPageMiCaja/>} />
+          <Route path="perfil" element={<MainPagePerfil/>} />
+          <Route path="reservas" element={<ProtectedRoute allowedRoles={["ADMIN_RESERVAS","RESERVAS"]}><MainPageReservas/></ProtectedRoute>} />
+          <Route path="registrarIngresoEgresoCaja" element={<ProtectedRoute allowedRoles={["EMPLEADO","AGREGAR_IE"]}><MainPageRegistrarIngresoEgresoCaja/></ProtectedRoute>} />
+          <Route path="finalizar-tarea/agregar-ie/:tareaId" element={<FormFinalizarTareaAgregarIE />} />
+        </Route>
       </Routes>
     </>
   )
@@ -40,7 +45,9 @@ function AppRouter() {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <AppRouter />
+      <UserProvider>
+        <AppRouter />
+      </UserProvider>
     </BrowserRouter>
   </StrictMode>,
 )
