@@ -1,12 +1,18 @@
+// frontend/tan/src/routes/gerencia/MainPageGerencia.tsx
 import React, { useState } from 'react';
 import { Button, List } from '../../generalComponents';
 import { useGerencia } from './useGerencia';
+import ModalAltaCliente from './components/ModalAltaCliente';
+import ModalAltaEmpleado from './components/ModalAltaEmpleado';
+import ModalAltaInmueble from './components/ModalAltaInmueble';
 import './MainPageGerencia.css';
 
 type VistaActual = 'inmuebles' | 'clientes' | 'empleados';
 
 const MainPageGerencia: React.FC = () => {
     const [vistaActual, setVistaActual] = useState<VistaActual>('inmuebles');
+    const [modalAltaAbierto, setModalAltaAbierto] = useState(false);
+    
     const {
         inmuebles,
         clientes,
@@ -15,7 +21,10 @@ const MainPageGerencia: React.FC = () => {
         error,
         bajaInmueble,
         bajaCliente,
-        bajaEmpleado
+        bajaEmpleado,
+        refetchInmuebles,
+        refetchClientes,
+        refetchEmpleados
     } = useGerencia();
 
     // Adaptadores para mostrar los datos en formato tabla
@@ -50,7 +59,8 @@ const MainPageGerencia: React.FC = () => {
     }));
 
     const handleBaja = async (id: number | string) => {
-        if (!confirm('¿Está seguro que desea dar de baja este elemento?')) return;
+        const confirmMessage = '¿Está seguro que desea dar de baja este elemento?';
+        if (!window.confirm(confirmMessage)) return;
 
         try {
             if (vistaActual === 'inmuebles') {
@@ -62,17 +72,36 @@ const MainPageGerencia: React.FC = () => {
             }
         } catch (error) {
             console.error('Error al dar de baja:', error);
-            alert('Error al dar de baja el elemento');
+            const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+            alert('Error al dar de baja el elemento: ' + errorMessage);
         }
     };
 
-    // TODO: Implementar modales de edición
-    const handleEditar = (item: unknown) => {
+    const handleEditar = (item: Record<string, unknown>) => {
         console.log('Editar:', item);
         alert('Función de edición en desarrollo');
     };
 
-    const getColumnasActuales = () => {
+    const handleAbrirModalAlta = () => {
+        setModalAltaAbierto(true);
+    };
+
+    const handleCerrarModalAlta = () => {
+        setModalAltaAbierto(false);
+    };
+
+    const handleSuccessAlta = () => {
+        // Refrescar la lista correspondiente
+        if (vistaActual === 'inmuebles' && refetchInmuebles) {
+            refetchInmuebles();
+        } else if (vistaActual === 'clientes' && refetchClientes) {
+            refetchClientes();
+        } else if (vistaActual === 'empleados' && refetchEmpleados) {
+            refetchEmpleados();
+        }
+    };
+
+    const getColumnasActuales = (): string[] => {
         switch (vistaActual) {
             case 'inmuebles':
                 return ['codInmueble', 'nombreInmueble', 'nombreCliente', 'direccion', 'm2Inmueble'];
@@ -85,7 +114,7 @@ const MainPageGerencia: React.FC = () => {
         }
     };
 
-    const getItemsActuales = () => {
+    const getItemsActuales = (): Record<string, unknown>[] => {
         switch (vistaActual) {
             case 'inmuebles':
                 return inmueblesAdaptados;
@@ -98,7 +127,7 @@ const MainPageGerencia: React.FC = () => {
         }
     };
 
-    const getTituloActual = () => {
+    const getTituloActual = (): string => {
         switch (vistaActual) {
             case 'inmuebles':
                 return 'Inmuebles';
@@ -108,6 +137,19 @@ const MainPageGerencia: React.FC = () => {
                 return 'Empleados';
             default:
                 return '';
+        }
+    };
+
+    const getLabelBotonCrear = (): string => {
+        switch (vistaActual) {
+            case 'inmuebles':
+                return 'Crear Inmueble';
+            case 'clientes':
+                return 'Crear Cliente';
+            case 'empleados':
+                return 'Crear Empleado';
+            default:
+                return 'Crear';
         }
     };
 
@@ -146,8 +188,8 @@ const MainPageGerencia: React.FC = () => {
                             Listado de {getTituloActual()}
                         </h2>
                         <Button
-                            label={`Agregar ${getTituloActual().slice(0, -1)}`}
-                            onClick={() => alert('Función de agregar en desarrollo')}
+                            label={getLabelBotonCrear()}
+                            onClick={handleAbrirModalAlta}
                             className="btn-add-gerencia"
                         />
                     </div>
@@ -168,6 +210,31 @@ const MainPageGerencia: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Modales de Alta */}
+            {vistaActual === 'clientes' && (
+                <ModalAltaCliente
+                    isOpen={modalAltaAbierto}
+                    onClose={handleCerrarModalAlta}
+                    onSuccess={handleSuccessAlta}
+                />
+            )}
+
+            {vistaActual === 'empleados' && (
+                <ModalAltaEmpleado
+                    isOpen={modalAltaAbierto}
+                    onClose={handleCerrarModalAlta}
+                    onSuccess={handleSuccessAlta}
+                />
+            )}
+
+            {vistaActual === 'inmuebles' && (
+                <ModalAltaInmueble
+                    isOpen={modalAltaAbierto}
+                    onClose={handleCerrarModalAlta}
+                    onSuccess={handleSuccessAlta}
+                />
+            )}
         </div>
     );
 };
