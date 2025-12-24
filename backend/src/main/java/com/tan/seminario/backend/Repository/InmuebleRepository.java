@@ -12,4 +12,5 @@ public interface InmuebleRepository extends JpaRepository<Inmueble, Long> {
 
    Optional<Inmueble> findByIdAndFechaHoraBajaInmuebleIsNull(Long id);
     List<Inmueble> findByFechaHoraBajaInmuebleIsNull();
+    Optional<Inmueble> findByIdAndFechaHoraBajaInmuebleIsNull(Long id);
 }

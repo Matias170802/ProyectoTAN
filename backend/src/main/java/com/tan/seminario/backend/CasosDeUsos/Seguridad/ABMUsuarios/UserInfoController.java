@@ -1,5 +1,7 @@
 package com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios;
 
+import com.tan.seminario.backend.Entity.Usuario;
+import com.tan.seminario.backend.Repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.util.Map;
 public class UserInfoController {
 
     private final JwtService jwtService;
+    private final UsuarioRepository usuarioRepository;
 
     /**
      * Endpoint para obtener información del usuario actual desde el token
@@ -33,8 +36,32 @@ public class UserInfoController {
             String email = jwtService.extractUsername(token);
             List<String> roles = jwtService.extractRoles(token);
 
+            // Buscar el usuario en la base de datos
+            Usuario usuario = usuarioRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            // Determinar el tipo de usuario
+            String tipoUsuario;
+            String nombre;
+            String codigo;
+
+            if (usuario.getEmpleado() != null) {
+                tipoUsuario = "EMPLEADO";
+                nombre = usuario.getEmpleado().getNombreEmpleado();
+                codigo = usuario.getEmpleado().getCodEmpleado();
+            } else if (usuario.getCliente() != null) {
+                tipoUsuario = "CLIENTE";
+                nombre = usuario.getCliente().getNombreCliente();
+                codigo = usuario.getCliente().getCodCliente();
+            } else {
+                throw new RuntimeException("Usuario sin tipo definido");
+            }
+
             Map<String, Object> userInfo = new HashMap<>();
             userInfo.put("email", email);
+            userInfo.put("nombre", nombre);
+            userInfo.put("codigo", codigo);
+            userInfo.put("tipoUsuario", tipoUsuario);
             userInfo.put("roles", roles);
 
             return ResponseEntity.ok(userInfo);

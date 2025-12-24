@@ -154,3 +154,46 @@
     font-size: 24px;
   }
 }
+
+.forgot-container {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.forgot-link {
+  background: none;
+  border: none;
+  color: #2c3e50;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 6px 8px;
+}
+
+.recuperar-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.recuperar-tab {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+}
+
+.recuperar-tab.active {
+  background: #2c3e50;
+  color: #fff;
+  border-color: #2c3e50;
+}
+
+.recuperar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* .email-encontrado removed: email now shown only inside alert */
