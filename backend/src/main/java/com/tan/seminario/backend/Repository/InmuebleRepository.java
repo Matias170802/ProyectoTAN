@@ -9,8 +9,6 @@ import java.util.Optional;
 
 public interface InmuebleRepository extends JpaRepository<Inmueble, Long> {
     Inmueble findByCodInmueble(String codInmueble);
-
-   Optional<Inmueble> findByIdAndFechaHoraBajaInmuebleIsNull(Long id);
     List<Inmueble> findByFechaHoraBajaInmuebleIsNull();
     Optional<Inmueble> findByIdAndFechaHoraBajaInmuebleIsNull(Long id);
 }
