@@ -15,11 +15,12 @@ import useUserRoles from '../../hooks/useUserRoles';
 const NavbarEmpleado: React.FC = () => {
   const { hasRole } = useUserRoles();
 
-  const showFinanzas = hasRole('FINANZAS') || hasRole('ADMIN_FINANZAS') || hasRole('ADMINISTRADOR_FINANCIERO');
-  const showGerencia = hasRole('GERENCIA') || hasRole('GERENCIA_ADMIN');
-  const showReservas = hasRole('ADMIN_RESERVAS') || hasRole('RESERVAS');
-  const showAdministracion = hasRole('ADMIN_SISTEMA') || hasRole('ADMINISTRADOR');
-  const showAgregarIE = hasRole('EMPLEADO') || hasRole('AGREGAR_IE');
+  // Usamos los nombres canónicos mapeados desde los códigos del backend
+  const showFinanzas = hasRole('FINANZAS');
+  const showGerencia = hasRole('GERENCIA');
+  const showReservas = hasRole('RESERVAS');
+  const showAdministracion = hasRole('ADMIN_SISTEMA');
+  const showAgregarIE = hasRole('EMPLEADO');
 
   return (
     <nav>

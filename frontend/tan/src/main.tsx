@@ -29,12 +29,12 @@ function AppRouter() {
           <Route path="admin" element={<ProtectedRoute allowedRoles={["ADMIN_SISTEMA"]}><MainPageAdministrador/></ProtectedRoute>} />
           <Route path="admin/roles" element={<ProtectedRoute allowedRoles={["ADMIN_SISTEMA"]}><AdministrarRolesDeUsuarioPage/></ProtectedRoute>} />
           <Route path="cliente" element={<MainPageCliente/>} />
-          <Route path="finanzas" element={<ProtectedRoute allowedRoles={["FINANZAS","ADMIN_FINANZAS","ADMINISTRADOR_FINANCIERO"]}><MainPageFinanzas/></ProtectedRoute>} />
+          <Route path="finanzas" element={<ProtectedRoute allowedRoles={["FINANZAS"]}><MainPageFinanzas/></ProtectedRoute>} />
           <Route path="gerencia" element={<ProtectedRoute allowedRoles={["GERENCIA"]}><MainPageGerencia/></ProtectedRoute>} />
           <Route path="micaja" element={<MainPageMiCaja/>} />
           <Route path="perfil" element={<MainPagePerfil/>} />
-          <Route path="reservas" element={<ProtectedRoute allowedRoles={["ADMIN_RESERVAS","RESERVAS"]}><MainPageReservas/></ProtectedRoute>} />
-          <Route path="registrarIngresoEgresoCaja" element={<ProtectedRoute allowedRoles={["EMPLEADO","AGREGAR_IE"]}><MainPageRegistrarIngresoEgresoCaja/></ProtectedRoute>} />
+          <Route path="reservas" element={<ProtectedRoute allowedRoles={["RESERVAS"]}><MainPageReservas/></ProtectedRoute>} />
+          <Route path="registrarIngresoEgresoCaja" element={<ProtectedRoute allowedRoles={["EMPLEADO"]}><MainPageRegistrarIngresoEgresoCaja/></ProtectedRoute>} />
           <Route path="finalizar-tarea/agregar-ie/:tareaId" element={<FormFinalizarTareaAgregarIE />} />
         </Route>
       </Routes>

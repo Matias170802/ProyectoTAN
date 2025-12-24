@@ -1,4 +1,5 @@
 import { useFetch } from '../../generalHooks/useFetch';
+import { useMemo } from 'react';
 
 // Tipos para Inmuebles
 export interface DTOInmuebleListado {
@@ -46,17 +47,16 @@ export interface DTOEmpleadoListado {
 export const useGerencia = () => {
     const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
 
+    // Memoizar las opciones de autorización para evitar que el objeto options cambie en cada render
+    const authOptions = useMemo(() => token ? { headers: { 'Authorization': `Bearer ${token}` } } : undefined, [token]);
+
     // Fetch de inmuebles
     const { 
         data: inmuebles, 
         loading: loadingInmuebles, 
         error: errorInmuebles,
         refetch: refetchInmuebles 
-    } = useFetch<DTOInmuebleListado[]>('/api/inmuebles/listar', {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
+    } = useFetch<DTOInmuebleListado[]>('/api/inmuebles/listar', authOptions);
 
     // Fetch de clientes
     const { 
@@ -64,23 +64,15 @@ export const useGerencia = () => {
         loading: loadingClientes, 
         error: errorClientes,
         refetch: refetchClientes 
-    } = useFetch<DTOClienteListado[]>('/api/clientes/listar', {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
+    } = useFetch<DTOClienteListado[]>('/api/clientes/listar', authOptions);
 
-    // Fetch de empleados
+    // Fetch de empleados (corregido: endpoint con prefijo /api/empleados)
     const { 
         data: empleados, 
         loading: loadingEmpleados, 
         error: errorEmpleados,
         refetch: refetchEmpleados 
-    } = useFetch<DTOEmpleadoListado[]>('/empleado/listar', {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
+    } = useFetch<DTOEmpleadoListado[]>('/api/empleados/listar', authOptions);
 
     // Función para dar de baja inmueble
     const bajaInmueble = async (id: number) => {
@@ -126,7 +118,7 @@ export const useGerencia = () => {
 
     // Función para dar de baja empleado
     const bajaEmpleado = async (id: number) => {
-        const response = await fetch(`/empleado/baja/${id}`, {
+        const response = await fetch(`/api/empleados/baja/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { isAuthenticated } from '../utils/auth';
 import useUserRoles from '../hooks/useUserRoles';
 
@@ -25,13 +25,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles,
 
   if (only && user.tipoUsuario !== only) {
     // No es el tipo de usuario correcto
-    return <Navigate to="/" replace />;
+    // Evitar redirect si ya estamos en la página home
+    if (location.pathname !== '/') return <Navigate to="/" replace />;
   }
 
   if (allowedRoles && allowedRoles.length > 0) {
-    const hasAny = allowedRoles.some(r => user.roles?.includes(r));
+    const hasAny = allowedRoles.some(r => user.roles?.some(ur => ur === r || ur === `ROLE_${r}`));
     if (!hasAny) {
-      return <Navigate to="/" replace />;
+      // Evitar redirect infinito
+      if (location.pathname !== '/') return <Navigate to="/" replace />;
     }
   }
 

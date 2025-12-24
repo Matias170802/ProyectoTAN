@@ -23,15 +23,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const refresh = async () => {
+  const refresh = async (): Promise<CurrentUser | null> => {
     setLoading(true);
     setError(null);
     try {
       const data = await authService.fetchCurrentUser();
       setUser(data);
+      return data;
     } catch (err: any) {
       setUser(null);
       setError(err instanceof Error ? err.message : String(err));
+      return null;
     } finally {
       setLoading(false);
     }

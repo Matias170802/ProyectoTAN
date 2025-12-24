@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUserContext } from '../../context/UserContext';
 import './LoginPage.css';
 import Modal from '../../generalComponents/Modal/Modal';
 
@@ -41,13 +42,26 @@ const LoginPage: React.FC = () => {
   const [recuperarPasswordMensaje, setRecuperarPasswordMensaje] = useState<string | null>(null);
   const [recuperarPasswordSuccess, setRecuperarPasswordSuccess] = useState<boolean | null>(null);
 
-  //* Verificar si ya existe una sesión activa
+  const userCtx = useUserContext();
+
+  //* Verificar si ya existe una sesión activa y validar con el contexto de usuario
   useEffect(() => {
     const accessToken = sessionStorage.getItem('access_token') || localStorage.getItem('access_token');
-    if (accessToken) {
+    // Si no hay token, no redirigimos
+    if (!accessToken) return;
+
+    // Si ya tenemos user en contexto, redirigimos al root
+    if (userCtx.user) {
       navigate('/');
+      return;
     }
-  }, [navigate]);
+
+    // Token presente pero inválido: limpiar y quedarse en login
+    if (!userCtx.loading && !userCtx.user) {
+      const { clearTokens } = require('../../services/authService');
+      clearTokens();
+    }
+  }, [navigate, userCtx.user, userCtx.loading]);
 
   const validateForm = (): boolean => {
     const newErrors: Partial<LoginFormData> = {};
@@ -123,11 +137,27 @@ const LoginPage: React.FC = () => {
         sessionStorage.setItem('refresh_token', data.refresh_token);
       }
 
-      setSuccessMessage('¡Inicio de sesión exitoso! Redirigiendo...');
-      
-      setTimeout(() => {
-        navigate('/');
-      }, 1000);
+      setSuccessMessage('¡Inicio de sesión exitoso! Obteniendo perfil...');
+
+      // Refrescar contexto de usuario y usar el resultado devuelto para evitar condiciones de carrera
+      try {
+        const fetchedUser = await userCtx.refresh();
+        if (fetchedUser) {
+          setSuccessMessage('¡Inicio de sesión exitoso! Redirigiendo...');
+          navigate('/');
+        } else {
+          // Si por alguna razón no se pudo obtener el usuario, limpiar tokens y mostrar error
+          const { clearTokens } = await import('../../services/authService');
+          clearTokens();
+          setSuccessMessage(null);
+          setErrorMessage('No se pudo obtener información del usuario tras el login. Intenta de nuevo.');
+        }
+      } catch (err) {
+        const { clearTokens } = await import('../../services/authService');
+        clearTokens();
+        setSuccessMessage(null);
+        setErrorMessage(err instanceof Error ? err.message : 'Error al obtener perfil');
+      }
 
     } catch (error) {
       console.error('Error en login:', error);

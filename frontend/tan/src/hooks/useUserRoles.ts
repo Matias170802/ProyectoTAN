@@ -7,9 +7,14 @@ export function useUserRoles() {
   const isEmpleado = useMemo(() => user?.tipoUsuario === 'EMPLEADO', [user]);
   const isCliente = useMemo(() => user?.tipoUsuario === 'CLIENTE', [user]);
 
+  function normalize(role: string) {
+    return role.replace(/^ROLE_/, '').toUpperCase();
+  }
+
   function hasRole(role: string) {
     if (!user || !user.roles) return false;
-    return user.roles.includes(role);
+    const norm = normalize(role);
+    return user.roles.some(r => normalize(r) === norm);
   }
 
   return {

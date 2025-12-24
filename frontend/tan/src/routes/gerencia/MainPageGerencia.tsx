@@ -1,5 +1,6 @@
 // frontend/tan/src/routes/gerencia/MainPageGerencia.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Button, List } from '../../generalComponents';
 import { useGerencia } from './useGerencia';
 import ModalAltaCliente from './components/ModalAltaCliente';
@@ -126,6 +127,31 @@ const MainPageGerencia: React.FC = () => {
                 return [];
         }
     };
+
+    // Debug: detectar cambios de ruta cuando estamos en Gerencia
+    const location = useLocation();
+    const lastPathRef = useRef(location.pathname);
+
+    useEffect(() => {
+        if (lastPathRef.current !== location.pathname) {
+            console.debug('[Gerencia] location changed:', lastPathRef.current, '->', location.pathname);
+            // Si salimos de /gerencia y React Router no realiza la transición correctamente,
+            // forzamos una recarga completa para asegurar que la nueva ruta cargue.
+            if (lastPathRef.current === '/gerencia' && location.pathname !== '/gerencia') {
+                console.warn('[Gerencia] Detected navigation away from /gerencia; forcing full reload to', location.pathname);
+                // Esperar un frame para darle oportunidad al router, luego forzar reload
+                setTimeout(() => {
+                    if (window.location.pathname !== location.pathname) {
+                        window.location.assign(location.pathname);
+                    } else {
+                        // Si la URL ya cambió pero la app no actualizó, recargar de todos modos
+                        window.location.reload();
+                    }
+                }, 50);
+            }
+            lastPathRef.current = location.pathname;
+        }
+    }, [location.pathname]);
 
     const getTituloActual = (): string => {
         switch (vistaActual) {
