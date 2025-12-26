@@ -1,5 +1,4 @@
 import React from 'react';
-import { IoBarChart } from "react-icons/io5";
 import { MdAttachMoney } from "react-icons/md";
 import { HiOutlineSwitchHorizontal } from "react-icons/hi";
 import { IoNewspaperOutline } from "react-icons/io5";
@@ -156,7 +155,7 @@ const MainPageFinanzas: React.FC = () => {
                             onClick={() => setOpenModalRealizarRendicion(true)}
                             />
                             <Button label="Registrar Cotización de Moneda" id="botonRegistrarCotizacionMoneda" icon={<MdAttachMoney/>} onClick={()=> setOpenModalRegistrarCotizacionMoneda(true)}/>
-                            <Button label='Estadisticas' id='botonEstadisticas' icon={<IoBarChart/>}/>
+                            
                         </section>
 
                     </div>
