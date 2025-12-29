@@ -1,5 +1,5 @@
 import './MainPageReportes.css';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { ModalConsultarEstadisticasFinancieras } from '@/casosDeUso/ConsultarEstadisticas/components/ModalConsultarEstadisticasFinancieras/ModalConsultarEstadisticasFinancieras';
 import { ModalConsultarEstadisticasGerencia } from '@/casosDeUso/ConsultarEstadisticas/components/ModalConsultarEstadisticasGerencia/ModalConsultarEstadisticasGerencia';
@@ -9,18 +9,22 @@ export const MainPageReportes: React.FC = () => {
     const [mostrarReportesGerencia, setMostrarReportesGerencia] = useState(false);
     const [mostrarReportesFinancieros, setMostrarReportesFinancieros] = useState(false);
     
-    //aca deberia haber un hook que me traiga los roles del usuario logueado
+    //TODO: aca deberia haber un hook que me traiga los roles del usuario logueado
     let roles;
     
     const definirReportesAMostrar = (roles: []) => {
 
-        if (roles.includes('GERENCIA')) {
+        if (roles.includes('Gerencia')) {
             setMostrarReportesGerencia(true);
         }
-        if (roles.includes('FINANZAS')) {
+        if (roles.includes('Administrador Financiero')) {
             setMostrarReportesFinancieros(true);
         }
     }
+
+    useEffect(() => {
+        definirReportesAMostrar(roles);
+    }, [roles]);
     
     return (
         <div className="App">
@@ -30,14 +34,14 @@ export const MainPageReportes: React.FC = () => {
                 <section id='reportesSection'>
                     <p>Aquí se mostrarán los reportes.</p>
 
-                    {mostrarReportesFinancieros && (
+                    {mostrarReportesFinancieros && roles && (
                         <ModalConsultarEstadisticasFinancieras
                             isOpen={mostrarReportesFinancieros}
                             onClose={() => setMostrarReportesFinancieros(false)}
                         />
                     )}
 
-                    {mostrarReportesGerencia && (
+                    {mostrarReportesGerencia && roles && (
                         <ModalConsultarEstadisticasGerencia
                             isOpen={mostrarReportesGerencia}
                             onClose={() => setMostrarReportesGerencia(false)}
