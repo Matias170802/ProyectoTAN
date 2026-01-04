@@ -3,6 +3,9 @@ import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { ModalConsultarEstadisticasFinancieras } from '@/casosDeUso/ConsultarEstadisticas/components/ModalConsultarEstadisticasFinancieras/ModalConsultarEstadisticasFinancieras';
 import { ModalConsultarEstadisticasGerencia } from '@/casosDeUso/ConsultarEstadisticas/components/ModalConsultarEstadisticasGerencia/ModalConsultarEstadisticasGerencia';
+import { useFetch } from '@/generalHooks/useFetch';
+import { type Rol} from './MainPageReportesTypes';
+import { Button } from '@/generalComponents';
 
 export const MainPageReportes: React.FC = () => {
     
@@ -10,14 +13,15 @@ export const MainPageReportes: React.FC = () => {
     const [mostrarReportesFinancieros, setMostrarReportesFinancieros] = useState(false);
     
     //TODO: aca deberia haber un hook que me traiga los roles del usuario logueado
-    let roles;
+    const { data: roles } = useFetch<Rol[]>('/api/reportes/roles');
     
-    const definirReportesAMostrar = (roles: []) => {
-
-        if (roles.includes('Gerencia')) {
+    const definirReportesAMostrar = (roles: Rol[] | null) => {
+        
+        if (roles &&roles.some((rol) => rol.nombreRol.includes('Gerencia'))) {
             setMostrarReportesGerencia(true);
         }
-        if (roles.includes('Administrador Financiero')) {
+        
+        if (roles && roles.some((rol) => rol.nombreRol.includes('Administrador Financiero'))) {
             setMostrarReportesFinancieros(true);
         }
     }
@@ -34,14 +38,16 @@ export const MainPageReportes: React.FC = () => {
                 <section id='reportesSection'>
                     <p>Aquí se mostrarán los reportes.</p>
 
-                    {mostrarReportesFinancieros && roles && (
-                        <ModalConsultarEstadisticasFinancieras
-                            isOpen={mostrarReportesFinancieros}
-                            onClose={() => setMostrarReportesFinancieros(false)}
-                        />
+                    <Button
+                    onClick={() => setMostrarReportesFinancieros(true)}
+                    label='mostrar reportes financieros'
+                    />
+
+                    {mostrarReportesFinancieros && /*roles*/ (
+                        <ModalConsultarEstadisticasFinancieras/>
                     )}
 
-                    {mostrarReportesGerencia && roles && (
+                    {mostrarReportesGerencia && /*roles*/ (
                         <ModalConsultarEstadisticasGerencia
                             isOpen={mostrarReportesGerencia}
                             onClose={() => setMostrarReportesGerencia(false)}

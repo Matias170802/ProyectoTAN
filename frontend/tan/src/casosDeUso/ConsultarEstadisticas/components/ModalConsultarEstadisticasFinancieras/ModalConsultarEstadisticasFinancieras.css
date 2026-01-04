@@ -1,0 +1,202 @@
+.modalConsultarEstadisticasFinancierasContent {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px;
+    background: #f5f5f5;
+    min-height: 100vh;
+}
+
+/* Sección de Filtros */
+#contenedorFiltrosModalEstadisticasFinancieras {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    grid-template-rows: auto auto;
+    gap: 15px;
+    align-items: start;
+}
+
+#contenedorFiltrosModalEstadisticasFinancieras > p {
+    grid-column: 1 / -1;
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+#contenedorFiltrosModalEstadisticasFinancieras > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#contenedorFiltrosModalEstadisticasFinancieras > div:first-of-type {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+#contenedorFiltrosModalEstadisticasFinancieras > div:last-of-type {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+#contenedorFiltrosModalEstadisticasFinancieras label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+#contenedorFiltrosModalEstadisticasFinancieras select {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    width: 180px;
+}
+
+#contenedorFiltrosModalEstadisticasFinancieras select:hover {
+    border-color: #999;
+}
+
+#contenedorFiltrosModalEstadisticasFinancieras select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+/* Sección de Ganancias Totales */
+#contenedorGananciasTotales {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+#contenedorGananciasTotales > div {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#gananciasEmpresa p:first-child,
+#gananciasCliente p:first-child,
+#gananciasTotales p:first-child {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+#gananciasEmpresa p:last-child {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2196F3;
+    margin: 0;
+}
+
+#gananciasCliente p:last-child {
+    font-size: 32px;
+    font-weight: 700;
+    color: #4CAF50;
+    margin: 0;
+}
+
+#gananciasTotales p:last-child {
+    font-size: 32px;
+    font-weight: 700;
+    color: #9C27B0;
+    margin: 0;
+}
+
+#gananciasEmpresa p:nth-child(3),
+#gananciasCliente p:nth-child(3),
+#gananciasTotales p:nth-child(3) {
+    font-size: 12px;
+    color: #999;
+    margin-top: 5px;
+}
+
+/* Sección de Gráficos */
+#contenedorGraficos {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#contenedorGraficos > p:first-child {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 10px 0;
+}
+
+#contenedorGraficos #subtitulo {
+    font-size: 13px;
+    color: #999;
+    margin: 0 0 20px 0;
+}
+
+#contenedorGraficos > div {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f9f9f9;
+    border-radius: 6px;
+    color: #ccc;
+    font-size: 14px;
+}
+
+/* Sección de Detalles */
+#contenedorDetallesGanancias {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#contenedorDetallesGanancias > p:first-child {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 20px 0;
+}
+
+#contenedorDetallesGanancias > p {
+    font-size: 13px;
+    color: #999;
+    margin: 0 0 15px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modalConsultarEstadisticasFinancierasContent {
+        padding: 15px;
+    }
+
+    #contenedorFiltrosModalEstadisticasFinancieras {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #contenedorFiltrosModalEstadisticasFinancieras > div {
+        max-width: 100%;
+    }
+
+    #contenedorGananciasTotales {
+        grid-template-columns: 1fr;
+    }
+}
