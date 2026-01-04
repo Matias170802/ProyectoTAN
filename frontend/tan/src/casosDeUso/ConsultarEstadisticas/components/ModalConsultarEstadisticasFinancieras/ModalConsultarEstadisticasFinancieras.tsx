@@ -2,8 +2,7 @@ import './ModalConsultarEstadisticasFinancieras.css';
 import {type PropsConsultarEstadisticas} from './ModalConsultarEstadisticasFinancierasTypes'
 import {List} from '../../../../generalComponents/index';
 import { useState } from 'react';
-import { useReportesFinanzas } from '../../hooks/UseReportesFinanzas';
-import {type FiltrosEstadisticasFinancieras} from '../../hooks/UseReportesFinanzas';
+import {type FiltrosEstadisticasFinancieras, useReportesFinanzas} from '../../hooks/useReportesFinanzas';
 
 export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstadisticas> = () => {
 
@@ -46,7 +45,7 @@ export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstad
                 <section id='contenedorFiltrosModalEstadisticasFinancieras'>
                     <p>Filtros</p>
                     
-                    
+
                     <div>
                         <label htmlFor='anio'>Año</label>
                         <select 
