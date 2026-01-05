@@ -42,6 +42,10 @@ export const MainPageReportes: React.FC = () => {
                     onClick={() => setMostrarReportesFinancieros(true)}
                     label='mostrar reportes financieros'
                     />
+                    <Button
+                    onClick={() => setMostrarReportesGerencia(true)}
+                    label='mostrar reportes gerencia'
+                    />
 
                     {mostrarReportesFinancieros && /*roles*/ (
                         <ModalConsultarEstadisticasFinancieras/>

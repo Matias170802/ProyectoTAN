@@ -1,9 +1,8 @@
 .modalConsultarEstadisticasFinancierasContent {
     width: 100%;
-    max-width: 1200px;
     margin: 0 auto;
     padding: 30px;
-    background: #f5f5f5;
+    background-color: oklch(0.985 0 0);
     min-height: 100vh;
 }
 
