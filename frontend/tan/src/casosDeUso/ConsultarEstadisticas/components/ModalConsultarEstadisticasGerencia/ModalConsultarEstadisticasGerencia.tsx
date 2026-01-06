@@ -1,10 +1,37 @@
-import {type PropsConsultarEstadisticas} from './ModalConsultarEstadisticasGerenciaTypes';
+import {type PropsConsultarEstadisticas, type EstadisticasGerenciaReservas, type EstadisticasGerenciaInmuebles, type InmuebleOption} from './ModalConsultarEstadisticasGerenciaTypes';
 import './ModalConsultarEstadisticasGerencia.css';
-import {Button} from '../../../../generalComponents/index';
+import {Button, List} from '../../../../generalComponents/index';
+import { useState } from 'react';
+import { useReportesGerencia, type FiltrosEstadisticasGerencia } from '../../hooks/useReportesGerencia';
+import { useFetch } from '@/generalHooks/useFetch';
 
 export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadisticas> = () => {
     
-    const [activo, setActivo] = React.useState<'inmuebles' | 'reservas'>('reservas');    
+    const columnasReservas = ["Inmueble", "Huesped", "Check in", "Check out", "Dias", "Estado", "Monto Total"];
+    const columnasInmuebles = ["Huesped", "Check in", "Check out", "Dias", "Estado", "Monto Total"];
+    const [activo, setActivo] = useState<'inmuebles' | 'reservas'>('reservas'); 
+    const [filtros, setFiltros] = useState<FiltrosEstadisticasGerencia>({});
+    const inmuebleSeleccionado = filtros.inmueble || '';
+
+    //*fetch para traerme los inmuebles para el filtro inmuebles cuando el activo es igual a "Inmuebles"
+    const { data: inmueblesOptions, loading: loadingInmuebles, error: errorInmuebles } = useFetch<InmuebleOption[]>(
+        activo === 'inmuebles' ? '/api/finanzas/realizarRendicion/inmuebles' : null
+    );
+
+    // Fetch de estadisticas según el activo y filtros
+    const reportes = useReportesGerencia(activo, filtros);
+
+    const estadisticasGerenciaReservas = (reportes as { estadisticasGerenciaReservas?: EstadisticasGerenciaReservas })?.estadisticasGerenciaReservas;
+    const estadisticasGerenciaInmuebles = (reportes as { estadisticasGerenciaInmuebles?: EstadisticasGerenciaInmuebles })?.estadisticasGerenciaInmuebles;
+
+    const handleFiltroChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = event.target;
+        setFiltros((prev) => ({ ...prev, [name]: value }));
+    };
+
+    //TODO: Placeholder para la lista hasta que se conecte a datos reales
+    const itemsTablero: any[] = [];
+
     return (
         <div id='modalConsultarEstadisticasGerenciaContent'>
 
@@ -73,51 +100,142 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
                     {activo === 'inmuebles' && (
                         <div>
                             <label htmlFor="inmueble">Inmueble</label>
-                            <select name="inmueble">
+                            <select 
+                                name="inmueble"
+                                value={filtros.inmueble || ''}
+                                onChange={handleFiltroChange}
+                            >
                                 <option value="">Seleccionar</option>
+                                <option value="todos">Todos</option>
+                                {inmueblesOptions?.map((inmueble) => (
+                                    <option key={inmueble.codInmueble} value={inmueble.codInmueble}>
+                                        {inmueble.nombreInmueble}
+                                    </option>
+                                ))}
                             </select>
+                            {loadingInmuebles && <p>Cargando inmuebles...</p>}
+                            {errorInmuebles && <p>Error al cargar inmuebles</p>}
                         </div>
                     )}
-                </section>
-
-                <section id='contenedorGananciasTotales'>
-
-                    <div id='gananciasEmpresa'>
-                        <p>Ganancias de la Empresa</p>
-                        <p>{estadisticasFinancieras?.gananciasEmpresa || 0}</p>
-                    </div>
-
-                    <div id='gananciasCliente'>
-                        <p>Ganancias del Cliente</p>
-                        <p>{estadisticasFinancieras?.gananciasCliente || 0}</p>
-
-                    </div>
-
-                    <div id='gananciasTotales'>
-                        <p>Total General</p>
-                        <p>{estadisticasFinancieras?.gananciasTotales || 0}</p>
-
-                    </div>
 
                 </section>
 
-                <section id='contenedorGraficos'>
+                {activo === 'reservas' && (
+                    <section id='contenedorGananciasTotales'>
 
-                    <p>Distribucion de Ganancias por Inmueble</p>
-                    <p id='subtitulo'>Ganacias del Cliente vs Ganancias de la Empresa</p>
+                        <div id='totalReservas'>
+                            <p>Total de Reservas</p>
+                            <p>{estadisticasGerenciaReservas?.gananciasEmpresa || 0}</p>
+                        </div>
 
-                    <div>grafico aca</div>
+                        <div id='diasTotalesReservados'>
+                            <p>Días Totales Reservados</p>
+                            <p>{estadisticasGerenciaReservas?.gananciasCliente || 0}</p>
 
-                </section>
+                        </div>
 
-                <section id='contenedorDetallesGanancias'>
+                        <div id='montoTotalGanancias'>
+                            <p>Monto Total</p>
+                            <p>{estadisticasGerenciaReservas?.gananciasTotales || 0}</p>
 
-                    <List
-                    columnas={columnas}
-                    items={itemsTablero}
-                    />
+                        </div>
 
-                </section>
+                        <div id='promedioPorReserva'>
+                            <p>Promedio por Reserva</p>
+                            <p>{estadisticasGerenciaReservas?.gananciasTotales || 0}</p>
+
+                        </div>
+
+                    </section>
+
+                )}
+                
+                {activo === 'inmuebles' &&  inmuebleSeleccionado && (
+                    <section id='contenedorGananciasTotales'>
+
+                        <div id='totalReservasINmueble'>
+                            <p>Reservas del Inmueble</p>
+                            <p>{estadisticasGerenciaInmuebles?.gananciasEmpresa || 0}</p>
+                        </div>
+
+                        <div id='diasTotalesOcupados'>
+                            <p>Días Totales Ocupados</p>
+                            <p>{estadisticasGerenciaInmuebles?.gananciasCliente || 0}</p>
+
+                        </div>
+
+                        <div id='tasaOcupacionInmueble'>
+                            <p>Tasa de Ocupación</p>
+                            <p>{estadisticasGerenciaInmuebles?.gananciasCliente || 0}</p>
+
+                        </div>
+
+                        <div id='montoTotalGanancias'>
+                            <p>Ingresos Totales</p>
+                            <p>{estadisticasGerenciaInmuebles?.gananciasTotales || 0}</p>
+
+                        </div>
+
+                    </section>
+                )}
+
+
+
+                {activo === 'reservas' && (
+                    <section id='contenedorGraficos'>
+
+                        <p>Incidencia de Reserva por Inmueble</p>
+                        <p className='subtitulo'>Participación porcentual de cada inmueble sobre el total de reservas</p>
+
+                        <div>grafico aca</div>
+
+                    </section>
+                )}
+
+                {activo === 'inmuebles' &&  inmuebleSeleccionado && (
+                    <section id='contenedorGraficos'>
+
+                        <p>Ocupación del Inmueble {inmuebleSeleccionado}</p>
+                        <p className='subtitulo'>Distribución de días ocupados vs. disponibles en el período seleccionado</p>
+
+                        <div>grafico aca</div>
+
+                        <section id='contenedorAnalisisGrafico'>
+                            <p id='analisisGrafico'>Analisis: ....</p>
+                        </section>
+
+                    </section>
+                )}
+                
+                {activo === 'reservas' && (
+                    <section id='contenedorDetallesGanancias'>
+
+                        <p>Detalle de Reservas</p>
+                        <p className='subtitulo'>Información completa de cada reserva</p>
+                        
+                        <List
+                        columnas={columnasReservas}
+                        items={itemsTablero}
+                        />
+
+                    </section>
+                )}
+
+                {activo === 'inmuebles' &&  inmuebleSeleccionado &&(
+                    <section id='contenedorDetallesGanancias'>
+
+                        <p>Reservas de {inmuebleSeleccionado}</p>
+                        <p className='subtitulo'>Detalle completo de todas las reservas del inmueble del periodo seleccionado</p>
+                        
+                        <List
+                        columnas={columnasInmuebles}
+                        items={itemsTablero}
+                        />
+
+                    </section>
+                )}
+
+                
         </div>
     )
 }
