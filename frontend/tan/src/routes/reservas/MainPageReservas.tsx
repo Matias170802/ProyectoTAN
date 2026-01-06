@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { Button, List, ModalAltaReserva } from "../../generalComponents/index";
 import { useReservas as useAMReservas } from "../../casosDeUso/AMReservas";
 import ModalConfirmarCancelar from '../../casosDeUso/CancelarReserva/components/ModalConfirmarCancelar';
+import { ModalAsignarCheckInOut } from '../../casosDeUso/AsignarCheckInOut';
 import type { ReservaFormData } from "../../casosDeUso/AMReservas/types";
+import type { ReservaDetailsForModal } from "../../casosDeUso/AsignarCheckInOut/types";
 import "./MainPageReservas.css";
 
 // Los estados se obtienen desde el backend via el hook; mantenemos esta lista como fallback
@@ -15,6 +17,10 @@ const MainPageReservas: React.FC = () => {
     // Cancel modal state
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
     const [cancelingReservaCod, setCancelingReservaCod] = useState<string | null>(null);
+
+    // AsignarCheckInOut modal state
+    const [isAsignarCheckInOutOpen, setIsAsignarCheckInOutOpen] = useState(false);
+    const [selectedReservaForCheckInOut, setSelectedReservaForCheckInOut] = useState<ReservaDetailsForModal | null>(null);
 
     const [filtroEstado, setFiltroEstado] = useState("Todos");
     const [filtroInmueble, setFiltroInmueble] = useState("Todos");
@@ -29,6 +35,27 @@ const MainPageReservas: React.FC = () => {
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
+        setIsEditMode(false);
+        setEditingReservaCod(null);
+        setEditingReservaData(null);
+    };
+
+    const handleOpenAsignarCheckInOut = (item: any) => {
+        const reservaDetail: ReservaDetailsForModal = {
+            codReserva: item.codReserva,
+            propiedad: item.propiedad,
+            checkin: item.checkin,
+            checkout: item.checkout,
+            huesped: item.huesped,
+            estado: item.estado,
+        };
+        setSelectedReservaForCheckInOut(reservaDetail);
+        setIsAsignarCheckInOutOpen(true);
+    };
+
+    const handleCloseAsignarCheckInOut = () => {
+        setIsAsignarCheckInOutOpen(false);
+        setSelectedReservaForCheckInOut(null);
     };
 
     const handleSaveReserva = async (reservaData: ReservaFormData) => {
@@ -139,6 +166,10 @@ const MainPageReservas: React.FC = () => {
                         showActions={true}
                         actionsPosition="left"
                         idField="codReserva"
+                        onItemClick={(item) => {
+                            // Abrir modal de asignar check-in/out al hacer clic en una fila
+                            handleOpenAsignarCheckInOut(item as any);
+                        }}
                         onItemEdit={(item) => {
                             // item es el objeto adaptado; buscamos la reserva original por codReserva
                             const cod = (item as any).codReserva;
@@ -191,6 +222,17 @@ const MainPageReservas: React.FC = () => {
                     }
                 }}
                 loading={loading}
+            />
+
+            <ModalAsignarCheckInOut
+                isOpen={isAsignarCheckInOutOpen}
+                onClose={handleCloseAsignarCheckInOut}
+                reserva={selectedReservaForCheckInOut}
+                onSuccess={() => {
+                    handleCloseAsignarCheckInOut();
+                    // Opcionalmente, refrescar la lista si el backend actualiza datos
+                    refreshReservas();
+                }}
             />
         </div>
     );
