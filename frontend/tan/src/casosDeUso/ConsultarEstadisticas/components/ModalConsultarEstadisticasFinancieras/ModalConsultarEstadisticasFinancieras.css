@@ -72,14 +72,14 @@
 }
 
 /* Sección de Ganancias Totales */
-#contenedorGananciasTotales {
+.modalConsultarEstadisticasFinancierasContent #contenedorGananciasTotales {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    gap: 60px;
     margin-bottom: 30px;
 }
 
-#contenedorGananciasTotales > div {
+.modalConsultarEstadisticasFinancierasContent #contenedorGananciasTotales > div {
     background: white;
     padding: 25px;
     border-radius: 8px;

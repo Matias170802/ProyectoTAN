@@ -11,14 +11,16 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
     const columnasInmuebles = ["Huesped", "Check in", "Check out", "Dias", "Estado", "Monto Total"];
     const [activo, setActivo] = useState<'inmuebles' | 'reservas'>('reservas'); 
     const [filtros, setFiltros] = useState<FiltrosEstadisticasGerencia>({});
-    const inmuebleSeleccionado = filtros.inmueble || '';
 
     //*fetch para traerme los inmuebles para el filtro inmuebles cuando el activo es igual a "Inmuebles"
-    const { data: inmueblesOptions, loading: loadingInmuebles, error: errorInmuebles } = useFetch<InmuebleOption[]>(
-        activo === 'inmuebles' ? '/api/finanzas/realizarRendicion/inmuebles' : null
+    const { data: inmueblesFiltro} = useFetch<InmuebleOption[]>(
+        activo === 'inmuebles' ? '/api/reportes/inmuebles' : null
     );
 
-    // Fetch de estadisticas según el activo y filtros
+    //*nombre del inmueble seleccionado en el filtro
+    const inmuebleSeleccionado = inmueblesFiltro?.find(inmueble => inmueble.codInmueble === filtros.inmueble)?.nombreInmueble;
+
+    //* Fetch de estadisticas según el activo y filtros
     const reportes = useReportesGerencia(activo, filtros);
 
     const estadisticasGerenciaReservas = (reportes as { estadisticasGerenciaReservas?: EstadisticasGerenciaReservas })?.estadisticasGerenciaReservas;
@@ -105,20 +107,24 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
                                 value={filtros.inmueble || ''}
                                 onChange={handleFiltroChange}
                             >
-                                <option value="">Seleccionar</option>
-                                <option value="todos">Todos</option>
-                                {inmueblesOptions?.map((inmueble) => (
+                                <option value="seleccionarInmueble">Seleccionar Inmueble</option>
+                                {inmueblesFiltro?.map((inmueble) => (
                                     <option key={inmueble.codInmueble} value={inmueble.codInmueble}>
                                         {inmueble.nombreInmueble}
                                     </option>
                                 ))}
                             </select>
-                            {loadingInmuebles && <p>Cargando inmuebles...</p>}
-                            {errorInmuebles && <p>Error al cargar inmuebles</p>}
                         </div>
                     )}
 
                 </section>
+
+                {activo === 'inmuebles' && (!inmuebleSeleccionado || inmuebleSeleccionado === 'seleccionarInmueble') && (
+                        <section id='mensajeSeleccioneInmueble'>
+                            <p>Por favor seleccione un inmueble para ver el reporte</p>
+                            <p>Utiliza el filtro de arriba para seleccionar un inmueble específico</p>
+                        </section>
+                )}
 
                 {activo === 'reservas' && (
                     <section id='contenedorGananciasTotales'>
