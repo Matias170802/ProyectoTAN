@@ -69,6 +69,8 @@ export function useFetch<T>(url: string | null, options?: FetchOptions) {
             const response = await fetch(url, fetchOptions);
             
             if (!response.ok) {
+                let errorMessage = `HTTP error! status: ${response.status} - ${response.statusText}`;
+                
                 try {
                     const errorResult = await response.json();
                     console.log("Error del backend en useFetch:", errorResult);
@@ -76,13 +78,13 @@ export function useFetch<T>(url: string | null, options?: FetchOptions) {
                     console.log("Mensaje del error:", errorResult.mensaje || errorResult.message);
                     
                     // Usar el mensaje del backend si está disponible
-                    const errorMessage = errorResult.mensaje || errorResult.message || `HTTP error! status: ${response.status} - ${response.statusText}`;
-                    throw new Error(errorMessage);
+                    errorMessage = errorResult.mensaje || errorResult.message || errorMessage;
                 } catch (jsonError) {
                     // Si no puede parsear el JSON, usar error genérico
                     console.log("Error al parsear JSON del error:", jsonError);
-                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
                 }
+                
+                throw new Error(errorMessage);
             }
             
             const result = await response.json();

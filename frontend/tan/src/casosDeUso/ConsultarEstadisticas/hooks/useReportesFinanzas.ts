@@ -27,9 +27,10 @@ export const useReportesFinanzas = (filtros?: FiltrosEstadisticasFinancieras) =>
             if (filtros.mes) {
                 params.append('mes', filtros.mes);
             } else {
-                //por defecto mandamos el mes actual, y se agrega el + 1 porque los meses en TS van de 0 a 11
+                // Por defecto, enviar mes actual como java.time.Month
                 const currentDate = new Date();
-                params.append('mes', (currentDate.getMonth() + 1).toString());
+                const currentMonthNumber = (currentDate.getMonth() + 1).toString();// +1 porque los meses van de 0 a 11
+                params.append('mes', currentMonthNumber);
             }
             
             if (params.toString()) {
@@ -40,6 +41,7 @@ export const useReportesFinanzas = (filtros?: FiltrosEstadisticasFinancieras) =>
         return endpoint;
     }, [filtros]);
 
+    console.log('URL construida en useReportesFinanzas:', url);
     const {data: estadisticasFinancieras, loading, error} = useFetch<EstadisticasFinancieras>(url);
 
     return {

@@ -58,9 +58,6 @@ dependencies {
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.13.0'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.13.0'
 
-	// Hibernate
-	implementation 'org.hibernate.orm:hibernate-core'
-
 	implementation 'org.postgresql:postgresql'
 
 	// Lombok

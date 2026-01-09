@@ -33,7 +33,10 @@ public class ReportesController {
 
     @GetMapping("/estadisticasFinancieras")
     public ResponseEntity<DTOReportesFinanzas> obtenerEstadisticasFinancieras(@RequestParam String anio, @RequestParam String mes) {
-        return ResponseEntity.ok(expertoReportes.obtenerEstadisticasFinancieras(anio, mes));
+        //convierto el mes a integer
+        Integer mesInteger = Integer.parseInt(mes);
+
+        return ResponseEntity.ok(expertoReportes.obtenerEstadisticasFinancieras(anio, mesInteger));
     }
     //reportes de finanzas
 

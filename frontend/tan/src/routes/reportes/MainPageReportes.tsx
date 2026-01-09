@@ -13,7 +13,7 @@ export const MainPageReportes: React.FC = () => {
     const [mostrarReportesFinancieros, setMostrarReportesFinancieros] = useState(false);
     
     //TODO: aca deberia haber un hook que me traiga los roles del usuario logueado
-    const { data: roles } = useFetch<Rol[]>('/api/reportes/roles');
+    //const { data: roles } = useFetch<Rol[]>('/api/reportes/roles');
     
     const definirReportesAMostrar = (roles: Rol[] | null) => {
         
@@ -26,9 +26,9 @@ export const MainPageReportes: React.FC = () => {
         }
     }
 
-    useEffect(() => {
+    /*useEffect(() => {
         definirReportesAMostrar(roles);
-    }, [roles]);
+    }, [roles]);*/
     
     return (
         <div className="App">
@@ -52,10 +52,7 @@ export const MainPageReportes: React.FC = () => {
                     )}
 
                     {mostrarReportesGerencia && /*roles*/ (
-                        <ModalConsultarEstadisticasGerencia
-                            isOpen={mostrarReportesGerencia}
-                            onClose={() => setMostrarReportesGerencia(false)}
-                        />
+                        <ModalConsultarEstadisticasGerencia/>
                     )}
                 </section>
             </div>

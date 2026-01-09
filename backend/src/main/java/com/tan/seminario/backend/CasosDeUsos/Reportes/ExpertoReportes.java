@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 @Service
@@ -45,7 +46,7 @@ public class ExpertoReportes {
             dtos.add(dto);
         }
 
-        //en el caso de que no hayan inmuebles disponibles
+        //en el caso de que NO hayan inmuebles disponibles
         if (dtos.isEmpty()) {
             throw new RuntimeException("No hay inmuebles disponibles");
         }
@@ -57,124 +58,123 @@ public class ExpertoReportes {
 
     // reportes financieros
 
-    public DTOReportesFinanzas obtenerEstadisticasFinancieras(String anio, String mes) {
+    public DTOReportesFinanzas obtenerEstadisticasFinancieras(String anio, Integer mes) {
 
         //creo instancia de dtoReportesFinanzas
         DTOReportesFinanzas dtoAEnviar = DTOReportesFinanzas.builder().build();
 
-        //se analiza si el mes es igual a "todos"
+        //defino las fechas limites para buscar en la bd como condiciones
+        LocalDateTime fechaInicio;
+        LocalDateTime fechaFin;
+
+        //analizo si mes es igual o no a "todos" para definir como hacer la consulta al repository de reservas
         if (mes.equals("todos")) {
-            //busco instancia de estado Finalizada para luego buscar las reservas
-            EstadoReserva estadoReservaFinalizada = estadoReservaRepository.findByNombreEstadoReserva("Finalizada");
-
             //determino la fecha incio y fin para buscar las reservas
-            LocalDateTime fechaInicio = LocalDateTime.of(Integer.parseInt(anio), 1, 1, 0, 0);
-            LocalDateTime fechaFin = LocalDateTime.of(Integer.parseInt(anio), 12, 31, 23, 59);
+            fechaInicio = LocalDateTime.of(Integer.parseInt(anio), 1, 1, 0, 0);
+            fechaFin = LocalDateTime.of(Integer.parseInt(anio), 12, 31, 23, 59);
+        } else {
+            //determino la fecha incio y fin para buscar las reservas
+            fechaInicio = LocalDateTime.of(Integer.parseInt(anio), mes, 1, 0, 0);
+            fechaFin = LocalDateTime.of(Integer.parseInt(anio), mes, 31, 23, 59);
+        }
 
-            //busco todas las instancias de reservas del año correspondiente
-            List<Reserva> reservas = reservaRepository.findByEstadoReservaAndFechaHoraInicioReservaBetween(estadoReservaFinalizada, fechaInicio, fechaFin);
+        //busco instancia de estado Finalizada para luego buscar las reservas
+        EstadoReserva estadoReservaFinalizada = estadoReservaRepository.findByNombreEstadoReserva("Finalizada");
 
-            if (reservas.isEmpty()) {
-                throw new RuntimeException("No existen datos disponibles en las fechas ingresadas");
-            }
+        //busco todas las instancias de reservas del año y mes correspondiente
+        List<Reserva> reservas = reservaRepository.findByEstadoReservaAndFechaHoraInicioReservaBetween(estadoReservaFinalizada, fechaInicio, fechaFin);
 
-            //creo la lista de dtoReservas que voy a guardar en el dtoAEnviar
-            List<DTOEstadisticasReservasFinancieras> dtoReservas = new java.util.ArrayList<>();
+        if (reservas.isEmpty()) {
+            throw new RuntimeException("No existen datos disponibles en las fechas ingresadas");
+        }
 
-            //defino variables que almacenan los valores calculados para luego asignarlos al dto
-            BigDecimal montoTotalReservas = BigDecimal.ZERO;
-            BigDecimal montoTotalCliente = BigDecimal.ZERO;
-            BigDecimal montoTotalEmpresa = BigDecimal.ZERO;
+        //creo la lista de dtoReservas que voy a guardar en el dtoAEnviar
+        List<DTOEstadisticasReservasFinancieras> dtoReservas = new java.util.ArrayList<>();
 
-            //calculo de los atributos del dto
+        //defino variables que almacenan los valores calculados para luego asignarlos al dto
+        BigDecimal montoTotalReservas = BigDecimal.ZERO;
+        BigDecimal montoTotalCliente = BigDecimal.ZERO;
+        BigDecimal montoTotalEmpresa = BigDecimal.ZERO;
 
-                //calculo de la ganancia total en el periodo
+        //calculo de los atributos del dto
+
+            //calculo de la ganancia total en el periodo
+        for (Reserva reserva: reservas) {
+            //el 10% del total de la reserva se la queda la empresa
+            montoTotalEmpresa = montoTotalEmpresa.add(BigDecimal.valueOf(reserva.getTotalMonto()).multiply(BigDecimal.valueOf(0.1)));
+            montoTotalReservas = montoTotalReservas.add(BigDecimal.valueOf(reserva.getTotalMonto()));
+            //le resto lo que se deja la empresa
+            montoTotalCliente = montoTotalCliente.add(BigDecimal.valueOf(reserva.getTotalMonto()).subtract(BigDecimal.valueOf(reserva.getTotalMonto()).multiply(BigDecimal.valueOf(0.1))));
+
+            //ESTADISTICAS DE RESERVAS
+            //creo el dto por cada reserva para guardarlo en el dtoReservas
+            DTOEstadisticasReservasFinancieras dtoReserva = DTOEstadisticasReservasFinancieras.builder()
+                    .checkin(reserva.getFechaHoraInicioReserva())
+                    .dias(reserva.getTotalDias())
+                    .total(BigDecimal.valueOf(reserva.getTotalMonto()))
+                    .gananciaCliente(BigDecimal.valueOf(reserva.getTotalMonto()).subtract(BigDecimal.valueOf(reserva.getTotalMonto()).multiply(BigDecimal.valueOf(0.1))))
+                    .gananciaEmpresa(BigDecimal.valueOf(reserva.getTotalMonto()).multiply(BigDecimal.valueOf(0.1)))
+                    .huesped(reserva.getNombreHuesped())
+                    .inmueble(reserva.getInmueble().getNombreInmueble())
+                    .build();
+
+            //agrego el dto a la lista de dtoReservas
+            dtoReservas.add(dtoReserva);
+        }
+
+        //asigno los atributos calculados
+        dtoAEnviar.setGananciasCliente(montoTotalCliente);
+        dtoAEnviar.setGananciasEmpresa(montoTotalEmpresa);
+        dtoAEnviar.setGananciasTotales(montoTotalReservas);
+        dtoAEnviar.setEstadisticasReservas(dtoReservas);
+
+        //ESTADISTICAS DE INMUEBLES
+        List<Inmueble> inmueblesActivos = inmuebleRepository.findByFechaHoraBajaInmuebleIsNull();
+
+        //creo la lista que contiene a los dtos de cada inmueble
+        List<DTOEstadisticasPorInmuebleFinancieras> dtosInmuebles = new java.util.ArrayList<>();
+
+        for (Inmueble inmueble: inmueblesActivos) {
+            //creo una lista donde se guardan SOLO las reservas del inmueble
+            List<Reserva> reservasDelInmueble = new java.util.ArrayList<>();
+
+            //busco las reservas que pertenezcan al inmueble
             for (Reserva reserva: reservas) {
-                //el 10% del total de la reserva se la queda la empresa
-                montoTotalEmpresa = montoTotalEmpresa.add(BigDecimal.valueOf(reserva.getTotalMonto()).multiply(BigDecimal.valueOf(0.1)));
-                montoTotalReservas = montoTotalReservas.add(BigDecimal.valueOf(reserva.getTotalMonto()));
-                //le resto lo que se deja la empresa
-                montoTotalCliente = montoTotalCliente.add(BigDecimal.valueOf(reserva.getTotalMonto()).subtract(BigDecimal.valueOf(reserva.getTotalMonto()).multiply(BigDecimal.valueOf(0.1))));
+                if (reserva.getInmueble().getCodInmueble().equals(inmueble.getCodInmueble())) {
+                    reservasDelInmueble.add(reserva);
+                }
+            }
 
-                //ESTADISTICAS DE RESERVAS
-                //creo el dto por cada reserva para guardarlo en el dtoReservas
-                DTOEstadisticasReservasFinancieras dtoReserva = DTOEstadisticasReservasFinancieras.builder()
-                        .checkin(reserva.getFechaHoraInicioReserva())
-                        .dias(reserva.getTotalDias())
-                        .total(BigDecimal.valueOf(reserva.getTotalMonto()))
-                        .gananciaCliente(BigDecimal.valueOf(reserva.getTotalMonto()).subtract(BigDecimal.valueOf(reserva.getTotalMonto()).multiply(BigDecimal.valueOf(0.1))))
-                        .gananciaEmpresa(BigDecimal.valueOf(reserva.getTotalMonto()).multiply(BigDecimal.valueOf(0.1)))
-                        .huesped(reserva.getNombreHuesped())
-                        .inmueble(reserva.getInmueble().getNombreInmueble())
-                        .build();
+            //si el inmueble no ha tenido reservas en el periodo determinado no se lo manda a las estadisticas
+            if (!reservasDelInmueble.isEmpty()) {
+                //creo el dtoInmueblesFiltro
+                DTOEstadisticasPorInmuebleFinancieras dtoInmueblesFiltro = DTOEstadisticasPorInmuebleFinancieras.builder().build();
 
-                //agrego el dto a la lista de dtoReservas
-                dtoReservas.add(dtoReserva);
+                //seteamos el nombre del inmueble
+                dtoInmueblesFiltro.setNombreInmueble(inmueble.getNombreInmueble());
+
+                //hacemos el calculo de lo ganado para el cliente y para la empresa
+                BigDecimal montoTotalClienteInmueble = BigDecimal.ZERO;
+                BigDecimal montoTotalEmpresaInmueble = BigDecimal.ZERO;
+
+                for (Reserva reservaInmueble: reservasDelInmueble) {
+                    montoTotalEmpresaInmueble = montoTotalEmpresaInmueble.add(BigDecimal.valueOf(reservaInmueble.getTotalMonto()).multiply(BigDecimal.valueOf(0.1)));
+                    montoTotalClienteInmueble = montoTotalClienteInmueble.add(BigDecimal.valueOf(reservaInmueble.getTotalMonto()).subtract(montoTotalEmpresaInmueble));
+                }
+
+                //asigno los atributos calculados al dtoInmuebleFiltro
+                dtoInmueblesFiltro.setGananciasCliente(montoTotalClienteInmueble);
+                dtoInmueblesFiltro.setGananciasEmpresa(montoTotalEmpresaInmueble);
+
+                //asigno el dtoInmuebleFiltro a la lista de los dtoInmuebleFiltro
+                dtosInmuebles.add(dtoInmueblesFiltro);
 
             }
 
-            //asigno los atributos calculados
-            dtoAEnviar.setGananciasCliente(montoTotalCliente);
-            dtoAEnviar.setGananciasEmpresa(montoTotalEmpresa);
-            dtoAEnviar.setGananciasTotales(montoTotalReservas);
-            dtoAEnviar.setEstadisticasReservas(dtoReservas);
-
-            //ESTADISTICAS DE INMUEBLES
-            List<Inmueble> inmueblesActivos = inmuebleRepository.findByFechaHoraBajaInmuebleIsNull();
-
-            //creo la lista que contiene a los dtos de cada inmueble
-            List<DTOEstadisticasPorInmuebleFinancieras> dtosInmuebles = new java.util.ArrayList<>();
-
-            for (Inmueble inmueble: inmueblesActivos) {
-                //creo una lista donde se guardan SOLO las reservas del inmueble
-                List<Reserva> reservasDelInmueble = new java.util.ArrayList<>();
-
-                //busco las reservas que pertenezcan al inmueble
-                for (Reserva reserva: reservas) {
-                    if (reserva.getInmueble().getCodInmueble().equals(inmueble.getCodInmueble())) {
-                        reservasDelInmueble.add(reserva);
-                    }
-                }
-
-                //si el inmueble no ha tenido reservas en el periodo determinado no se lo manda a las estadisticas
-                if (!reservasDelInmueble.isEmpty()) {
-                    //creo el dtoInmueblesFiltro
-                    DTOEstadisticasPorInmuebleFinancieras dtoInmueblesFiltro = DTOEstadisticasPorInmuebleFinancieras.builder().build();
-
-                    //seteamos el nombre del inmueble
-                    dtoInmueblesFiltro.setNombreInmueble(inmueble.getNombreInmueble());
-
-                    //hacemos el calculo de lo ganado para el cliente y para la empresa
-                    BigDecimal montoTotalClienteInmueble = BigDecimal.ZERO;
-                    BigDecimal montoTotalEmpresaInmueble = BigDecimal.ZERO;
-
-                    for (Reserva reservaInmueble: reservasDelInmueble) {
-                        montoTotalEmpresaInmueble = montoTotalEmpresaInmueble.add(BigDecimal.valueOf(reservaInmueble.getTotalMonto()).multiply(BigDecimal.valueOf(0.1)));
-                        montoTotalClienteInmueble = montoTotalClienteInmueble.add(BigDecimal.valueOf(reservaInmueble.getTotalMonto()).subtract(montoTotalEmpresaInmueble));
-                    }
-
-                    //asigno los atributos calculados al dtoInmuebleFiltro
-                    dtoInmueblesFiltro.setGananciasCliente(montoTotalClienteInmueble);
-                    dtoInmueblesFiltro.setGananciasEmpresa(montoTotalEmpresaInmueble);
-
-                    //asigno el dtoInmuebleFiltro a la lista de los dtoInmuebleFiltro
-                    dtosInmuebles.add(dtoInmueblesFiltro);
-
-                }
-
-                //asigno la lista de dtoInmuebles al DTOReportesFinanzas
-                dtoAEnviar.setEstadisticasPorInmueble(dtosInmuebles);
-
-            }
-
+            //asigno la lista de dtoInmuebles al DTOReportesFinanzas
+            dtoAEnviar.setEstadisticasPorInmueble(dtosInmuebles);
 
         }
-
-        //si mes no es igual a "todos"
-        if (!mes.equals("todos")) {
-            
-        }
-
 
         return dtoAEnviar;
 

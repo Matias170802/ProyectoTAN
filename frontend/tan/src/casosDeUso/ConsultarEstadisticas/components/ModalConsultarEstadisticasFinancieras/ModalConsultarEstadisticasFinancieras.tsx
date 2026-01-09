@@ -9,16 +9,18 @@ export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstad
     const columnas = ["Inmueble", "Huesped", "Check in", "Dias", "Total", "Ganancia Cliente", "Ganancia Empresa"];
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear().toString();
-    const currentMonth = (currentDate.getMonth() + 1).toString(); // +1 porque los meses van de 0 a 11
+    const currentMonthNumber = (currentDate.getMonth() + 1).toString();// +1 porque los meses van de 0 a 11
 
     // Estados para los filtros
     const [filtros, setFiltros] = useState<FiltrosEstadisticasFinancieras>({
         anio: currentYear,
-        mes: currentMonth
+        mes: currentMonthNumber
     });
 
     // Hook personalizado con los filtros
-    const {estadisticasFinancieras, loading, error} = useReportesFinanzas(filtros);
+    const {estadisticasFinancieras, loading, error: errorEstadisticasFinancieras} = useReportesFinanzas(filtros);
+
+    console.log('estadisticasFinancieras', estadisticasFinancieras);
 
     // Maneja los cambios en los filtros
     const handleFiltroChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -69,61 +71,73 @@ export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstad
                             value={filtros.mes || ''}
                             onChange={handleFiltroChange}
                         > 
-                            <option value="enero">Enero</option>
-                            <option value="febrero">Febrero</option>
-                            <option value="marzo">Marzo</option>
-                            <option value="abril">Abril</option>
-                            <option value="mayo">Mayo</option>
-                            <option value="junio">Junio</option>
-                            <option value="julio">Julio</option>
-                            <option value="agosto">Agosto</option>
-                            <option value="septiembre">Septiembre</option>
-                            <option value="octubre">Octubre</option>
-                            <option value="noviembre">Noviembre</option>
-                            <option value="diciembre">Diciembre</option>
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
                             <option value="todos">Todos</option>
                         </select>
                     </div>
                 </section>
 
-                <section id='contenedorGananciasTotales'>
+                {errorEstadisticasFinancieras && (
+                    <section id='contenedorError'>
+                        <p>Error al cargar las estadísticas financieras: {errorEstadisticasFinancieras.message}</p>
+                    </section>
+                )}
 
-                    <div id='gananciasEmpresa'>
-                        <p>Ganancias de la Empresa</p>
-                        <p>${estadisticasFinancieras?.gananciasEmpresa || 0}</p>
+                {estadisticasFinancieras && !errorEstadisticasFinancieras && !loading &&(
+
+                    <div>
+                        <section id='contenedorGananciasTotales'>
+
+                        <div id='gananciasEmpresa'>
+                            <p>Ganancias de la Empresa</p>
+                            <p>${estadisticasFinancieras?.gananciasEmpresa || 0}</p>
+                        </div>
+
+                        <div id='gananciasCliente'>
+                            <p>Ganancias del Cliente</p>
+                            <p>${estadisticasFinancieras?.gananciasCliente || 0}</p>
+
+                        </div>
+
+                        <div id='gananciasTotales'>
+                            <p>Total General</p>
+                            <p>${estadisticasFinancieras?.gananciasTotales || 0}</p>
+
+                        </div>
+
+                        </section>
+
+                        <section id='contenedorGraficos'>
+
+                            <p>Distribucion de Ganancias por Inmueble</p>
+                            <p id='subtitulo'>Ganacias del Cliente vs Ganancias de la Empresa</p>
+
+                            <div>grafico aca</div>
+
+                        </section>
+
+                        <section id='contenedorDetallesGanancias'>
+
+                            <List
+                            columnas={columnas}
+                            items={itemsTablero}
+                            />
+
+                        </section>
                     </div>
-
-                    <div id='gananciasCliente'>
-                        <p>Ganancias del Cliente</p>
-                        <p>${estadisticasFinancieras?.gananciasCliente || 0}</p>
-
-                    </div>
-
-                    <div id='gananciasTotales'>
-                        <p>Total General</p>
-                        <p>${estadisticasFinancieras?.gananciasTotales || 0}</p>
-
-                    </div>
-
-                </section>
-
-                <section id='contenedorGraficos'>
-
-                    <p>Distribucion de Ganancias por Inmueble</p>
-                    <p id='subtitulo'>Ganacias del Cliente vs Ganancias de la Empresa</p>
-
-                    <div>grafico aca</div>
-
-                </section>
-
-                <section id='contenedorDetallesGanancias'>
-
-                    <List
-                    columnas={columnas}
-                    items={itemsTablero}
-                    />
-
-                </section>
+                )}
+                
 
 
         </div>
