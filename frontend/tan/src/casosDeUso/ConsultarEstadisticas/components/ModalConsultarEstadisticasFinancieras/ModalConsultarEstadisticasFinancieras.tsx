@@ -7,11 +7,14 @@ import {type FiltrosEstadisticasFinancieras, useReportesFinanzas} from '../../ho
 export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstadisticas> = () => {
 
     const columnas = ["Inmueble", "Huesped", "Check in", "Dias", "Total", "Ganancia Cliente", "Ganancia Empresa"];
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear().toString();
+    const currentMonth = (currentDate.getMonth() + 1).toString(); // +1 porque los meses van de 0 a 11
 
     // Estados para los filtros
     const [filtros, setFiltros] = useState<FiltrosEstadisticasFinancieras>({
-        anio: undefined,
-        mes: undefined
+        anio: currentYear,
+        mes: currentMonth
     });
 
     // Hook personalizado con los filtros
@@ -53,11 +56,9 @@ export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstad
                             value={filtros.anio || ''}
                             onChange={handleFiltroChange}
                         >
-                            <option value="">Seleccionar</option>
-                            <option value="2026">2026</option>
+                            <option value="2026" >2026</option>
                             <option value="2025">2025</option>
                             <option value='2024'>2024</option>
-                            <option value="todos">Todos</option>
                         </select>
                     </div>
 
@@ -68,7 +69,6 @@ export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstad
                             value={filtros.mes || ''}
                             onChange={handleFiltroChange}
                         > 
-                            <option value="">Seleccionar</option>
                             <option value="enero">Enero</option>
                             <option value="febrero">Febrero</option>
                             <option value="marzo">Marzo</option>
@@ -90,18 +90,18 @@ export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstad
 
                     <div id='gananciasEmpresa'>
                         <p>Ganancias de la Empresa</p>
-                        <p>{estadisticasFinancieras?.gananciasEmpresa || 0}</p>
+                        <p>${estadisticasFinancieras?.gananciasEmpresa || 0}</p>
                     </div>
 
                     <div id='gananciasCliente'>
                         <p>Ganancias del Cliente</p>
-                        <p>{estadisticasFinancieras?.gananciasCliente || 0}</p>
+                        <p>${estadisticasFinancieras?.gananciasCliente || 0}</p>
 
                     </div>
 
                     <div id='gananciasTotales'>
                         <p>Total General</p>
-                        <p>{estadisticasFinancieras?.gananciasTotales || 0}</p>
+                        <p>${estadisticasFinancieras?.gananciasTotales || 0}</p>
 
                     </div>
 

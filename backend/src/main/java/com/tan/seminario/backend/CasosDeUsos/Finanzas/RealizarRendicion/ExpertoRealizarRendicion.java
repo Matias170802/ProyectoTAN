@@ -183,6 +183,9 @@ public class ExpertoRealizarRendicion {
             totalPagarUSD = totalPagarUSD.add(cajaInmueble.getBalanceTotalARS().divide(cotizacionDolarHoy.getMontoCompra(), 2, BigDecimal.ROUND_HALF_UP));
         }
 
+        //le quito el porcentaje que nos corresponde de cada reserva al total a pagar, 10%
+        totalPagarUSD = totalPagarUSD.subtract(totalPagarUSD.multiply(BigDecimal.valueOf(0.1)));
+
         //si hay reservas para rendir
         DTOBalanceADevolver balanceADevolver = DTOBalanceADevolver.builder()
                 .balanceARS(BigDecimal.ZERO)
@@ -210,7 +213,7 @@ public class ExpertoRealizarRendicion {
 
         log.info("Inmueble seleccionado: " + inmuebleSeleccionado);
 
-        //si no es un inmueble registro la rendicion al epmleado
+        //si no es un inmueble registro la rendicion al empleado
         if (inmuebleSeleccionado == null ) {
             Empleado empleadoSeleccionado = empleadoRepository.findByDniEmpleado(identificador).get();
 
@@ -301,12 +304,14 @@ public class ExpertoRealizarRendicion {
             InmuebleCaja cajaInmueble = inmuebleCajaRepository.findByInmuebleAndFechaHoraBajaInmuebleCajaIsNull(inmuebleSeleccionado);
 
             log.info("Caja inmueble encontrada", cajaInmueble);
-            // busco la ctaegoria movimiento
+
+            // busco la categoria movimiento
             CategoriaMovimiento categoriaMovimiento = categoriaMovimientoRepository.findBynombreCategoriaMovimientoAndFechaHoraBajaCategoriaMovimientoIsNull("Rendicion a Inmueble");
 
             log.info("Categoria movimiento encontrada", categoriaMovimiento);
 
             log.info("balance usd:" + rendicion.getBalanceUSD());
+
             //creo los movimientos
             Movimiento movimiento1 = Movimiento.builder()
                     .montoMovimiento(toDouble(rendicion.getBalanceUSD()))
@@ -320,7 +325,7 @@ public class ExpertoRealizarRendicion {
 
             movimientoRepository.save(movimiento1);
 
-            //creo el movimiento relaiconado a la caja madre
+            //creo el movimiento relacionado a la caja madre
             Movimiento movimiento2 = Movimiento.builder()
                     .montoMovimiento(toDouble(rendicion.getBalanceUSD()))
                     .nroMovimiento(Movimiento.generarProximoNumero(movimientoRepository))

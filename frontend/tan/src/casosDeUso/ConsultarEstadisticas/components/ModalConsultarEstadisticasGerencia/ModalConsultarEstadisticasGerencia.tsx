@@ -71,7 +71,6 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
                             <option value="2026">2026</option>
                             <option value="2025">2025</option>
                             <option value='2024'>2024</option>
-                            <option value="todos">Todos</option>
                         </select>
                     </div>
 
@@ -131,24 +130,24 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
 
                         <div id='totalReservas'>
                             <p>Total de Reservas</p>
-                            <p>{estadisticasGerenciaReservas?.gananciasEmpresa || 0}</p>
+                            <p>${estadisticasGerenciaReservas?.gananciasEmpresa || 0}</p>
                         </div>
 
                         <div id='diasTotalesReservados'>
                             <p>Días Totales Reservados</p>
-                            <p>{estadisticasGerenciaReservas?.gananciasCliente || 0}</p>
+                            <p>${estadisticasGerenciaReservas?.gananciasCliente || 0}</p>
 
                         </div>
 
                         <div id='montoTotalGanancias'>
                             <p>Monto Total</p>
-                            <p>{estadisticasGerenciaReservas?.gananciasTotales || 0}</p>
+                            <p>${estadisticasGerenciaReservas?.gananciasTotales || 0}</p>
 
                         </div>
 
                         <div id='promedioPorReserva'>
                             <p>Promedio por Reserva</p>
-                            <p>{estadisticasGerenciaReservas?.gananciasTotales || 0}</p>
+                            <p>${estadisticasGerenciaReservas?.gananciasTotales || 0}</p>
 
                         </div>
 
@@ -161,24 +160,24 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
 
                         <div id='totalReservasINmueble'>
                             <p>Reservas del Inmueble</p>
-                            <p>{estadisticasGerenciaInmuebles?.gananciasEmpresa || 0}</p>
+                            <p>${estadisticasGerenciaInmuebles?.gananciasEmpresa || 0}</p>
                         </div>
 
                         <div id='diasTotalesOcupados'>
                             <p>Días Totales Ocupados</p>
-                            <p>{estadisticasGerenciaInmuebles?.gananciasCliente || 0}</p>
+                            <p>${estadisticasGerenciaInmuebles?.gananciasCliente || 0}</p>
 
                         </div>
 
                         <div id='tasaOcupacionInmueble'>
                             <p>Tasa de Ocupación</p>
-                            <p>{estadisticasGerenciaInmuebles?.gananciasCliente || 0}</p>
+                            <p>${estadisticasGerenciaInmuebles?.gananciasCliente || 0}</p>
 
                         </div>
 
                         <div id='montoTotalGanancias'>
                             <p>Ingresos Totales</p>
-                            <p>{estadisticasGerenciaInmuebles?.gananciasTotales || 0}</p>
+                            <p>${estadisticasGerenciaInmuebles?.gananciasTotales || 0}</p>
 
                         </div>
 

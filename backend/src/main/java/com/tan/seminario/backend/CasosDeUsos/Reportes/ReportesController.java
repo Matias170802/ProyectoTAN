@@ -5,6 +5,7 @@ import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOReportesFinanzas;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class ReportesController {
     //reportes de finanzas
 
     @GetMapping("/estadisticasFinancieras")
-    public ResponseEntity<DTOReportesFinanzas> obtenerEstadisticasFinancieras(String anio, String mes) {
+    public ResponseEntity<DTOReportesFinanzas> obtenerEstadisticasFinancieras(@RequestParam String anio, @RequestParam String mes) {
         return ResponseEntity.ok(expertoReportes.obtenerEstadisticasFinancieras(anio, mes));
     }
     //reportes de finanzas

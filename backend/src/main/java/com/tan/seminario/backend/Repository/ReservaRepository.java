@@ -16,5 +16,6 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
             LocalDateTime fechaHoraAltaReservaAfter,
             LocalDateTime fechaHoraAltaReservaBefore);
     List<Reserva> findByEstadoReservaAndRendidaAInmuebleIsFalseAndInmueble(EstadoReserva estadoReserva, Inmueble inmueble);
+    List<Reserva> findByEstadoReservaAndFechaHoraInicioReservaBetween(EstadoReserva estadoReserva, LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin);
 
 }

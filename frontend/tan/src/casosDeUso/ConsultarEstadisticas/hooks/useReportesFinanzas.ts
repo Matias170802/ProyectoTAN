@@ -16,12 +16,20 @@ export const useReportesFinanzas = (filtros?: FiltrosEstadisticasFinancieras) =>
         if (filtros) {
             const params = new URLSearchParams();
             
-            if (filtros.anio && filtros.anio !== 'todos') {
+            if (filtros.anio) {
                 params.append('anio', filtros.anio);
+            } else {
+                //por defecto mando el año actual y mes actual
+                const currentDate = new Date();
+                params.append('anio', currentDate.getFullYear().toString());
             }
             
-            if (filtros.mes && filtros.mes !== 'todos') {
+            if (filtros.mes) {
                 params.append('mes', filtros.mes);
+            } else {
+                //por defecto mandamos el mes actual, y se agrega el + 1 porque los meses en TS van de 0 a 11
+                const currentDate = new Date();
+                params.append('mes', (currentDate.getMonth() + 1).toString());
             }
             
             if (params.toString()) {
