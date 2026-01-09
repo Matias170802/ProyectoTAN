@@ -11,12 +11,17 @@ interface ModalAsignarCheckInOutProps {
     reserva: ReservaDetailsForModal | null;
     onSuccess?: () => void;
 }
+ 
+interface ModalAsignarCheckInOutPropsExtended extends ModalAsignarCheckInOutProps {
+    onlyCheckout?: boolean;
+}
 
-const ModalAsignarCheckInOut: React.FC<ModalAsignarCheckInOutProps> = ({
+const ModalAsignarCheckInOut: React.FC<ModalAsignarCheckInOutPropsExtended> = ({
     isOpen,
     onClose,
     reserva,
     onSuccess,
+    onlyCheckout = false,
 }) => {
     const { empleados, loading: empleadosLoading } = useEmpleados();
     const [empleadoCheckIn, setEmpleadoCheckIn] = useState<string>('');
@@ -27,19 +32,32 @@ const ModalAsignarCheckInOut: React.FC<ModalAsignarCheckInOutProps> = ({
     // Resetear formulario cuando se abre el modal o cambia la reserva
     useEffect(() => {
         if (isOpen) {
-            setEmpleadoCheckIn('');
-            setEmpleadoCheckOut('');
+            // Si es modo onlyCheckout, limpiamos solo el checkOut y dejamos checkIn vacío
+            if (onlyCheckout) {
+                setEmpleadoCheckIn('');
+                setEmpleadoCheckOut('');
+            } else {
+                setEmpleadoCheckIn('');
+                setEmpleadoCheckOut('');
+            }
             setError(null);
         }
-    }, [isOpen, reserva?.codReserva]);
+    }, [isOpen, reserva?.codReserva, onlyCheckout]);
 
     const handleAssign = async () => {
         if (!reserva) return;
 
-        // Validar que se haya seleccionado al menos un empleado
-        if (!empleadoCheckIn && !empleadoCheckOut) {
-            setError('Por favor selecciona al menos un empleado');
-            return;
+        // Validaciones: si es onlyCheckout, exigir empleadoCheckOut; si no, exigir al menos uno
+        if (onlyCheckout) {
+            if (!empleadoCheckOut) {
+                setError('Por favor selecciona un empleado para Check-out');
+                return;
+            }
+        } else {
+            if (!empleadoCheckIn && !empleadoCheckOut) {
+                setError('Por favor selecciona al menos un empleado');
+                return;
+            }
         }
 
         setIsSubmitting(true);
@@ -51,8 +69,8 @@ const ModalAsignarCheckInOut: React.FC<ModalAsignarCheckInOutProps> = ({
             console.log('[ModalAsignarCheckInOut] Check-in empleado:', empleadoCheckIn);
             console.log('[ModalAsignarCheckInOut] Check-out empleado:', empleadoCheckOut);
 
-            // Crear tareas para check-in
-            if (empleadoCheckIn) {
+            // Crear tareas para check-in (solo si no estamos en onlyCheckout)
+            if (!onlyCheckout && empleadoCheckIn) {
                 console.log('[ModalAsignarCheckInOut] Creando tarea CHECK-IN...');
                 const dtoCheckIn: DTOTarea = {
                     nombreTarea: `Check-in para ${reserva.propiedad}`,
@@ -139,23 +157,26 @@ const ModalAsignarCheckInOut: React.FC<ModalAsignarCheckInOutProps> = ({
 
                 {/* Formulario de Asignación */}
                 <div className="asignacion-form">
-                    <div className="form-group">
-                        <label htmlFor="empleado-checkin">Empleado para Check-in</label>
-                        <select
-                            id="empleado-checkin"
-                            value={empleadoCheckIn}
-                            onChange={(e) => setEmpleadoCheckIn(e.target.value)}
-                            disabled={empleadosLoading || isSubmitting}
-                            className="form-select"
-                        >
-                            <option value="">Seleccionar empleado</option>
-                            {empleados.map((emp) => (
-                                <option key={emp.codEmpleado} value={emp.codEmpleado}>
-                                    {emp.nombreEmpleado}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    {/* Mostrar select de Check-in solo si no es modo onlyCheckout */}
+                    {!onlyCheckout && (
+                        <div className="form-group">
+                            <label htmlFor="empleado-checkin">Empleado para Check-in</label>
+                            <select
+                                id="empleado-checkin"
+                                value={empleadoCheckIn}
+                                onChange={(e) => setEmpleadoCheckIn(e.target.value)}
+                                disabled={empleadosLoading || isSubmitting}
+                                className="form-select"
+                            >
+                                <option value="">Seleccionar empleado</option>
+                                {empleados.map((emp) => (
+                                    <option key={emp.codEmpleado} value={emp.codEmpleado}>
+                                        {emp.nombreEmpleado}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
 
                     <div className="form-group">
                         <label htmlFor="empleado-checkout">Empleado para Check-out</label>

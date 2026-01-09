@@ -8,7 +8,7 @@ import type { ReservaDetailsForModal } from "../../casosDeUso/AsignarCheckInOut/
 import "./MainPageReservas.css";
 
 // Los estados se obtienen desde el backend via el hook; mantenemos esta lista como fallback
-const estadosFallback = ["Señada", "Preparada", "Finalizada", "Cancelado"];
+const estadosFallback = ["Señada", "Preparada", "Finalizada", "Cancelada", "En Curso"];
 
 const MainPageReservas: React.FC = () => {
     const am = useAMReservas();
@@ -21,6 +21,7 @@ const MainPageReservas: React.FC = () => {
     // AsignarCheckInOut modal state
     const [isAsignarCheckInOutOpen, setIsAsignarCheckInOutOpen] = useState(false);
     const [selectedReservaForCheckInOut, setSelectedReservaForCheckInOut] = useState<ReservaDetailsForModal | null>(null);
+    const [onlyCheckoutMode, setOnlyCheckoutMode] = useState(false);
 
     const [filtroEstado, setFiltroEstado] = useState("Todos");
     const [filtroInmueble, setFiltroInmueble] = useState("Todos");
@@ -41,6 +42,15 @@ const MainPageReservas: React.FC = () => {
     };
 
     const handleOpenAsignarCheckInOut = (item: any) => {
+        // Determinar si se permite asignar y si es modo solo CHECKOUT (en curso)
+        const rawEstado = String(item.estado || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
+        const isSenada = rawEstado === 'señada' || rawEstado === 'senada';
+        const isPreparada = rawEstado === 'preparada';
+        const isEnCurso = rawEstado === 'en curso' || rawEstado === 'encurso';
+
+        // Solo abrir modal si está en Señada, Preparada o En Curso
+        if (!isSenada && !isPreparada && !isEnCurso) return;
+
         const reservaDetail: ReservaDetailsForModal = {
             codReserva: item.codReserva,
             propiedad: item.propiedad,
@@ -49,13 +59,16 @@ const MainPageReservas: React.FC = () => {
             huesped: item.huesped,
             estado: item.estado,
         };
+
         setSelectedReservaForCheckInOut(reservaDetail);
+        setOnlyCheckoutMode(isEnCurso);
         setIsAsignarCheckInOutOpen(true);
     };
 
     const handleCloseAsignarCheckInOut = () => {
         setIsAsignarCheckInOutOpen(false);
         setSelectedReservaForCheckInOut(null);
+        setOnlyCheckoutMode(false);
     };
 
     const handleSaveReserva = async (reservaData: ReservaFormData) => {
@@ -98,16 +111,37 @@ const MainPageReservas: React.FC = () => {
         return estadoMatch && inmuebleMatch;
     });
 
-    // Si no se selecciona inmueble ("Todos"), mostrar las reservas ordenadas por fecha de check-in más próxima
-    if (filtroInmueble === "Todos") {
-        reservasFiltradas = [...reservasFiltradas].sort((a, b) => {
-            const parseDate = (str: string) => {
-                const [d, m, y] = str.split("/").map(Number);
-                return new Date(y, m - 1, d).getTime();
-            };
-            return parseDate(a.checkin) - parseDate(b.checkin);
-        });
-    }
+    // Ordenar reservas: futuras próximas primero, luego pasadas
+    reservasFiltradas = [...reservasFiltradas].sort((a, b) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const parseDate = (str: string) => {
+            const [d, m, y] = str.split("/").map(Number);
+            const date = new Date(y, m - 1, d);
+            date.setHours(0, 0, 0, 0);
+            return date;
+        };
+
+        const dateA = parseDate(a.checkin);
+        const dateB = parseDate(b.checkin);
+
+        const distA = dateA.getTime() - today.getTime();
+        const distB = dateB.getTime() - today.getTime();
+
+        // Si uno es futuro y otro pasado, futuro va primero
+        if ((distA >= 0) !== (distB >= 0)) {
+            return distA >= 0 ? -1 : 1;
+        }
+
+        // Si ambos son futuros, ordenar por proximidad (menor distancia primero)
+        if (distA >= 0 && distB >= 0) {
+            return distA - distB;
+        }
+
+        // Si ambos son pasados, ordenar por proximidad (más reciente primero)
+        return distB - distA;
+    });
 
     // Preparar lista de inmuebles para el select: preferimos la lista del backend, si está vacía
     // construimos una lista única a partir de las reservas (nombreInmueble).
@@ -167,7 +201,7 @@ const MainPageReservas: React.FC = () => {
                         actionsPosition="left"
                         idField="codReserva"
                         onItemClick={(item) => {
-                            // Abrir modal de asignar check-in/out al hacer clic en una fila
+                            // Intentar abrir modal (la función internamente decide si corresponde)
                             handleOpenAsignarCheckInOut(item as any);
                         }}
                         onItemEdit={(item) => {
@@ -189,9 +223,15 @@ const MainPageReservas: React.FC = () => {
                         }}
                         // Mostrar la acción 'delete' (cruz) solo si el estado permite cancelar
                         getVisibleActions={(item) => {
-                            const estado = (item as any).estado;
-                            if (estado === 'Señada' || estado === 'Preparada') return ['edit', 'delete'];
-                            return ['edit'];
+                            const estado = (item as any).estado || '';
+                            const normalized = String(estado).toLowerCase();
+                            if (normalized === 'señada' || normalized === 'preparada' || normalized === 'en curso') return ['edit', 'delete'];
+                            return [];
+                        }}
+                        // Hacer seleccionable (y marcar) solo las filas sobre las que se puede asignar check-in/out
+                        selectableCondition={(item) => {
+                            const estado = String((item as any).estado || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
+                            return estado === 'señada' || estado === 'senada' || estado === 'preparada' || estado === 'en curso' || estado === 'encurso';
                         }}
                         emptyMessage="No hay reservas para mostrar."
                     />
@@ -228,6 +268,7 @@ const MainPageReservas: React.FC = () => {
                 isOpen={isAsignarCheckInOutOpen}
                 onClose={handleCloseAsignarCheckInOut}
                 reserva={selectedReservaForCheckInOut}
+                onlyCheckout={onlyCheckoutMode}
                 onSuccess={() => {
                     handleCloseAsignarCheckInOut();
                     // Opcionalmente, refrescar la lista si el backend actualiza datos

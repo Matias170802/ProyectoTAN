@@ -155,3 +155,26 @@
     opacity: 0.7;
     cursor: default !important;
 }
+
+/* Colores por estado de reserva */
+.status-yellow td {
+    background-color: #fff8e1 !important; /* amarillo claro */
+}
+
+.status-green td {
+    background-color: #e8f5e9 !important; /* verde claro */
+}
+
+.status-red td {
+    background-color: #ffebee !important; /* rojo claro */
+}
+
+.status-yellow .actions-cell, .status-yellow .actions-header {
+    background-color: #fff8e1;
+}
+.status-green .actions-cell, .status-green .actions-header {
+    background-color: #e8f5e9;
+}
+.status-red .actions-cell, .status-red .actions-header {
+    background-color: #ffebee;
+}

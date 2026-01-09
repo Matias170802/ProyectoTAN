@@ -69,6 +69,21 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
             classes += ' list-item-not-selectable';
         }
         
+        // Añadir clase según estado para colorear la fila (señada=amarillo, preparada=verde, en curso/cancelada/finalizada=rojo)
+        try {
+            const rawEstado = (item as any).estado || '';
+            const estado = String(rawEstado).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            if (estado === 'señada' || estado === 'senada') {
+                classes += ' status-yellow';
+            } else if (estado === 'preparada') {
+                classes += ' status-green';
+            } else if (estado === 'en curso' || estado === 'encurso' || estado === 'cancelada' || estado === 'finalizada') {
+                classes += ' status-red';
+            }
+        } catch (e) {
+            // ignore
+        }
+
         return classes;
     };
 

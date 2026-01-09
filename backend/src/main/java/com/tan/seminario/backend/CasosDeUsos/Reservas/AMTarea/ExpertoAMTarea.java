@@ -22,6 +22,8 @@ public class ExpertoAMTarea {
     private TipoTareaRepository tipoTareaRepository;
     @Autowired
     private EstadoTareaRepository estadoTareaRepository;
+    @Autowired
+    private EstadoReservaRepository estadoReservaRepository;
 
 
 
@@ -42,6 +44,7 @@ public class ExpertoAMTarea {
             List<Empleado> empleados = empleadoRepository.findByCodEmpleado(codEmpleado);
             if (empleados.isEmpty()) {throw new RuntimeException("No se encuentra el Empleado con el Codigo: " + codEmpleado);}
             List<Reserva> reservas = reservaRepository.findByCodReserva(codReserva);
+            LocalDateTime fechaCheckIn = reservas.get(0).getFechaHoraInicioReserva();
             if (reservas.isEmpty()) {throw new RuntimeException("No se encuentra la Reserva con el Codigo: " + codReserva);}
             List<TipoTarea> tipoTareas = tipoTareaRepository.findByCodTipoTarea(codTipoTarea);
             if (tipoTareas.isEmpty()) {throw new RuntimeException("No se encuentra el Tipo de Tarea con el Codigo: " + codTipoTarea);}
@@ -51,6 +54,7 @@ public class ExpertoAMTarea {
             }
 
             EstadoTarea estadoTipoTarea = estadoTareaRepository.findByNombreEstadoTarea("Asignada");
+            EstadoReserva estadoReserva = reservas.get(0).getEstadoReserva();
             // Creamos la Nueva Tarea
             try {
                 Tarea tarea = new Tarea();
@@ -59,11 +63,19 @@ public class ExpertoAMTarea {
                     tarea.setDescripcionTarea(descripcionTarea);
                 }
                 tarea.setFechaHoraAsignacionTarea(LocalDateTime.now());
+                tarea.setFechaHoraInicioTarea(fechaCheckIn);
 
                 tarea.setEstadoTarea(estadoTipoTarea);
                 tarea.setEmpleado(empleados.get(0));
                 tarea.setReserva(reservas.get(0));
                 tarea.setTipoTarea(tipoTareas.get(0));
+
+                //Setear Estado Reserva
+                if (estadoReserva.getNombreEstadoReserva().equals("Señada")) {
+                    EstadoReserva estPreparada = estadoReservaRepository.findByNombreEstadoReserva("Preparada");
+                    Reserva reserva = reservas.get(0);
+                    reserva.setEstadoReserva(estPreparada);
+                }
                 // Setear nro Tarea = al id
                 //  Guardás
                 Tarea guardada = tareaRepository.save(tarea);
@@ -73,6 +85,7 @@ public class ExpertoAMTarea {
 
                 // Guardás de nuevo
                 tareaRepository.save(guardada);
+
 
                 return "Tarea creada";
             }catch (Exception e){
@@ -95,6 +108,9 @@ public class ExpertoAMTarea {
             List<TipoTarea> tipoTareas = tipoTareaRepository.findByCodTipoTarea(codTipoTarea);
             if (tipoTareas.isEmpty()) {throw new RuntimeException("No se encuentra el Tipo de Tarea con el Codigo: " + codTipoTarea);}
 
+            EstadoTarea estadoTipoTarea = estadoTareaRepository.findByNombreEstadoTarea("Asignada");
+            EstadoReserva estadoReserva = reservas.get(0).getEstadoReserva();
+
             try {
                 if (nombreTarea == null) {
                     nombreTarea = tipoTareas.get(0).getNombreTipoTarea();
@@ -106,6 +122,15 @@ public class ExpertoAMTarea {
                 tareasModificacion.get(0).setReserva(reservas.get(0));
                 tareasModificacion.get(0).setTipoTarea(tipoTareas.get(0));
                 tareasModificacion.get(0).setFechaHoraAsignacionTarea(LocalDateTime.now());
+                tareasModificacion.get(0).setEstadoTarea(estadoTipoTarea);
+                tareasModificacion.get(0).setFechaHoraInicioTarea(reservas.get(0).getFechaHoraInicioReserva());
+
+                //Setear Estado Reserva
+                if (estadoReserva.getNombreEstadoReserva().equals("Señada")) {
+                    EstadoReserva estPreparada = estadoReservaRepository.findByNombreEstadoReserva("Preparada");
+                    Reserva reserva = reservas.get(0);
+                    reserva.setEstadoReserva(estPreparada);
+                }
 
                 tareaRepository.save(tareasModificacion.get(0));
                 return "Tarea modificada";
