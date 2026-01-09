@@ -34,5 +34,15 @@ public class ReservaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of());
         }
     }
+
+    @GetMapping("/tipotarea")
+    public ResponseEntity<?> obtenerTipoTarea(){
+        try {
+            List<DTOEstadoReserva> estados = experto.obtenerTipoTarea();
+            return ResponseEntity.ok(estados);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of());
+        }
+    }
 }
 

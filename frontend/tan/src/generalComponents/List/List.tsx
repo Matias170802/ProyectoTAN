@@ -1,7 +1,7 @@
 import './List.css'
 import {type Props} from './List.ts'
 
-const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete, onItemEdit, onItemInfo, emptyMessage, showActions = true, columnas, idField = 'id', getVisibleActions, loadingItems, onItemSelect, selectedItem, selectableCondition}: Props<T>) => {
+const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete, onItemEdit, onItemInfo, emptyMessage, showActions = true, actionsPosition, columnas, idField = 'id', getVisibleActions, loadingItems, onItemSelect, selectedItem, selectableCondition}: Props<T>) => {
     
     //* en el caso de que la lista este cargando
     if (loadingItems) {
@@ -69,6 +69,21 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
             classes += ' list-item-not-selectable';
         }
         
+        // Añadir clase según estado para colorear la fila (señada=amarillo, preparada=verde, en curso/cancelada/finalizada=rojo)
+        try {
+            const rawEstado = (item as any).estado || '';
+            const estado = String(rawEstado).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            if (estado === 'señada' || estado === 'senada') {
+                classes += ' status-yellow';
+            } else if (estado === 'preparada') {
+                classes += ' status-green';
+            } else if (estado === 'en curso' || estado === 'encurso' || estado === 'cancelada' || estado === 'finalizada') {
+                classes += ' status-red';
+            }
+        } catch (e) {
+            // ignore
+        }
+
         return classes;
     };
 
@@ -145,21 +160,24 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
 };
 
     return (
-    <section className='contenedor-lista'>
+    <section className='contenedor-lista' style={{ overflowX: 'auto' }}>
         <table className="lista-tabla">
             
             {/*encabezado tabla*/}
             <thead>
                 <tr className="tabla-header">
+                    {actionsPosition === 'left' && showActions && (
+                        <th className="header-cell actions-header">Acciones</th>
+                    )}
+
                     {columnas.map((columna) => (
                         <th key={columna} className="header-cell">
                             {formatoColumna(columna)}
                         </th>
                     ))}
-                    {showActions && (
-                        <th className="header-cell actions-header">
-                            Acciones
-                        </th>
+
+                    {actionsPosition === 'right' && showActions && (
+                        <th className="header-cell actions-header">Acciones</th>
                     )}
                 </tr>
             </thead>
@@ -175,6 +193,7 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                             cursor: isItemSelectable(item) ? 'pointer' : 'default'
                         }}
                     >
+                        {actionsPosition === 'left' && renderActionButtons(item)}
                         {/* celdas de datos*/}
                         {columnas.map((columna) => (
                             <td key={columna} className="tabla-cell">
@@ -182,7 +201,7 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                             </td>
                         ))}
 
-                        {renderActionButtons(item)}
+                        {actionsPosition === 'right' && renderActionButtons(item)}
                     </tr>
                 ))}
             </tbody>

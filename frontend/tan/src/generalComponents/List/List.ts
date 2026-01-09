@@ -8,6 +8,8 @@ export interface Props <T = any> {
     emptyMessage?: string;
     loadingItems?: boolean;
     showActions?: boolean;
+    /** Position of the actions column. 'right' (default) or 'left' */
+    actionsPosition?: 'left' | 'right';
     columnas: string[];
     idField?: string; //* Nombre del campo que actúa como ID único en los items
     getVisibleActions?: (item: T) => ('info' | 'edit' | 'delete')[];

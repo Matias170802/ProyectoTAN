@@ -65,8 +65,8 @@ public class Movimiento  extends Base {
     /**
      * Builder personalizado que auto-genera el número
      */
-    public static MovimientoBuilder builderConNumero(MovimientoRepository repository) {
-        return Movimiento.builder()
-                .nroMovimiento(generarProximoNumero(repository));
-    }
+//    public Movimiento builderConNumero(MovimientoRepository repository) {
+//        return Movimiento.builder()
+//                .nroMovimiento(generarProximoNumero(repository));
+//    }
 }

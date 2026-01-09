@@ -71,4 +71,15 @@ public class ExpertoReserva {
         }
         return dtos;
     }
+
+    public List<DTOEstadoReserva> obtenerTipoTarea() {
+        List<EstadoReserva> estados = estadoReservaRepository.findAll();
+        List<DTOEstadoReserva> dtos = new ArrayList<>();
+        for (EstadoReserva e : estados) {
+            DTOEstadoReserva dto = new DTOEstadoReserva();
+            dto.setCodEstadoReserva(e.getCodEstadoReserva());
+            dto.setNombreEstadoReserva(e.getNombreEstadoReserva());
+        }
+        return dtos;
+    }
 }
