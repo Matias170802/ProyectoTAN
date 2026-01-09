@@ -108,29 +108,29 @@
     gap: 10px;
 }
 
-#gananciasEmpresa p:first-child,
-#gananciasCliente p:first-child,
-#gananciasTotales p:first-child {
+#gananciasEmpresa p:first-of-type,
+#gananciasCliente p:first-of-type,
+#gananciasTotales p:first-of-type {
     font-size: 14px;
     color: #666;
     margin: 0;
 }
 
-#gananciasEmpresa p:last-child {
+.modalConsultarEstadisticasFinancierasContent #gananciasEmpresa p:last-of-type {
     font-size: 32px;
     font-weight: 700;
     color: #2196F3;
     margin: 0;
 }
 
-#gananciasCliente p:last-child {
+.modalConsultarEstadisticasFinancierasContent #gananciasCliente p:last-of-type {
     font-size: 32px;
     font-weight: 700;
     color: #4CAF50;
     margin: 0;
 }
 
-#gananciasTotales p:last-child {
+.modalConsultarEstadisticasFinancierasContent #gananciasTotales p:last-of-type {
     font-size: 32px;
     font-weight: 700;
     color: #9C27B0;
@@ -190,7 +190,7 @@
     font-size: 18px;
     font-weight: 600;
     color: #333;
-    margin: 0 0 20px 0;
+    margin: 0 0 10px 0; /* mismo estilo que el título de gráficos */
 }
 
 #contenedorDetallesGanancias > p {

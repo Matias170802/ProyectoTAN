@@ -3,6 +3,8 @@ import {type PropsConsultarEstadisticas} from './ModalConsultarEstadisticasFinan
 import {List} from '../../../../generalComponents/index';
 import { useState } from 'react';
 import {type FiltrosEstadisticasFinancieras, useReportesFinanzas} from '../../hooks/useReportesFinanzas';
+import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar } from 'recharts';
+
 
 export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstadisticas> = () => {
 
@@ -35,11 +37,11 @@ export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstad
     const itemsTablero = estadisticasFinancieras?.estadisticasReservas?.map(reserva => ({
         'Inmueble': reserva.inmueble,
         'Huesped': reserva.huesped,
-        'Check in': reserva.checkin,
+        'Check in': new Date(reserva.checkin).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }),
         'Dias': reserva.dias,
-        'Total': reserva.total,
-        'Ganancia Cliente': reserva.gananciaCliente,
-        'Ganancia Empresa': reserva.gananciaEmpresa
+        'Total': `USD$ ${reserva.total}`,
+        'Ganancia Cliente': `USD$ ${reserva.gananciaCliente}`,
+        'Ganancia Empresa': `USD$ ${reserva.gananciaEmpresa}`
     })) || [];
 
 
@@ -101,18 +103,18 @@ export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstad
 
                         <div id='gananciasEmpresa'>
                             <p>Ganancias de la Empresa</p>
-                            <p>${estadisticasFinancieras?.gananciasEmpresa || 0}</p>
+                            <p>USD$ {estadisticasFinancieras?.gananciasEmpresa || 0}</p>
                         </div>
 
                         <div id='gananciasCliente'>
                             <p>Ganancias del Cliente</p>
-                            <p>${estadisticasFinancieras?.gananciasCliente || 0}</p>
+                            <p>USD$ {estadisticasFinancieras?.gananciasCliente || 0}</p>
 
                         </div>
 
                         <div id='gananciasTotales'>
                             <p>Total General</p>
-                            <p>${estadisticasFinancieras?.gananciasTotales || 0}</p>
+                            <p>USD$ {estadisticasFinancieras?.gananciasTotales || 0}</p>
 
                         </div>
 
@@ -123,11 +125,24 @@ export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstad
                             <p>Distribucion de Ganancias por Inmueble</p>
                             <p id='subtitulo'>Ganacias del Cliente vs Ganancias de la Empresa</p>
 
-                            <div>grafico aca</div>
+                            <div>
+                                <ResponsiveContainer width="100%" height={320}>
+                                    <BarChart data={estadisticasFinancieras?.estadisticasPorInmueble || []} margin={{ top: 20, right: 30, left: 60, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="nombreInmueble" />
+                                        <YAxis label={{ value: 'USD', angle: -90, position: 'left' }} />
+                                        <Tooltip />
+                                        <Legend />
+                                        <Bar dataKey="gananciasCliente" fill="#4CAF50" name="Ganancias del Cliente USD" />
+                                        <Bar dataKey="gananciasEmpresa" fill="#1E88E5" name="Ganancias de la Empresa USD" />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
 
                         </section>
 
                         <section id='contenedorDetallesGanancias'>
+                            <p>Detalle de Ganancias por Reserva</p>
 
                             <List
                             columnas={columnas}

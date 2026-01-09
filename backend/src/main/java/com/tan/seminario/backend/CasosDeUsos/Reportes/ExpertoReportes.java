@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.YearMonth;
 import java.util.List;
 
 @Service
@@ -58,7 +59,7 @@ public class ExpertoReportes {
 
     // reportes financieros
 
-    public DTOReportesFinanzas obtenerEstadisticasFinancieras(String anio, Integer mes) {
+    public DTOReportesFinanzas obtenerEstadisticasFinancieras(String anio, String mes) {
 
         //creo instancia de dtoReportesFinanzas
         DTOReportesFinanzas dtoAEnviar = DTOReportesFinanzas.builder().build();
@@ -68,14 +69,21 @@ public class ExpertoReportes {
         LocalDateTime fechaFin;
 
         //analizo si mes es igual o no a "todos" para definir como hacer la consulta al repository de reservas
-        if (mes.equals("todos")) {
-            //determino la fecha incio y fin para buscar las reservas
-            fechaInicio = LocalDateTime.of(Integer.parseInt(anio), 1, 1, 0, 0);
-            fechaFin = LocalDateTime.of(Integer.parseInt(anio), 12, 31, 23, 59);
+        int year = Integer.parseInt(anio);
+
+        if (mes.equalsIgnoreCase("todos")) {
+
+            fechaInicio = LocalDateTime.of(year, 1, 1, 0, 0);
+            fechaFin = LocalDateTime.of(year, 12, 31, 23, 59, 59);
+
         } else {
-            //determino la fecha incio y fin para buscar las reservas
-            fechaInicio = LocalDateTime.of(Integer.parseInt(anio), mes, 1, 0, 0);
-            fechaFin = LocalDateTime.of(Integer.parseInt(anio), mes, 31, 23, 59);
+
+            int month = Integer.parseInt(mes);
+
+            YearMonth yearMonth = YearMonth.of(year, month);
+
+            fechaInicio = yearMonth.atDay(1).atStartOfDay();
+            fechaFin = yearMonth.atEndOfMonth().atTime(23, 59, 59);
         }
 
         //busco instancia de estado Finalizada para luego buscar las reservas

@@ -59,7 +59,6 @@
 }
 
 #contenedorFiltrosModalEstadisticasFinancieras > p:first-child::before {
-    content: "📅";
     font-size: 20px;
 }
 
