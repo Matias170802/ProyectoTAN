@@ -28,10 +28,11 @@ public class DataInitialazer {
     private final EmpleadoRepository empleadoRepository;
     private final EmpleadoRolRepository empleadoRolRepository;
     private final EmpleadoCajaRepository empleadoCajaRepository;
+    private final CajaMadreRepository cajaMadreRepository;
     private final ExpertoABMEmpleado expertoABMEmpleado;
 
     // Constructor correcto para la inyección de dependencia
-    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository, EmpleadoRepository empleadoRepository, EmpleadoRolRepository empleadoRolRepository, ExpertoABMEmpleado expertoABMEmpleado, EmpleadoCajaRepository empleadoCajaRepository) {
+    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository, EmpleadoRepository empleadoRepository, EmpleadoRolRepository empleadoRolRepository, ExpertoABMEmpleado expertoABMEmpleado, EmpleadoCajaRepository empleadoCajaRepository, CajaMadreRepository cajaMadreRepository) {
         this.estadoReservaRepository = estadoReservaRepository;
         this.tipoMovimientoRepository = tipoMovimientoRepository;
         this.tipoTareaRepository = tipoTareaRepository;
@@ -43,6 +44,7 @@ public class DataInitialazer {
         this.empleadoRolRepository = empleadoRolRepository;
         this.expertoABMEmpleado = expertoABMEmpleado;
         this.empleadoCajaRepository = empleadoCajaRepository;
+        this.cajaMadreRepository = cajaMadreRepository;
     }
 
     // ========================
@@ -217,6 +219,21 @@ public class DataInitialazer {
             System.out.println("La base de datos ya contiene datos de Rol, no se inicializaron nuevos datos.");
         }
         //inicializacion de datos roles
+
+        //inicializacion de caja madre
+        if (cajaMadreRepository.count() == 0) {
+            CajaMadre cajaMadre = CajaMadre.builder()
+                    .nroCajaMadre(1L)
+                    .nombreCajaMadre("Caja Madre")
+                    .balanceTotalARS(BigDecimal.ZERO)
+                    .balanceTotalUSD(BigDecimal.ZERO)
+                    .fechaHoraAltaCajaMadre(LocalDateTime.now())
+                    .build();
+
+            cajaMadreRepository.save(cajaMadre);
+            System.out.println("Datos iniciales de CajaMadre insertados correctamente.");
+        }
+        //inicializacion de caja madre
 
         //Iniciacion de Empleado maestro
         if (empleadoRepository.count() == 0) {

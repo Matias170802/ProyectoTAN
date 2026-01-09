@@ -1,5 +1,6 @@
 package com.tan.seminario.backend.Repository;
 
+import com.tan.seminario.backend.Entity.EstadoReserva;
 import com.tan.seminario.backend.Entity.Inmueble;
 import com.tan.seminario.backend.Entity.Reserva;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,5 +15,6 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     List<Reserva> findByFechaHoraAltaReservaBetweenOrderByFechaHoraAltaReserva(
             LocalDateTime fechaHoraAltaReservaAfter,
             LocalDateTime fechaHoraAltaReservaBefore);
+    List<Reserva> findByEstadoReservaAndRendidaAInmuebleIsFalseAndInmueble(EstadoReserva estadoReserva, Inmueble inmueble);
 
 }

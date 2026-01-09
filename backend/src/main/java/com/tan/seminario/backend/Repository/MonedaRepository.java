@@ -9,4 +9,5 @@ public interface MonedaRepository extends JpaRepository<Moneda, Long> {
 
     List<Moneda> findByfechaHoraBajaMonedaIsNull();
     Moneda findBynombreMoneda(String nombreMoneda);
+    Moneda findBynombreMonedaAndFechaHoraBajaMonedaIsNull(String nombreMoneda);
 }

@@ -38,6 +38,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final ClienteRepository clienteRepository;
+    private final UserDetailsServiceImpl userDetailsService;
 
     //REGISTRAR
     @Transactional
@@ -145,16 +146,18 @@ public class AuthService {
             throw new IllegalArgumentException("Refresh token inválido");
         }
 
-        // 3. Buscar usuario
-        final Usuario user = usuarioRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new BadCredentialsException("Usuario no encontrado"));
+        // Obtener UserDetails desde Spring Security
+        var userDetails = userDetailsService.loadUserByUsername(userEmail);
 
-        // 4. Validar token
-        if (!jwtService.isTokenValid(refreshToken, user)) {
+        // Validar token CON UserDetails (ya no con Usuario)
+        if (!jwtService.isTokenValid(refreshToken, userDetails)) {
             throw new IllegalArgumentException("Invalid refresh token");
         }
 
-        // 5. Generar nuevo token
+        // Obtener la entidad Usuario para generar nuevo token y guardarlo
+        var user = usuarioRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new BadCredentialsException("Usuario no encontrado"));
+
         final String jwtToken = jwtService.generateToken(user);
         revokeAllUserTokens(user);
         saveUsuarioToken(user, jwtToken);
