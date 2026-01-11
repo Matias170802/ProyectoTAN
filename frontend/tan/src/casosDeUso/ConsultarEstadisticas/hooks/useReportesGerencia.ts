@@ -18,15 +18,15 @@ export const useReportesGerencia = (activo: string, filtros?: FiltrosEstadistica
         if (filtros) {
             const params = new URLSearchParams();
             
-            if (filtros.anio && filtros.anio !== 'todos') {
+            if (filtros.anio) {
                 params.append('anio', filtros.anio);
             }
             
-            if (filtros.mes && filtros.mes !== 'todos') {
+            if (filtros.mes) {
                 params.append('mes', filtros.mes);
             }
 
-            if (filtros.inmueble && filtros.inmueble !== 'todos') {
+            if (filtros.inmueble) {
                 params.append('inmueble', filtros.inmueble);
             }
             
@@ -39,23 +39,24 @@ export const useReportesGerencia = (activo: string, filtros?: FiltrosEstadistica
     }, [filtros, activo]);
 
     if (activo === 'inmuebles') {
-        const {data: estadisticasGerencia, loading: loadingInmuebles, error: errorInmuebles} = useFetch<EstadisticasGerenciaInmuebles>(url);
+        const {data: estadisticasGerencia, loading, error} = useFetch<EstadisticasGerenciaInmuebles>(url);
         
         return {
-            estadisticasGerenciaInmuebles: estadisticasGerencia,
-            loadingInmuebles,
-            errorInmuebles
+            data: estadisticasGerencia,
+            loading,
+            error
         }
     }
 
     if (activo === 'reservas') {
-        const {data: estadisticasGerenciaReservas, loading: loadingReservas, error: errorReservas} = useFetch<EstadisticasGerenciaReservas>(url);
+        const {data: estadisticasGerenciaReservas, loading, error} = useFetch<EstadisticasGerenciaReservas>(url);
         
         return {
-            estadisticasGerenciaReservas: estadisticasGerenciaReservas,
-            loadingReservas,
-            errorReservas
+            data: estadisticasGerenciaReservas,
+            loading,
+            error
         }
     }
 
+    return { data: null, loading: false, error: null };
 }

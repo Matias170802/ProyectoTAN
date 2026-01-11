@@ -1,5 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Reportes;
 
+import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOEstadisticasGerenciaReservas;
 import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOInmueblesFiltro;
 import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOReportesFinanzas;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,11 @@ public class ReportesController {
     @GetMapping("/inmuebles")
     public ResponseEntity<List<DTOInmueblesFiltro>> obtenerInmueblesFiltro() {
         return ResponseEntity.ok(expertoReportes.obtenerInmueblesFiltro());
+    }
+
+    @GetMapping("/estadisticasGerencia/reservas")
+    public ResponseEntity<DTOEstadisticasGerenciaReservas> obtenerEstadisticasGerenciaReservas(@RequestParam String anio, @RequestParam String mes) {
+        return ResponseEntity.ok(expertoReportes.obtenerEstadisticasGerenciaReservas(anio, mes));
     }
 
     //reportes de gerencia

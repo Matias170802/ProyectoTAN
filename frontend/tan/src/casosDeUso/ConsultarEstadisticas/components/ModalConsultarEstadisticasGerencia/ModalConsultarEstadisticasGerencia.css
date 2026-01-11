@@ -299,3 +299,38 @@
         flex: 1;
     }
 }
+
+/* Mensajes de estado */
+#mensajeCargando,
+#mensajeError {
+    background-color: white;
+    border-radius: 12px;
+    padding: 40px;
+    margin-bottom: 30px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#mensajeCargando p {
+    font-size: 16px;
+    color: #6b7280;
+    margin: 0;
+}
+
+#mensajeError {
+    border: 1px solid #fecaca;
+    background-color: #fef2f2;
+}
+
+#mensajeError p:first-child {
+    font-size: 18px;
+    font-weight: 600;
+    color: #dc2626;
+    margin: 0 0 8px 0;
+}
+
+#mensajeError p:last-child {
+    font-size: 14px;
+    color: #991b1b;
+    margin: 0;
+}

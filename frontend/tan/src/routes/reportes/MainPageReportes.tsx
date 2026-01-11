@@ -39,11 +39,11 @@ export const MainPageReportes: React.FC = () => {
                     <p>Aquí se mostrarán los reportes.</p>
 
                     <Button
-                    onClick={() => setMostrarReportesFinancieros(true)}
+                    onClick={() => setMostrarReportesFinancieros(!mostrarReportesFinancieros)}
                     label='mostrar reportes financieros'
                     />
                     <Button
-                    onClick={() => setMostrarReportesGerencia(true)}
+                    onClick={() => setMostrarReportesGerencia(!mostrarReportesGerencia)}
                     label='mostrar reportes gerencia'
                     />
 

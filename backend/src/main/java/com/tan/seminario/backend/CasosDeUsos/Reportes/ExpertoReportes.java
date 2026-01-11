@@ -1,9 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Reportes;
 
-import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOEstadisticasPorInmuebleFinancieras;
-import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOEstadisticasReservasFinancieras;
-import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOInmueblesFiltro;
-import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOReportesFinanzas;
+import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.*;
 import com.tan.seminario.backend.Entity.EstadoReserva;
 import com.tan.seminario.backend.Entity.Inmueble;
 import com.tan.seminario.backend.Entity.Reserva;
@@ -31,7 +28,6 @@ public class ExpertoReportes {
         this.estadoReservaRepository = estadoReservaRepository;
     }
 
-
     // reportes de gerencia
     public List<DTOInmueblesFiltro> obtenerInmueblesFiltro() {
         List<Inmueble> inmueblesActivos = inmuebleRepository.findByFechaHoraBajaInmuebleIsNull();
@@ -53,6 +49,104 @@ public class ExpertoReportes {
         }
 
         return dtos;
+    }
+
+    public DTOEstadisticasGerenciaReservas obtenerEstadisticasGerenciaReservas(String anio, String mes) {
+        //creo instancia de dtoEstadisticasGerenciaReservas
+        DTOEstadisticasGerenciaReservas dtoAEnviar = DTOEstadisticasGerenciaReservas.builder().build();
+
+        //defino las fechas limites para buscar en la bd como condiciones
+        LocalDateTime fechaInicio;
+        LocalDateTime fechaFin;
+
+        //analizo si mes es igual o no a "todos" para definir como hacer la consulta al repository de reservas
+        int year = Integer.parseInt(anio);
+
+        if (mes.equalsIgnoreCase("todos")) {
+
+            fechaInicio = LocalDateTime.of(year, 1, 1, 0, 0);
+            fechaFin = LocalDateTime.of(year, 12, 31, 23, 59, 59);
+
+        } else {
+
+            int month = Integer.parseInt(mes);
+
+            YearMonth yearMonth = YearMonth.of(year, month);
+
+            fechaInicio = yearMonth.atDay(1).atStartOfDay();
+            fechaFin = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+        }
+
+        //busco instancia de estado Finalizada para luego buscar las reservas
+        EstadoReserva estadoReservaFinalizada = estadoReservaRepository.findByNombreEstadoReserva("Finalizada");
+
+        //busco todas las instancias de reservas del año y mes correspondiente
+        List<Reserva> reservas = reservaRepository.findByEstadoReservaAndFechaHoraInicioReservaBetween(estadoReservaFinalizada, fechaInicio, fechaFin);
+
+        if (reservas.isEmpty()) {
+            throw new RuntimeException("No existen datos disponibles en las fechas ingresadas");
+        }
+
+        //creo instancia de List dtoDetalleReservasGerencia y DTOIncidenciaInmuebles
+        List<DTODetalleReservasGerencia> dtosDetalleReservasGerencia = new java.util.ArrayList<>();
+        List<DTOIncidenciaInmuebles> dtosIncidenciaInmuebles = new java.util.ArrayList<>();
+
+        //creo instancia de atributos para dsp asignarlos al dtoAEnviar
+        Integer cantidadTotalReservas = 0;
+        Integer cantidadTotalDiasReservados = 0;
+        BigDecimal montoTotalGanado = BigDecimal.ZERO;
+        BigDecimal montoPromedioPorReserva = BigDecimal.ZERO;
+
+        //hago calculo de los atributos que acabo de crear
+        for (Reserva reserva: reservas) {
+            cantidadTotalReservas++;
+            cantidadTotalDiasReservados += reserva.getTotalDias();
+            montoTotalGanado = montoTotalGanado.add(BigDecimal.valueOf(reserva.getTotalMonto()));
+
+            //asigno el dtoDetalleReserva
+            DTODetalleReservasGerencia dto = DTODetalleReservasGerencia.builder()
+                    .checkIn(reserva.getFechaHoraInicioReserva())
+                    .checkOut(reserva.getFechaHoraFinReserva())
+                    .estadoReserva(reserva.getEstadoReserva().getNombreEstadoReserva())
+                    .dias(reserva.getTotalDias())
+                    .huesped(reserva.getNombreHuesped())
+                    .montoTotalReserva(BigDecimal.valueOf(reserva.getTotalMonto()))
+                    .nombreInmueble(reserva.getInmueble().getNombreInmueble())
+                    .build();
+
+            //agrego el dto creado al list de dtos
+            dtosDetalleReservasGerencia.add(dto);
+
+        }
+
+        //calculo el monto promedio por reserva
+        montoPromedioPorReserva = montoTotalGanado.divide(BigDecimal.valueOf(cantidadTotalReservas), 2, BigDecimal.ROUND_HALF_UP);
+
+        //calculo la incidencia de cada inmueble
+        for (Reserva reserva: reservas) {
+
+            //asigno el dtoIncidenciaInmuebles
+            DTOIncidenciaInmuebles dtoIncidenciaInmuebles = DTOIncidenciaInmuebles.builder()
+                    .codInmueble(reserva.getInmueble().getCodInmueble())
+                    .nombreInmueble(reserva.getInmueble().getNombreInmueble())
+                    .porcentajeIncidencia((reserva.getTotalDias() * 100) / cantidadTotalDiasReservados)
+                    .build();
+
+            dtosIncidenciaInmuebles.add(dtoIncidenciaInmuebles);
+
+        }
+
+        //asigno atributos calculados al dtoAEnviar
+        dtoAEnviar.setCantTotalReservas(cantidadTotalReservas);
+        dtoAEnviar.setDetalleReservas(dtosDetalleReservasGerencia);
+        dtoAEnviar.setIncidenciaInmuebles(dtosIncidenciaInmuebles);
+        dtoAEnviar.setMontoPromedioPorReserva(montoPromedioPorReserva);
+        dtoAEnviar.setMontoTotalGanado(montoTotalGanado);
+        dtoAEnviar.setDiasTotalesReservados(cantidadTotalDiasReservados);
+
+        return dtoAEnviar;
+
+
     }
 
     // reportes de gerencia

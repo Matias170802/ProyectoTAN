@@ -33,7 +33,7 @@ export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstad
         }));
     };
 
-    // Convertir los datos de estadisticasReservas al formato esperado por List
+    //* Convertir los datos de estadisticasReservas al formato esperado por List
     const itemsTablero = estadisticasFinancieras?.estadisticasReservas?.map(reserva => ({
         'Inmueble': reserva.inmueble,
         'Huesped': reserva.huesped,
