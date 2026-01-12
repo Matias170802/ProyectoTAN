@@ -54,6 +54,24 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
         setFiltros((prev) => ({ ...prev, [name]: value }));
     };
 
+    // Nombre del mes en español para mostrar en el análisis
+    const MESES_ES: Record<string, string> = {
+        '1': 'Enero',
+        '2': 'Febrero',
+        '3': 'Marzo',
+        '4': 'Abril',
+        '5': 'Mayo',
+        '6': 'Junio',
+        '7': 'Julio',
+        '8': 'Agosto',
+        '9': 'Septiembre',
+        '10': 'Octubre',
+        '11': 'Noviembre',
+        '12': 'Diciembre',
+        'todos': 'todos los meses'
+    };
+    const nombreMes = MESES_ES[filtros.mes ?? ''] ?? (filtros.mes ?? '');
+
 
     //* items para el componente list ya transformados al formato esperado RESERVAS
     const itemsTableroReservas = estadisticasGerenciaReservas ? estadisticasGerenciaReservas.detalleReservas.map(reserva => ({
@@ -159,9 +177,9 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
 
                 </section>
 
-                {(error && activo === 'reservas') || (activo === 'inmuebles' && inmuebleSeleccionado && error) && (
+                {((error && activo === 'reservas') || (activo === 'inmuebles' && inmuebleSeleccionado && error)) && (
                     <section id='contenedorError'>
-                        <p>Error al cargar las estadísticas: {error.message}</p>
+                        <p>Error al cargar las estadísticas: {typeof error === 'string' ? error : error?.message}</p>
                     </section>
                 )}
 
@@ -283,11 +301,11 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
                 {!loading && !error && activo === 'inmuebles' && inmuebleSeleccionado && (
                     <section id='contenedorGraficos'>
 
-                        <p>Ocupación del Inmueble {inmuebleSeleccionado}</p>
+                        <p>Ocupación del Inmueble - {inmuebleSeleccionado}</p>
                         <p className='subtitulo'>Distribución de días ocupados vs. disponibles en el período seleccionado</p>
 
                         <div className='chartWrapper'>
-                            <ResponsiveContainer width="100%" height={400}>
+                            <ResponsiveContainer width="100%" height={300}>
                                 <BarChart
                                     layout="vertical"
                                     data={[
@@ -298,19 +316,21 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
                                         }
                                     ]}
                                     margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                                    barSize={64}
                                 >
                                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#E5E7EB" />
                                     <XAxis 
                                         type="number" 
                                         axisLine={false}
                                         tickLine={false}
+                                        domain={[0, 'dataMax']}
                                     />
                                     <YAxis 
                                         type="category" 
                                         dataKey="name" 
                                         axisLine={false}
                                         tickLine={false}
-                                        tick={false}
+                                        tick={true}
                                     />
                                     <Tooltip 
                                         cursor={false}
@@ -339,14 +359,14 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
                                             paddingTop: '20px'
                                         }}
                                     />
-                                    <Bar dataKey="Días Disponibles" stackId="a" fill="#D1D5DB" />
                                     <Bar dataKey="Días Ocupados" stackId="a" fill="#16A34A" />
+                                    <Bar dataKey="Días Disponibles" stackId="a" fill="#D1D5DB" />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
 
                         <section id='contenedorAnalisisGrafico'>
-                            <p id='analisisGrafico'>Analisis: El inmueble tuvo una ocupación de {estadisticasGerenciaInmuebles?.tasaOcupacionInmueble || 0}% durante {filtros.mes} de {filtros.anio}, con {estadisticasGerenciaInmuebles?.cantidadReservasInmueble} reserva/s que totalizaron {estadisticasGerenciaInmuebles?.totalDiasOcupadosInmueble} días ocupados de los {(estadisticasGerenciaInmuebles?.totalDiasLibresInmueble ?? 0) + (estadisticasGerenciaInmuebles?.totalDiasOcupadosInmueble ?? 0)} días disponibles</p>
+                            <p id='analisisGrafico'>Analisis: El inmueble tuvo una ocupación de {estadisticasGerenciaInmuebles?.tasaOcupacionInmueble || 0}% durante {nombreMes} de {filtros.anio}, con {estadisticasGerenciaInmuebles?.cantidadReservasInmueble} reserva/s que totalizaron {estadisticasGerenciaInmuebles?.totalDiasOcupadosInmueble} días ocupados de los {(estadisticasGerenciaInmuebles?.totalDiasLibresInmueble ?? 0) + (estadisticasGerenciaInmuebles?.totalDiasOcupadosInmueble ?? 0)} días disponibles</p>
                         </section>
 
                     </section>
