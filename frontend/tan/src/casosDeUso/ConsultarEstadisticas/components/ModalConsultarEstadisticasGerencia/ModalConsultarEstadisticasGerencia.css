@@ -141,25 +141,25 @@
 }
 
 /* Estilos específicos por tarjeta */
-#totalReservas > p:last-child,
-#totalReservasINmueble > p:last-child {
+#modalConsultarEstadisticasGerenciaContent #totalReservas > p:last-child,
+#modalConsultarEstadisticasGerenciaContent #totalReservasInmueble > p:last-child {
     color: #3b82f6;
 }
 
-#diasTotalesReservados > p:last-child,
-#diasTotalesOcupados > p:last-child {
+#modalConsultarEstadisticasGerenciaContent #diasTotalesReservados > p:last-child,
+#modalConsultarEstadisticasGerenciaContent #diasTotalesOcupados > p:last-child {
     color: #10b981;
 }
 
-#tasaOcupacionInmueble > p:last-child {
+#modalConsultarEstadisticasGerenciaContent #tasaOcupacionInmueble > p:last-child {
     color: #8b5cf6;
 }
 
-#montoTotalGanancias > p:last-child {
+#modalConsultarEstadisticasGerenciaContent #montoTotalGanancias > p:last-child {
     color: #f59e0b;
 }
 
-#promedioPorReserva > p:last-child {
+#modalConsultarEstadisticasGerenciaContent #promedioPorReserva > p:last-child {
     color: #ec4899;
 }
 
@@ -226,6 +226,25 @@
     border: 2px dashed #d1d5db;
     color: #9ca3af;
     font-size: 16px;
+}
+
+#contenedorGraficos > .chartWrapper {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background-color: #ffffff;
+    color: #1f2937;
+    padding: 12px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.chartInner {
+    width: 100%;
+    height: 320px;
+}
+
+.noDataChart {
+    color: #6b7280;
+    font-weight: 500;
 }
 
 /* Análisis del gráfico */

@@ -141,12 +141,101 @@ public class ExpertoReportes {
         dtoAEnviar.setDetalleReservas(dtosDetalleReservasGerencia);
         dtoAEnviar.setIncidenciaInmuebles(dtosIncidenciaInmuebles);
         dtoAEnviar.setMontoPromedioPorReserva(montoPromedioPorReserva);
-        dtoAEnviar.setMontoTotalGanado(montoTotalGanado);
+        dtoAEnviar.setMontoTotal(montoTotalGanado);
         dtoAEnviar.setDiasTotalesReservados(cantidadTotalDiasReservados);
 
         return dtoAEnviar;
 
 
+    }
+
+    public DTOEstadisticasGerenciaInmuebles obtenerEstadisticasGerenciaInmuebles(String anio, String mes, String inmueble) {
+
+        //creo instancia del DTOEstadisticasGerenciaInmuebles que voy a enviar
+        DTOEstadisticasGerenciaInmuebles dtoAEnviar = DTOEstadisticasGerenciaInmuebles.builder().build();
+
+        //defino las fechas limites para buscar en la bd como condiciones
+        LocalDateTime fechaInicio;
+        LocalDateTime fechaFin;
+        Integer cantidadTotalDias = 0;
+
+        //analizo si mes es igual o no a "todos" para definir como hacer la consulta al repository de reservas
+        int year = Integer.parseInt(anio);
+
+        if (mes.equalsIgnoreCase("todos")) {
+
+            fechaInicio = LocalDateTime.of(year, 1, 1, 0, 0);
+            fechaFin = LocalDateTime.of(year, 12, 31, 23, 59, 59);
+            cantidadTotalDias = 365;
+
+        } else {
+
+            int month = Integer.parseInt(mes);
+
+            YearMonth yearMonth = YearMonth.of(year, month);
+
+            //asigno la cantidad total de dias que hay en el mes
+            cantidadTotalDias = yearMonth.lengthOfMonth();
+
+            fechaInicio = yearMonth.atDay(1).atStartOfDay();
+            fechaFin = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+        }
+
+        //busco el inmueble seleccionado
+        Inmueble inmuebleSeleccionado = inmuebleRepository.findByCodInmuebleAndFechaHoraBajaInmuebleIsNull(inmueble);
+
+        //busco instancia de estado Finalizada para luego buscar las reservas
+        EstadoReserva estadoReservaFinalizada = estadoReservaRepository.findByNombreEstadoReserva("Finalizada");
+
+        //busco todas las instancias de reservas del año y mes correspondiente del inmueble correspondiente
+        List<Reserva> reservas = reservaRepository.findByEstadoReservaAndInmuebleAndFechaHoraInicioReservaBetween(estadoReservaFinalizada, inmuebleSeleccionado,fechaInicio, fechaFin);
+
+        if (reservas.isEmpty()) {
+            throw new RuntimeException("No existen datos disponibles en las fechas ingresadas");
+        }
+
+        //creo variables para asignarlas al dtoAEnviar
+        Integer cantidadTotalReservas = 0;
+        Integer cantidadTotalDiasOcupados = 0;
+        Double tasaOcupacionInmueble = 0.0;
+        BigDecimal montoTotalGanado = BigDecimal.ZERO;
+        List<DTODetalleReservasGerencia> dtosDetalleReservasGerencia = new java.util.ArrayList<>();
+
+        //calculo los valores de los atributos
+        for (Reserva reserva: reservas) {
+            cantidadTotalReservas++;
+            cantidadTotalDiasOcupados += reserva.getTotalDias();
+            montoTotalGanado = montoTotalGanado.add(BigDecimal.valueOf(reserva.getTotalMonto()));
+
+            DTODetalleReservasGerencia dto = DTODetalleReservasGerencia.builder()
+                    .checkIn(reserva.getFechaHoraInicioReserva())
+                    .checkOut(reserva.getFechaHoraFinReserva())
+                    .estadoReserva(reserva.getEstadoReserva().getNombreEstadoReserva())
+                    .dias(reserva.getTotalDias())
+                    .huesped(reserva.getNombreHuesped())
+                    .montoTotalReserva(BigDecimal.valueOf(reserva.getTotalMonto()))
+                    .nombreInmueble(reserva.getInmueble().getNombreInmueble())
+                    .build();
+
+            dtosDetalleReservasGerencia.add(dto);
+        }
+
+        //calculo la tasa de ocupacion
+        tasaOcupacionInmueble = Math.round(((cantidadTotalDiasOcupados * 100.0) / cantidadTotalDias) * 100.0) / 100.0;
+
+        //calculo los dias libres del inmueble
+        Integer cantidadTotalDiasLibres = cantidadTotalDias - cantidadTotalDiasOcupados;
+
+        //asigno los atributos calculados al dtoAEnviar
+        dtoAEnviar.setCantidadReservasInmueble(cantidadTotalReservas);
+        dtoAEnviar.setNombreInmueble(inmuebleSeleccionado.getNombreInmueble());
+        dtoAEnviar.setDetalleReservas(dtosDetalleReservasGerencia);
+        dtoAEnviar.setIngresosGeneradosInmueble(montoTotalGanado);
+        dtoAEnviar.setTasaOcupacionInmueble(tasaOcupacionInmueble);
+        dtoAEnviar.setTotalDiasLibresInmueble(cantidadTotalDiasLibres);
+        dtoAEnviar.setTotalDiasOcupadosInmueble(cantidadTotalDiasOcupados);
+
+        return dtoAEnviar;
     }
 
     // reportes de gerencia

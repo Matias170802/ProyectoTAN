@@ -27,7 +27,7 @@ export interface EstadisticasGerenciaInmuebles {
 export interface EstadisticasGerenciaReservas {
     cantTotalReservas: number;
     diasTotalesReservados: number;
-    montoTotalGanado: number;
+    montoTotal: number;
     montoPromedioPorReserva: number;
     incidenciaInmuebles: incidenciaInmueble[];
     detalleReservas: detalleReservas[];
@@ -37,6 +37,7 @@ interface incidenciaInmueble {
     codInmueble: string;
     nombreInmueble: string;
     porcentajeIncidencia: number;
+    [key: string]: any;
 }
 
 interface detalleReservas {

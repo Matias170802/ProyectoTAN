@@ -1,5 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Reportes;
 
+import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOEstadisticasGerenciaInmuebles;
 import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOEstadisticasGerenciaReservas;
 import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOInmueblesFiltro;
 import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOReportesFinanzas;
@@ -31,6 +32,11 @@ public class ReportesController {
     @GetMapping("/estadisticasGerencia/reservas")
     public ResponseEntity<DTOEstadisticasGerenciaReservas> obtenerEstadisticasGerenciaReservas(@RequestParam String anio, @RequestParam String mes) {
         return ResponseEntity.ok(expertoReportes.obtenerEstadisticasGerenciaReservas(anio, mes));
+    }
+
+    @GetMapping("/estadisticasGerencia/inmuebles")
+    public ResponseEntity<DTOEstadisticasGerenciaInmuebles> obtenerEstadisticasGerenciaInmuebles(@RequestParam String anio, @RequestParam String mes, @RequestParam String inmueble) {
+        return ResponseEntity.ok(expertoReportes.obtenerEstadisticasGerenciaInmuebles(anio, mes, inmueble));
     }
 
     //reportes de gerencia

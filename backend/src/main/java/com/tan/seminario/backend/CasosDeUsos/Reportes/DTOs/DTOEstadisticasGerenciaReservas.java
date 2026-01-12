@@ -14,7 +14,7 @@ import java.util.List;
 public class DTOEstadisticasGerenciaReservas {
     private Integer cantTotalReservas;
     private Integer diasTotalesReservados;
-    private BigDecimal montoTotalGanado;
+    private BigDecimal montoTotal;
     private BigDecimal montoPromedioPorReserva;
     private List<DTOIncidenciaInmuebles> incidenciaInmuebles;
     private List<DTODetalleReservasGerencia> detalleReservas;

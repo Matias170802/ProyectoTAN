@@ -3,8 +3,8 @@ import { useFetch } from "@/generalHooks/useFetch";
 import {type EstadisticasGerenciaReservas, type EstadisticasGerenciaInmuebles} from "../components/ModalConsultarEstadisticasGerencia/ModalConsultarEstadisticasGerenciaTypes";
 
 export interface FiltrosEstadisticasGerencia {
-    anio?: string;
-    mes?: string;
+    anio?: string ;
+    mes?: string ;
     inmueble?: string;
 }
 
@@ -38,25 +38,11 @@ export const useReportesGerencia = (activo: string, filtros?: FiltrosEstadistica
         return endpoint;
     }, [filtros, activo]);
 
-    if (activo === 'inmuebles') {
-        const {data: estadisticasGerencia, loading, error} = useFetch<EstadisticasGerenciaInmuebles>(url);
-        
-        return {
-            data: estadisticasGerencia,
-            loading,
-            error
-        }
+    const {data: estadisticasData, loading, error} = useFetch<EstadisticasGerenciaReservas | EstadisticasGerenciaInmuebles>(url);
+    
+    return {
+        data: estadisticasData,
+        loading,
+        error
     }
-
-    if (activo === 'reservas') {
-        const {data: estadisticasGerenciaReservas, loading, error} = useFetch<EstadisticasGerenciaReservas>(url);
-        
-        return {
-            data: estadisticasGerenciaReservas,
-            loading,
-            error
-        }
-    }
-
-    return { data: null, loading: false, error: null };
 }
