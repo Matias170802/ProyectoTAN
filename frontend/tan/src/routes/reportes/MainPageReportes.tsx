@@ -5,15 +5,15 @@ import { ModalConsultarEstadisticasFinancieras } from '@/casosDeUso/ConsultarEst
 import { ModalConsultarEstadisticasGerencia } from '@/casosDeUso/ConsultarEstadisticas/components/ModalConsultarEstadisticasGerencia/ModalConsultarEstadisticasGerencia';
 import { useFetch } from '@/generalHooks/useFetch';
 import { type Rol} from './MainPageReportesTypes';
-import { Button } from '@/generalComponents';
 
 export const MainPageReportes: React.FC = () => {
     
     const [mostrarReportesGerencia, setMostrarReportesGerencia] = useState(false);
     const [mostrarReportesFinancieros, setMostrarReportesFinancieros] = useState(false);
-    
-    //TODO: aca deberia haber un hook que me traiga los roles del usuario logueado
-    //const { data: roles } = useFetch<Rol[]>('/api/reportes/roles');
+    const [reporteSeleccionado, setReporteSeleccionado] = useState<'gerencia' | 'finanzas'>('gerencia');
+
+    //me traigo los roles del usuario logueado
+    const { data: roles } = useFetch<Rol[]>('/api/reportes/roles');
     
     const definirReportesAMostrar = (roles: Rol[] | null) => {
         
@@ -26,9 +26,13 @@ export const MainPageReportes: React.FC = () => {
         }
     }
 
-    /*useEffect(() => {
+    const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setReporteSeleccionado(event.target.value as 'gerencia' | 'finanzas');
+    }
+
+    useEffect(() => {
         definirReportesAMostrar(roles);
-    }, [roles]);*/
+    }, [roles]);
     
     return (
         <div className="App">
@@ -36,23 +40,30 @@ export const MainPageReportes: React.FC = () => {
                 <p className='titulo'>Reportes</p>
 
                 <section id='reportesSection'>
-                    <p>Aquí se mostrarán los reportes.</p>
-
-                    <Button
-                    onClick={() => setMostrarReportesFinancieros(!mostrarReportesFinancieros)}
-                    label='mostrar reportes financieros'
-                    />
-                    <Button
-                    onClick={() => setMostrarReportesGerencia(!mostrarReportesGerencia)}
-                    label='mostrar reportes gerencia'
-                    />
-
-                    {mostrarReportesFinancieros && /*roles*/ (
+                    
+                    {mostrarReportesFinancieros && roles && !mostrarReportesGerencia &&(
                         <ModalConsultarEstadisticasFinancieras/>
                     )}
 
-                    {mostrarReportesGerencia && /*roles*/ (
+                    {mostrarReportesGerencia && roles && !mostrarReportesFinancieros &&(
                         <ModalConsultarEstadisticasGerencia/>
+                    )}
+
+                    {mostrarReportesFinancieros && mostrarReportesGerencia && roles && (
+                        <section id='contenedorReportesConSelect'>
+                            <div id='contenedorElegirReportes'>
+                                <select value={reporteSeleccionado} onChange={handleSelectChange}>
+                                    <option value="gerencia">Reportes Gerencia</option>
+                                    <option value="finanzas">Reportes Finanzas</option>
+                                </select>
+                            </div>
+
+                            <section id='reportesSegunSeleccion'>
+                                {reporteSeleccionado === 'gerencia' && <ModalConsultarEstadisticasGerencia/>}
+                                {reporteSeleccionado === 'finanzas' && <ModalConsultarEstadisticasFinancieras/>}
+                            </section>
+
+                        </section>
                     )}
                 </section>
             </div>

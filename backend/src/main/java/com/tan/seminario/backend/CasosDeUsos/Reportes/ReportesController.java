@@ -1,10 +1,8 @@
 package com.tan.seminario.backend.CasosDeUsos.Reportes;
 
-import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOEstadisticasGerenciaInmuebles;
-import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOEstadisticasGerenciaReservas;
-import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOInmueblesFiltro;
-import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.DTOReportesFinanzas;
+import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +20,12 @@ public class ReportesController {
         this.expertoReportes = expertoReportes;
     }
 
+    //get de roles del usuario loggeado
+    @GetMapping("/roles")
+    public ResponseEntity<List<DTORoles>> obtenerRoles(Authentication authentication) {
+        String username = authentication.getName();
+        return ResponseEntity.ok(expertoReportes.obtenerRoles(username));
+    }
     //reportes de gerencia
 
     @GetMapping("/inmuebles")

@@ -1,12 +1,12 @@
 package com.tan.seminario.backend.CasosDeUsos.Reportes;
 
 import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.*;
-import com.tan.seminario.backend.Entity.EstadoReserva;
-import com.tan.seminario.backend.Entity.Inmueble;
-import com.tan.seminario.backend.Entity.Reserva;
+import com.tan.seminario.backend.Entity.*;
 import com.tan.seminario.backend.Repository.EstadoReservaRepository;
 import com.tan.seminario.backend.Repository.InmuebleRepository;
 import com.tan.seminario.backend.Repository.ReservaRepository;
+import com.tan.seminario.backend.Repository.UsuarioRepository;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -21,12 +21,42 @@ public class ExpertoReportes {
     private final InmuebleRepository inmuebleRepository;
     private final ReservaRepository reservaRepository;
     private final EstadoReservaRepository estadoReservaRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public ExpertoReportes(InmuebleRepository inmuebleRepository, ReservaRepository reservaRepository, EstadoReservaRepository estadoReservaRepository) {
+
+    public ExpertoReportes(InmuebleRepository inmuebleRepository, ReservaRepository reservaRepository, EstadoReservaRepository estadoReservaRepository, UsuarioRepository usuarioRepository) {
         this.inmuebleRepository = inmuebleRepository;
         this.reservaRepository = reservaRepository;
         this.estadoReservaRepository = estadoReservaRepository;
+        this.usuarioRepository = usuarioRepository;
     }
+
+    //obtener roles
+
+    public List<DTORoles> obtenerRoles(String username) {
+        Usuario usuarioActivo = usuarioRepository.findByEmail(username).get();
+
+        //busco instancia de empleado relacioada al usuario activo
+        Empleado empleado = usuarioActivo.getEmpleado();
+
+        //creo la instancia de la lista que va a contener el DTORoles
+        List<DTORoles> dtosRoles = new java.util.ArrayList<>();
+
+        //Me busco los roles que tiene el empleado
+        List<EmpleadoRol> instanciasRol = empleado.getEmpleadosRoles();
+
+        for (EmpleadoRol empleadoRol: instanciasRol) {
+            //creo el dtoRol
+            DTORoles dto = DTORoles.builder()
+                    .nombreRol(empleadoRol.getRol().getNombreRol())
+                    .build();
+
+            dtosRoles.add(dto);
+        }
+
+        return dtosRoles;
+    }
+    //obtener roles
 
     // reportes de gerencia
     public List<DTOInmueblesFiltro> obtenerInmueblesFiltro() {
