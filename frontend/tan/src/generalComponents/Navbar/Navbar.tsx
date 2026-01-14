@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import './Navbar.css'
+import { IoBarChart } from "react-icons/io5";
 import {Button} from '../index'
 import { FaHome } from "react-icons/fa";
 import { FaCalendarAlt } from "react-icons/fa";
@@ -25,6 +26,7 @@ const Navbar: React.FC = () => {
                 <li><Link to="/micaja"><Button label="Mi Caja" icon={<FaCreditCard />}/></Link></li>
                 <li><Link to="/perfil"><Button label="Mi Perfil" icon={<CgProfile />}/></Link></li>
                 <li><Link to="/registrarIngresoEgresoCaja"><Button label="Agregar Ingreso/Egreso" icon={<IoMdAdd />}/></Link></li>
+                <li><Link to="/reportes"><Button label='Reportes' id='botonReportes' icon={<IoBarChart/>}/></Link></li>
                 
             </ul>
         </nav>
