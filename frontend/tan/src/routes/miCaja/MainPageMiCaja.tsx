@@ -12,9 +12,26 @@ const MainPageMiCaja: React.FC = () => {
 
     const filteredMovimientos = useMemo(() => {
         const items = movimientos ?? [];
-        if (filter === 'todas') return items;
-        if (filter === 'ingresos') return items.filter(m => m.tipoMovimiento?.toString().toLowerCase().includes('ingres'));
-        return items.filter(m => m.tipoMovimiento?.toString().toLowerCase().includes('egres'));
+        
+        // Formatear las fechas antes de filtrar
+        const itemsWithFormattedDates = items.map(item => ({
+            ...item,
+            Fecha: item.fechaMovimiento 
+                ? new Date(item.fechaMovimiento).toLocaleDateString('es-AR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                })
+                : '-',
+            Tipo: item.tipoMovimiento,
+            Monto: item.montoMovimiento,
+            Descripcion: item.descripcionMovimiento,
+            Categoria: item.categoriaMovimiento
+        }));
+        
+        if (filter === 'todas') return itemsWithFormattedDates;
+        if (filter === 'ingresos') return itemsWithFormattedDates.filter(m => m.tipoMovimiento?.toString().toLowerCase().includes('ingres'));
+        return itemsWithFormattedDates.filter(m => m.tipoMovimiento?.toString().toLowerCase().includes('egres'));
     }, [movimientos, filter]);
 
 
