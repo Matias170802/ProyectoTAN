@@ -9,20 +9,15 @@ import com.tan.seminario.backend.CasosDeUsos.Inmuebles.ABMCliente.DTOs.Modificar
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.AuthService;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.RegisterRequest;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.TokenResponse;
-import com.tan.seminario.backend.Entity.Cliente;
-import com.tan.seminario.backend.Entity.Inmueble;
-import com.tan.seminario.backend.Entity.Token;
-import com.tan.seminario.backend.Entity.Usuario;
-import com.tan.seminario.backend.Repository.ClienteRepository;
-import com.tan.seminario.backend.Repository.InmuebleRepository;
-import com.tan.seminario.backend.Repository.TokenRepository;
-import com.tan.seminario.backend.Repository.UsuarioRepository;
+import com.tan.seminario.backend.Entity.*;
+import com.tan.seminario.backend.Repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +28,7 @@ public class ExpertoABMCliente {
 
     private final ClienteRepository clienteRepository;
     private final InmuebleRepository inmuebleRepository;
+    private final ReservaRepository reservaRepository;
     private final AuthService authService;
     private final TokenRepository tokenRepository;
     private final UsuarioRepository usuarioRepository;
@@ -111,19 +107,25 @@ public class ExpertoABMCliente {
             );
         }
 
-        LocalDateTime fechaBaja = LocalDateTime.now();
-
-        // 3. Dar de baja al cliente
-        cliente.setFechaHoraBajaCliente(fechaBaja);
-        clienteRepository.save(cliente);
-        log.info("Cliente marcado como inactivo: {}", cliente.getCodCliente());
-
-        // 4. Dar de baja todos los inmuebles del cliente
+        // 3. Obtener todos los inmuebles activos del cliente
         List<Inmueble> inmueblesActivos = inmuebleRepository.findAll().stream()
                 .filter(inmueble -> inmueble.getCliente().getId().equals(clienteId))
                 .filter(inmueble -> inmueble.getFechaHoraBajaInmueble() == null)
                 .collect(Collectors.toList());
 
+        // 4. Validar que ningún inmueble tenga reservas activas o futuras
+        for (Inmueble inmueble : inmueblesActivos) {
+            validarReservasActivasOFuturas(inmueble);
+        }
+
+        LocalDateTime fechaBaja = LocalDateTime.now();
+
+        // 5. Dar de baja al cliente
+        cliente.setFechaHoraBajaCliente(fechaBaja);
+        clienteRepository.save(cliente);
+        log.info("Cliente marcado como inactivo: {}", cliente.getCodCliente());
+
+        // 6. Dar de baja todos los inmuebles del cliente
         int inmueblesAfectados = 0;
         if (!inmueblesActivos.isEmpty()) {
             inmueblesActivos.forEach(inmueble -> inmueble.setFechaHoraBajaInmueble(fechaBaja));
@@ -132,7 +134,7 @@ public class ExpertoABMCliente {
             log.info("Dados de baja {} inmuebles del cliente", inmueblesAfectados);
         }
 
-        // 5. Desactivar el usuario asociado
+        // 7. Desactivar el usuario asociado
         List<Usuario> usuarios = usuarioRepository.findAll().stream()
                 .filter(u -> u.getCliente() != null)
                 .filter(u -> u.getCliente().getId().equals(clienteId))
@@ -153,7 +155,7 @@ public class ExpertoABMCliente {
 
         log.info("Baja de cliente completada exitosamente: {}", cliente.getCodCliente());
 
-        // 6. Construir respuesta
+        // 8. Construir respuesta
         return DTOBajaClienteResponse.builder()
                 .mensaje("Cliente dado de baja correctamente")
                 .exito(true)
@@ -327,6 +329,66 @@ public class ExpertoABMCliente {
         if (dniEnUso) {
             throw new IllegalArgumentException("Ya existe un cliente activo con ese DNI");
         }
+    }
+
+    /**
+     * Valida que el inmueble no tenga reservas activas o futuras (excepto canceladas)
+     */
+    private void validarReservasActivasOFuturas(Inmueble inmueble) {
+        LocalDateTime ahora = LocalDateTime.now();
+
+        // Obtener todas las reservas del inmueble
+        List<Reserva> reservasDelInmueble = reservaRepository.findByInmueble(inmueble);
+
+        // Filtrar reservas que estén en curso o sean futuras
+        List<Reserva> reservasProblematicas = reservasDelInmueble.stream()
+                .filter(reserva -> {
+                    EstadoReserva estado = reserva.getEstadoReserva();
+                    String nombreEstado = estado != null ? estado.getNombreEstadoReserva() : "";
+
+                    // Ignorar reservas canceladas o finalizadas
+                    if ("Cancelada".equalsIgnoreCase(nombreEstado) ||
+                            "Finalizada".equalsIgnoreCase(nombreEstado)) {
+                        return false;
+                    }
+
+                    // Verificar si la reserva está en curso o es futura
+                    LocalDateTime fechaFin = reserva.getFechaHoraFinReserva();
+                    return fechaFin != null && fechaFin.isAfter(ahora);
+                })
+                .collect(Collectors.toList());
+
+        if (!reservasProblematicas.isEmpty()) {
+            log.warn("Intento de dar de baja cliente con inmueble {} que tiene {} reservas activas/futuras",
+                    inmueble.getCodInmueble(), reservasProblematicas.size());
+
+            // Construir mensaje con detalles de las reservas
+            StringBuilder mensaje = new StringBuilder(
+                    "No se puede dar de baja el cliente porque el inmueble ")
+                    .append(inmueble.getNombreInmueble())
+                    .append(" (")
+                    .append(inmueble.getCodInmueble())
+                    .append(") tiene reservas activas o futuras. Reservas: ");
+
+            for (int i = 0; i < reservasProblematicas.size(); i++) {
+                Reserva r = reservasProblematicas.get(i);
+                mensaje.append(r.getCodReserva())
+                        .append(" (")
+                        .append(r.getEstadoReserva().getNombreEstadoReserva())
+                        .append(", hasta ")
+                        .append(r.getFechaHoraFinReserva())
+                        .append(")");
+
+                if (i < reservasProblematicas.size() - 1) {
+                    mensaje.append(", ");
+                }
+            }
+
+            throw new IllegalStateException(mensaje.toString());
+        }
+
+        log.debug("Validación exitosa: el inmueble {} no tiene reservas activas o futuras",
+                inmueble.getCodInmueble());
     }
 
     private Cliente crearCliente(DTOAltaClienteRequest request, String codigoCliente) {
