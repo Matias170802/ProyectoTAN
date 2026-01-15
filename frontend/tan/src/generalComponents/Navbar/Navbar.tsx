@@ -9,8 +9,7 @@ import { GrConfigure } from "react-icons/gr";
 import { FaCreditCard } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { IoMdAdd } from "react-icons/io";
-
-
+import { MdBusinessCenter } from "react-icons/md";
 
 
 const Navbar: React.FC = () => {
@@ -22,6 +21,7 @@ const Navbar: React.FC = () => {
                 <li><Link to="/"><Button label="Inicio" icon={<FaHome/>}/></Link></li>
                 <li><Link to="/reservas"><Button label="Reservas" icon={<FaCalendarAlt />}/></Link></li>
                 <li><Link to="/finanzas"><Button label="Finanzas" icon={<MdOutlineAttachMoney />}/></Link></li>
+                <li><Link to="/gerencia"><Button label="Gerencia" icon={<MdBusinessCenter />}/></Link></li>
                 <li><Link to="/admin"><Button label="Administracion" icon={<GrConfigure />}/></Link></li>
                 <li><Link to="/micaja"><Button label="Mi Caja" icon={<FaCreditCard />}/></Link></li>
                 <li><Link to="/perfil"><Button label="Mi Perfil" icon={<CgProfile />}/></Link></li>
