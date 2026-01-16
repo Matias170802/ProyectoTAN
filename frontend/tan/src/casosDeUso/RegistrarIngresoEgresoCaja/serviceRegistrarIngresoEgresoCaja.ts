@@ -3,10 +3,14 @@ import type { formSchemaRegistrarIngresoEgresoCajaType } from "./models/modelReg
 
 export const registrarIngresoEgreso = async (ingresoEgresoCaja: formSchemaRegistrarIngresoEgresoCajaType ): Promise<formSchemaRegistrarIngresoEgresoCajaType> => {
     
+    const token = sessionStorage.getItem('access_token') || localStorage.getItem('access_token');
+
+    
     const response = await fetch ('/api/finanzas/registrarIngresoEgresoCaja', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(ingresoEgresoCaja)
     })

@@ -19,6 +19,7 @@ const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description, on
             tipoTransaccion: "Selecciona un tipo de transacción",
             categoria: "Selecciona una categoría",
             moneda: "Selecciona una moneda", 
+            monto: 0,
             descripcion: ""
         },
         mode: 'onBlur'
@@ -42,6 +43,7 @@ const FormRegistrarIngresoEgresoCaja: React.FC<Props> = ({title, description, on
         } else {
             // Modo normal: registra en backend
             const exito = await registrarIngresoEgresoCaja(data);
+            console.log('Datos del formulario:', data);
             console.log("Este es mi exito", exito)
 
             if (exito) {

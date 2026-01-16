@@ -1,9 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja;
 
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOCategoriaMovimiento;
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOMoneda;
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOTipoTransaccion;
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOTransaccionARegistrar;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.*;
 import com.tan.seminario.backend.Entity.Movimiento;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +20,10 @@ public class RegistrarIngresoEgresoCajaController {
     }
 
     @PostMapping
-    public ResponseEntity<Movimiento> registrarIngresoEgresoCaja(@RequestBody DTOTransaccionARegistrar transaccionARegistrar, Authentication authentication){
+    public ResponseEntity<DTOMovimiento> registrarIngresoEgresoCaja(@RequestBody DTOTransaccionARegistrar transaccionARegistrar, Authentication authentication){
 
         String username = authentication.getName();
-        Movimiento nuevoMovimiento = expertoRegistrarIngresoEgresoCaja.registrarMovimiento(transaccionARegistrar, username);
+        DTOMovimiento nuevoMovimiento = expertoRegistrarIngresoEgresoCaja.registrarMovimiento(transaccionARegistrar, username);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoMovimiento);
     }
 

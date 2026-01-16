@@ -1,15 +1,15 @@
 package com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja;
 
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOCategoriaMovimiento;
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOMoneda;
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOTipoTransaccion;
-import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.DTOTransaccionARegistrar;
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarIngresoEgresoCaja.DTO.*;
 import com.tan.seminario.backend.Entity.*;
 import com.tan.seminario.backend.Repository.*;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ExpertoRegistrarIngresoEgresoCaja {
@@ -19,6 +19,7 @@ public class ExpertoRegistrarIngresoEgresoCaja {
     private final MovimientoRepository movimientoRepository;
     private final UsuarioRepository usuarioRepository;
     private final EmpleadoCajaRepository empleadoCajaRepository;
+    private final Logger logger = org.slf4j.LoggerFactory.getLogger(ExpertoRegistrarIngresoEgresoCaja.class);
 
     public ExpertoRegistrarIngresoEgresoCaja(TipoMovimientoRepository tipoMovimientoRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, MovimientoRepository movimientoRepository, UsuarioRepository usuarioRepository, EmpleadoCajaRepository empleadoCajaRepository)  {
         this.tipoMovimientoRepository = tipoMovimientoRepository;
@@ -71,15 +72,17 @@ public class ExpertoRegistrarIngresoEgresoCaja {
         return categoriaMovimientoAEnviar;
     }
 
-    public Movimiento registrarMovimiento (DTOTransaccionARegistrar transaccionARegistrar, String username) {
+    public DTOMovimiento registrarMovimiento (DTOTransaccionARegistrar transaccionARegistrar, String username) {
         Moneda monedaSeleccionada = monedaRepository.findBynombreMoneda(transaccionARegistrar.getMoneda());
         TipoMovimiento tipoMovimientoSeleccionado = tipoMovimientoRepository.findBynombreTipoMovimiento(transaccionARegistrar.getTipoTransaccion());
         CategoriaMovimiento categoriaMovimientoSeleccionada = categoriaMovimientoRepository.findBynombreCategoriaMovimiento(transaccionARegistrar.getCategoria());
         Usuario usuarioActivo = usuarioRepository.findByEmail(username).get();
+
         Empleado empleadoActivo = usuarioActivo.getEmpleado();
 
         EmpleadoCaja cajaEmpleadoActivo = empleadoCajaRepository.findByEmpleadoAndFechaHoraBajaEmpleadoCajaIsNull(empleadoActivo);
 
+        logger.info("Monto movimiento" + transaccionARegistrar.getMonto());
         Movimiento nuevoMovimiento = Movimiento.builder()
                 .moneda(monedaSeleccionada)
                 .descripcionMovimiento(transaccionARegistrar.getDescripcion())
@@ -91,8 +94,70 @@ public class ExpertoRegistrarIngresoEgresoCaja {
                 .nroMovimiento(Movimiento.generarProximoNumero(movimientoRepository))
                 .build();
 
+        //guardo en la base de datos el nuevo movimiento
         movimientoRepository.save(nuevoMovimiento);
 
-        return nuevoMovimiento;
+        if (tipoMovimientoSeleccionado.getNombreTipoMovimiento().equals("Ingreso")) {
+            if (monedaSeleccionada.getNombreMoneda().equals("Peso Argentino")) {
+                //modifico el balance de la caja del empleado
+                BigDecimal balanceAntiguo = cajaEmpleadoActivo.getBalanceARS();
+                cajaEmpleadoActivo.setBalanceARS(balanceAntiguo.add(BigDecimal.valueOf(transaccionARegistrar.getMonto())));
+            } else {
+                BigDecimal balanceAntiguo = cajaEmpleadoActivo.getBalanceUSD();
+                cajaEmpleadoActivo.setBalanceUSD(balanceAntiguo.add(BigDecimal.valueOf(transaccionARegistrar.getMonto())));
+            }
+        } else if (tipoMovimientoSeleccionado.getNombreTipoMovimiento().equals("Egreso")) {
+            if (monedaSeleccionada.getNombreMoneda().equals("Peso Argentino")) {
+                //modifico el balance de la caja del empleado
+                BigDecimal balanceAntiguo = cajaEmpleadoActivo.getBalanceARS();
+                cajaEmpleadoActivo.setBalanceARS(balanceAntiguo.subtract(BigDecimal.valueOf(transaccionARegistrar.getMonto())));
+            } else {
+                BigDecimal balanceAntiguo = cajaEmpleadoActivo.getBalanceUSD();
+                cajaEmpleadoActivo.setBalanceUSD(balanceAntiguo.subtract(BigDecimal.valueOf(transaccionARegistrar.getMonto())));
+            }
+        }
+
+        //guardo lo cambiado en la caja del empleado
+        empleadoCajaRepository.save(cajaEmpleadoActivo);
+
+        //creo DTOMovimiento para poder transferir datos
+        DTOMovimiento dto = DTOMovimiento.builder()
+                .nroMovimiento(nuevoMovimiento.getNroMovimiento())
+
+                .nroCajaMadre(
+                        nuevoMovimiento.getCajaMadre() != null
+                                ? nuevoMovimiento.getCajaMadre().getNroCajaMadre()
+                                : 0
+                )
+
+                .descripcionMovimiento(nuevoMovimiento.getDescripcionMovimiento())
+
+                .nroTarea(
+                        nuevoMovimiento.getTarea() != null
+                                ? nuevoMovimiento.getTarea().getNroTarea()
+                                : 0
+                )
+
+                .nroInmuebleCaja(
+                        nuevoMovimiento.getInmuebleCaja() != null
+                                ? nuevoMovimiento.getInmuebleCaja().getNroInmuebleCaja()
+                                : 0
+                )
+
+                .codReserva(
+                        nuevoMovimiento.getReserva() != null
+                                ? nuevoMovimiento.getReserva().getCodReserva()
+                                : ""
+                )
+
+                .codCategoriaMovimiento(nuevoMovimiento.getCategoriaMovimiento().getCodCategoriaMovimiento())
+                .nroEmpleadoCaja(nuevoMovimiento.getEmpleadoCaja().getNroEmpleadoCaja())
+                .fechaMovimiento(nuevoMovimiento.getFechaMovimiento())
+                .codMoneda(nuevoMovimiento.getMoneda().getCodMoneda())
+                .montoMovimiento(nuevoMovimiento.getMontoMovimiento())
+                .codTipoMovimiento(nuevoMovimiento.getTipoMovimiento().getCodTipoMovimiento())
+                .build();
+
+        return dto;
     }
 }
