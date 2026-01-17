@@ -89,7 +89,7 @@ export const FormFinalizarTareaAgregarIE: React.FC = () => {
                     icon={<IoMdArrowRoundBack />}
                     onClick={handleVolver}
                 />
-                <h1>Agregar Ingreso/Egreso</h1>
+                <h2>Agregar Ingreso/Egreso</h2>
             </header>
 
             {/* Contenido principal */}

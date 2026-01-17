@@ -29,10 +29,11 @@ public class DataInitialazer {
     private final EmpleadoRolRepository empleadoRolRepository;
     private final EmpleadoCajaRepository empleadoCajaRepository;
     private final CajaMadreRepository cajaMadreRepository;
+    private final TareaRepository tareaRepository;
     private final ExpertoABMEmpleado expertoABMEmpleado;
 
     // Constructor correcto para la inyección de dependencia
-    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository, EmpleadoRepository empleadoRepository, EmpleadoRolRepository empleadoRolRepository, ExpertoABMEmpleado expertoABMEmpleado, EmpleadoCajaRepository empleadoCajaRepository, CajaMadreRepository cajaMadreRepository) {
+    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository, EmpleadoRepository empleadoRepository, EmpleadoRolRepository empleadoRolRepository, ExpertoABMEmpleado expertoABMEmpleado, EmpleadoCajaRepository empleadoCajaRepository, CajaMadreRepository cajaMadreRepository, TareaRepository tareaRepository) {
         this.estadoReservaRepository = estadoReservaRepository;
         this.tipoMovimientoRepository = tipoMovimientoRepository;
         this.tipoTareaRepository = tipoTareaRepository;
@@ -45,6 +46,7 @@ public class DataInitialazer {
         this.expertoABMEmpleado = expertoABMEmpleado;
         this.empleadoCajaRepository = empleadoCajaRepository;
         this.cajaMadreRepository = cajaMadreRepository;
+        this.tareaRepository = tareaRepository;
     }
 
     // ========================
@@ -310,5 +312,19 @@ public class DataInitialazer {
         } else {
             System.out.println("Empleado maestro ya existente!");
         }
+
+        //inicializacion tareas de ejemplo BORRAR DSP?
+        if (tareaRepository.count() == 0) {
+
+            Reserva reserva = reservaRepository.findByCodReserva("RES003").get(0);
+            TipoTarea tipoTarea = tipoTareaRepository.findByCodTipoTarea("TT001").get(0);
+            EstadoTarea estadoTarea = estadoTareaRepository.findByNombreEstadoTarea("Asignada");
+            Empleado empleado = empleadoRepository.findByDniEmpleado("44564456").orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+
+            Tarea tarea1 = new Tarea(1L, "Check in Cabaña Montaña", "Realizar el check in del inmueble Cabaña Montaña", LocalDateTime.now(), reserva.getFechaHoraInicioReserva(), reserva.getFechaHoraInicioReserva().plusHours(1), tipoTarea, estadoTarea, empleado, reserva);
+
+            tareaRepository.save(tarea1);
+        }
+        //inicializacion tareas de ejemplo BORRAR DSP?
     }
 }

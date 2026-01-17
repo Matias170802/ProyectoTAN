@@ -63,7 +63,7 @@ export const ModalFinalizarTarea: React.FC<PropsFinalizarTarea> = ({isOpen, onCl
 
     const handleFinalizarTarea = async () => {
         try {
-            const response = await fetch(`/api/tareas/finalizar/${tarea.nroTarea}`, {
+            const response = await fetch(`/api/reservas/finalizarTarea`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ export const ModalFinalizarTarea: React.FC<PropsFinalizarTarea> = ({isOpen, onCl
                     <p id='tituloDetallesTarea'>Detalles de la tarea:</p>
                     <p className='detallesTareaTexto'>Ubicación: {tarea.ubicacionTarea}</p>
                     <p className='detallesTareaTexto'>
-                        Fecha y hora: {tarea.fechaYHoraTarea.toLocaleDateString('es-AR', {
+                        Fecha y hora: {new Date(tarea.fechaYHoraTarea).toLocaleDateString('es-AR', {
                             year: 'numeric',
                             month: '2-digit',
                             day: '2-digit',

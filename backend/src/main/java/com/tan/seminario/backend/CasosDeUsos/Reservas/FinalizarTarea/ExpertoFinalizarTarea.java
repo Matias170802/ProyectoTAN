@@ -30,6 +30,10 @@ public class ExpertoFinalizarTarea {
 
         Tarea tareaAFinalizar = tareaRepository.findTareaByNroTarea(tareaFinalizadaARegistrar.getNroTarea());
 
+        if (tareaAFinalizar == null) {
+            throw new RuntimeException("No se encuentra la Tarea con el Nro de Tarea: " + tareaFinalizadaARegistrar.getNroTarea());
+        }
+
         tareaAFinalizar.setEstadoTarea(estadoTareaRepository.findByNombreEstadoTarea("Finalizada"));
 
         for (DTOTransaccionARegistrar movimiento: tareaFinalizadaARegistrar.getMovimientosARegistrar()) {
