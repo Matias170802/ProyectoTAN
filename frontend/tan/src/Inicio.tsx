@@ -19,6 +19,7 @@ function AppContent() {
   const [finalizarTareaSeleccionada, setFinalizarTareaSeleccionada] = useState<number | null>(null);
   const location = useLocation();
 
+  console.log("Tareas asignadas:", tareas);
   // Efecto para manejar el regreso desde agregar IE
     useEffect(() => {
     if (location.state?.volviendoDeAgregarIE && location.state?.abrirModalFinalizar) {

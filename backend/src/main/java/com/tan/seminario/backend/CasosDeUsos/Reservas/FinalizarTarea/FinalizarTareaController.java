@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/reservas/finalizarTarea")
 public class FinalizarTareaController {
@@ -18,10 +20,11 @@ public class FinalizarTareaController {
     }
 
     @PostMapping
-    public ResponseEntity<Tarea> finalizarTarea(@RequestBody DTOTareaFinalizadaARegistrar tareaFinalizadaARegistrar, Authentication authentication) {
+    public ResponseEntity finalizarTarea(@RequestBody DTOTareaFinalizadaARegistrar tareaFinalizadaARegistrar, Authentication authentication) {
 
         String username = authentication.getName();
-        Tarea nuevaTarea = expertoFinalizarTarea.finalizarTarea(tareaFinalizadaARegistrar, username);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaTarea);
+        expertoFinalizarTarea.finalizarTarea(tareaFinalizadaARegistrar, username);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("resultado", "EXITO"));
+
     }
 }

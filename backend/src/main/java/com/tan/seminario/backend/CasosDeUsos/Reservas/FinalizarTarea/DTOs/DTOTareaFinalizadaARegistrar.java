@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class DTOTareaFinalizadaARegistrar {
     private Long nroTarea;
     private List<DTOTransaccionARegistrar> movimientosARegistrar = new java.util.ArrayList<>();

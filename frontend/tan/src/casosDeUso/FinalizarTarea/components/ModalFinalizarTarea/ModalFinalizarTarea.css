@@ -6,6 +6,89 @@
     gap: 1.5rem;
 }
 
+/* Estilos de éxito */
+#seccionExito {
+    margin-bottom: 1rem;
+}
+
+.contenedor-alerta-exito {
+    background-color: #d4edda;
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.titulo-exito {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #155724;
+}
+
+.mensaje-exito {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #155724;
+    line-height: 1.5;
+}
+
+.subtitulo-exito {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #155724;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* Estilos de error */
+#seccionError {
+    margin-bottom: 1rem;
+}
+
+.contenedor-alerta-error {
+    background-color: #fee;
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.titulo-error {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #dc3545;
+}
+
+.mensaje-error {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #721c24;
+    line-height: 1.5;
+}
+
+.boton-cerrar-error {
+    align-self: flex-end;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.boton-cerrar-error:hover {
+    background-color: #c82333;
+}
+
 #seccionDetallesTarea {
     margin-bottom: 1rem;
     padding-bottom: 1.5rem;

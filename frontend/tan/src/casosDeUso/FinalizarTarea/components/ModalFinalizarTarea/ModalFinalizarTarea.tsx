@@ -13,9 +13,15 @@ export const ModalFinalizarTarea: React.FC<PropsFinalizarTarea> = ({isOpen, onCl
     const navigate = useNavigate();
     const location = useLocation();
     const [transaccionesTemporales, setTransaccionesTemporales] = useState<[Transaccion] | []>([]);
+    const [mensajeError, setMensajeError] = useState<string | null>(null);
+    const [mostrarError, setMostrarError] = useState(false);
+    const [mensajeExito, setMensajeExito] = useState<string | null>(null);
+    const [mostrarExito, setMostrarExito] = useState(false);
+    const [cargando, setCargando] = useState(false);
     const {registrarIngresoEgresoCaja} = useIngresoEgresoCaja(); 
     const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
 
+    console.log("Tarea en modal finalizar:", tarea);
     // Cargar transacciones temporales cuando se abre el modal O cuando se vuelve de agregar IE
     useEffect(() => {
         if (isOpen || location.state?.volviendoDeAgregarIE) {
@@ -63,27 +69,61 @@ export const ModalFinalizarTarea: React.FC<PropsFinalizarTarea> = ({isOpen, onCl
 
     const handleFinalizarTarea = async () => {
         try {
+            setCargando(true);
+            setMensajeError(null);
+            
+            // Mapear las transacciones para enviar solo los campos que el backend necesita
+            const movimientosParaBackend = transaccionesTemporales.map(t => ({
+                tipoTransaccion: t.tipoTransaccion,
+                categoria: t.categoria,
+                monto: t.monto,
+                descripcion: t.descripcion || '',
+                moneda: t.moneda
+            }));
+
+            const bodyData = {
+                nroTarea: tarea.nroTarea,
+                movimientosARegistrar: movimientosParaBackend
+            };
+
             const response = await fetch(`/api/reservas/finalizarTarea`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    tareaFinalizadaARegistrar: {
-                        nroTarea: tarea.nroTarea,
-                        movimientosARegistrar: transaccionesTemporales
-                    }
-                })
+                body: JSON.stringify(bodyData)
             })
 
+            const result = await response.json();
+            console.log('Respuesta del backend:', result);
+
             if (response.ok) {
-                alert('Tarea finalizada con éxito');
+                setMensajeExito('Tarea finalizada con éxito');
+                setMostrarExito(true);
+                // Limpiar las transacciones temporales del sessionStorage
+                sessionStorage.removeItem('transaccionesTemporales');
+                sessionStorage.removeItem('tareaActual');
+                sessionStorage.removeItem('modalFinalizarAbierto');
+                // Cerrar el modal después de 2 segundos
+                setTimeout(() => {
+                    onClose ? onClose() : null;
+                    window.location.reload();
+                }, 2000);
+            } else {
+                console.error('Error del backend:', result);
+                const errorMsg = result.mensaje || result.message || 'Error desconocido al finalizar la tarea';
+                setMensajeError(errorMsg);
+                setMostrarError(true);
             }
             
         } catch (error) {
             console.error('Error al finalizar tarea:', error);
-            alert('Error al finalizar la tarea');
+            const errorMsg = error instanceof Error ? error.message : 'Error de conexión. Intenta nuevamente.';
+            setMensajeError(errorMsg);
+            setMostrarError(true);
+        } finally {
+            setCargando(false);
         }
     };
 
@@ -97,6 +137,36 @@ export const ModalFinalizarTarea: React.FC<PropsFinalizarTarea> = ({isOpen, onCl
         showCloseButton={showCloseButton}
         >
             <div id='contenedorContenidoModal'>
+                {/* Sección de éxito */}
+                {mostrarExito && mensajeExito && (
+                    <section id='seccionExito'>
+                        <div className='contenedor-alerta-exito'>
+                            <p className='titulo-exito'>✅ Éxito</p>
+                            <p className='mensaje-exito'>{mensajeExito}</p>
+                            <p className='subtitulo-exito'>El modal se cerrará automáticamente...</p>
+                        </div>
+                    </section>
+                )}
+
+                {/* Sección de error */}
+                {mostrarError && mensajeError && (
+                    <section id='seccionError'>
+                        <div className='contenedor-alerta-error'>
+                            <p className='titulo-error'>⚠️ Error</p>
+                            <p className='mensaje-error'>{mensajeError}</p>
+                            <button 
+                                className='boton-cerrar-error'
+                                onClick={() => {
+                                    setMostrarError(false);
+                                    setMensajeError(null);
+                                }}
+                            >
+                                ✕ Cerrar
+                            </button>
+                        </div>
+                    </section>
+                )}
+
                 <section id='seccionDetallesTarea'>
                     <p id='tituloDetallesTarea'>Detalles de la tarea:</p>
                     <p className='detallesTareaTexto'>Ubicación: {tarea.ubicacionTarea}</p>
@@ -134,13 +204,15 @@ export const ModalFinalizarTarea: React.FC<PropsFinalizarTarea> = ({isOpen, onCl
                     icon={<IoMdAddCircleOutline/>}
                     onClick={handleAgregarIE}
                     id='botonAgregarIngreso'
+                    disabled={cargando}
                     />
 
                     <Button
-                    label='Finalizar Tarea'
+                    label={cargando ? 'Finalizando...' : 'Finalizar Tarea'}
                     icon={<FaRegCheckCircle />}
                     onClick={handleFinalizarTarea}
                     id='botonFinalizarTarea'
+                    disabled={cargando}
                     />
                 </section>
 
