@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/api/clientes")
 @RequireRoles("ROL002") // Solo Gerencia puede gestionar clientes
 @RequiredArgsConstructor
-public class ABMClienteController {
+public class    ABMClienteController {
 
     private final ExpertoABMCliente expertoABMCliente;
 

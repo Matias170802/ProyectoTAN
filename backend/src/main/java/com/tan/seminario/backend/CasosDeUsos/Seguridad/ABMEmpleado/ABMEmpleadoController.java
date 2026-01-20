@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/empleado")
+@RequestMapping("/api/empleado")
 @RequireRoles("ROL002")
 @RequiredArgsConstructor
 public class ABMEmpleadoController {
