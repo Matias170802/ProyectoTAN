@@ -45,7 +45,7 @@ export interface DTOEmpleadoListado {
 }
 
 export const useGerencia = () => {
-    const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+    const token = useMemo(() => localStorage.getItem('access_token') || sessionStorage.getItem('access_token'), []);
 
     // Memoizar las opciones de autorización para evitar que el objeto options cambie en cada render
     const authOptions = useMemo(() => token ? { headers: { 'Authorization': `Bearer ${token}` } } : undefined, [token]);
