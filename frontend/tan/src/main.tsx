@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import Inicio from './Inicio.tsx'
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import {MainPageAdministrador, MainPageCliente, MainPageFinanzas, MainPageMiCaja, MainPagePerfil, MainPageReservas, MainPageRegistrarIngresoEgresoCaja, MainPageReportes} from './routes/index.ts'
+import {MainPageAdministrador, MainPageCliente, MainPageFinanzas, MainPageGerencia, MainPageMiCaja, MainPagePerfil, MainPageReservas, MainPageRegistrarIngresoEgresoCaja, MainPageReportes} from './routes/index.ts'
 import AdministrarRolesDeUsuarioPage from './casosDeUso/AdministrarRolesDeUsuario/pages/AdministrarRolesDeUsuarioPage';
 import { Navbar } from './generalComponents/index.ts';
 import { FormFinalizarTareaAgregarIE } from './casosDeUso/FinalizarTarea/components/FormFinalizarTareaAgregarIE/FormFinalizarTareaAregarIE.tsx';
@@ -35,6 +35,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/admin/roles" element={<ProtectedRoute><AdministrarRolesDeUsuarioPage/></ProtectedRoute>}/>
           <Route path="/cliente" element={<ProtectedRoute><MainPageCliente/></ProtectedRoute>}/>
           <Route path="/finanzas" element={<ProtectedRoute><MainPageFinanzas/></ProtectedRoute>}/>
+          <Route path="/gerencia" element={<ProtectedRoute><MainPageGerencia/></ProtectedRoute>}/>
           <Route path="/micaja" element={<ProtectedRoute><MainPageMiCaja/></ProtectedRoute>}/>
           <Route path="/perfil" element={<ProtectedRoute><MainPagePerfil/></ProtectedRoute>}/>
           <Route path="/reservas" element={<ProtectedRoute><MainPageReservas/></ProtectedRoute>}/>

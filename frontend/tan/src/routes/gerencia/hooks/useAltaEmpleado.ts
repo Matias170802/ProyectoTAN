@@ -31,7 +31,7 @@ export const useAltaEmpleado = () => {
         try {
             const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
             
-            const response = await fetch('/empleado/alta', {
+            const response = await fetch('/api/empleado/alta', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -1,6 +1,5 @@
 // frontend/tan/src/routes/gerencia/MainPageGerencia.tsx
-import React, { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
 import { Button, List } from '../../generalComponents';
 import { useGerencia } from './useGerencia';
 import ModalAltaCliente from './components/ModalAltaCliente';
@@ -31,7 +30,7 @@ const MainPageGerencia: React.FC = () => {
     // Adaptadores para mostrar los datos en formato tabla
     const inmueblesAdaptados = (inmuebles || []).map(i => ({
         id: i.id,
-        codInmueble: i.codInmueble,
+        codigoInmueble: i.codInmueble,
         nombreInmueble: i.nombreInmueble,
         nombreCliente: i.nombreCliente,
         direccion: i.direccion,
@@ -41,7 +40,7 @@ const MainPageGerencia: React.FC = () => {
 
     const clientesAdaptados = (clientes || []).map(c => ({
         id: c.id,
-        codCliente: c.codCliente,
+        codigoCliente: c.codCliente,
         nombreCliente: c.nombreCliente,
         dniCliente: c.dniCliente,
         cantidadInmuebles: c.cantidadInmuebles,
@@ -50,7 +49,7 @@ const MainPageGerencia: React.FC = () => {
 
     const empleadosAdaptados = (empleados || []).map(e => ({
         id: e.id,
-        codEmpleado: e.codEmpleado,
+        codigoEmpleado: e.codEmpleado,
         nombreEmpleado: e.nombreEmpleado,
         dniEmpleado: e.dniEmpleado,
         nombresRoles: e.nombresRoles?.join(', ') || 'Sin roles',
@@ -105,11 +104,11 @@ const MainPageGerencia: React.FC = () => {
     const getColumnasActuales = (): string[] => {
         switch (vistaActual) {
             case 'inmuebles':
-                return ['codInmueble', 'nombreInmueble', 'nombreCliente', 'direccion', 'm2Inmueble'];
+                return ['codigoInmueble', 'nombreInmueble', 'nombreCliente', 'direccion', 'm2Inmueble'];
             case 'clientes':
-                return ['codCliente', 'nombreCliente', 'dniCliente', 'cantidadInmuebles'];
+                return ['codigoCliente', 'nombreCliente', 'dniCliente', 'cantidadInmuebles'];
             case 'empleados':
-                return ['codEmpleado', 'nombreEmpleado', 'dniEmpleado', 'nombresRoles', 'balanceCajaARS', 'balanceCajaUSD'];
+                return ['codigoEmpleado', 'nombreEmpleado', 'dniEmpleado', 'nombresRoles', 'balanceCajaARS', 'balanceCajaUSD'];
             default:
                 return [];
         }
@@ -127,32 +126,6 @@ const MainPageGerencia: React.FC = () => {
                 return [];
         }
     };
-
-    // Debug: detectar cambios de ruta cuando estamos en Gerencia
-    const location = useLocation();
-    const lastPathRef = useRef(location.pathname);
-
-    useEffect(() => {
-        if (lastPathRef.current !== location.pathname) {
-            console.debug('[Gerencia] location changed:', lastPathRef.current, '->', location.pathname);
-            // Si salimos de /gerencia y React Router no realiza la transición correctamente,
-            // forzamos una recarga completa para asegurar que la nueva ruta cargue.
-            if (lastPathRef.current === '/gerencia' && location.pathname !== '/gerencia') {
-                console.warn('[Gerencia] Detected navigation away from /gerencia; forcing full reload to', location.pathname);
-                // Esperar un frame para darle oportunidad al router, luego forzar reload
-                setTimeout(() => {
-                    if (window.location.pathname !== location.pathname) {
-                        window.location.assign(location.pathname);
-                    } else {
-                        // Si la URL ya cambió pero la app no actualizó, recargar de todos modos
-                        window.location.reload();
-                    }
-                }, 50);
-            }
-            lastPathRef.current = location.pathname;
-        }
-    }, [location.pathname]);
-
     const getTituloActual = (): string => {
         switch (vistaActual) {
             case 'inmuebles':

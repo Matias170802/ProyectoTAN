@@ -1,13 +1,15 @@
 // frontend/tan/src/routes/gerencia/components/ModalAltaEmpleado.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Modal, Button } from '../../../generalComponents';
 import { useAltaEmpleado } from '../hooks/useAltaEmpleado';
 import { useFetch } from '../../../generalHooks/useFetch';
 import './ModalAltaEntidad.css';
 
 interface Rol {
-    codRol: string;
-    nombreRol: string;
+    id: number;
+    codigo: string;
+    nombre: string;
 }
 
 interface ModalAltaEmpleadoProps {
@@ -18,19 +20,45 @@ interface ModalAltaEmpleadoProps {
 
 const ModalAltaEmpleado: React.FC<ModalAltaEmpleadoProps> = ({ isOpen, onClose, onSuccess }) => {
     const { altaEmpleado, loading, error, success, resetState } = useAltaEmpleado();
-    const { data: roles } = useFetch<Rol[]>('/api/roles');
+    const [showPassword, setShowPassword] = useState(false);
+    
+    const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+    const authOptions = useMemo(() => token ? { headers: { 'Authorization': `Bearer ${token}` } } : undefined, [token]);
+    const { data: rolesData } = useFetch<Rol[]>('/api/roles', authOptions);
+    
+    // Filtrar roles: excluir "Cliente" (ROL006) y obtener solo los disponibles
+    const rolesDisponibles = useMemo(() => {
+        if (!rolesData) return [];
+        return rolesData.filter(rol => rol.codigo !== 'ROL006');
+    }, [rolesData]);
+
+    // Obtener el código del rol "Empleado"
+    const rolEmpleadoCodigo = useMemo(() => {
+        const rolEmpleado = rolesDisponibles.find(r => r.nombre === 'Empleado');
+        return rolEmpleado?.codigo || 'ROL003';
+    }, [rolesDisponibles]);
     
     const [formData, setFormData] = useState({
         dniEmpleado: '',
         nombreEmpleado: '',
         nroTelefonoEmpleado: '',
         salarioEmpleado: '',
-        codRoles: [] as string[],
+        codRoles: [rolEmpleadoCodigo],
         email: '',
-        password: ''
+        password: 'Passw0rd!'
     });
 
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+
+    // Actualizar el rol empleado cuando se carga la lista de roles
+    useEffect(() => {
+        setFormData(prev => ({
+            ...prev,
+            codRoles: prev.codRoles.includes(rolEmpleadoCodigo) 
+                ? prev.codRoles 
+                : [rolEmpleadoCodigo, ...prev.codRoles.filter(r => r !== rolEmpleadoCodigo)]
+        }));
+    }, [rolEmpleadoCodigo]);
 
     useEffect(() => {
         if (!isOpen) {
@@ -39,23 +67,20 @@ const ModalAltaEmpleado: React.FC<ModalAltaEmpleadoProps> = ({ isOpen, onClose, 
                 nombreEmpleado: '',
                 nroTelefonoEmpleado: '',
                 salarioEmpleado: '',
-                codRoles: [],
+                codRoles: [rolEmpleadoCodigo],
                 email: '',
-                password: ''
+                password: 'Passw0rd!'
             });
             setValidationErrors({});
             resetState();
         }
-    }, [isOpen, resetState]);
+    }, [isOpen, resetState, rolEmpleadoCodigo]);
 
     useEffect(() => {
         if (success) {
-            setTimeout(() => {
-                onSuccess();
-                onClose();
-            }, 2000);
+            // No hacer nada, dejar que el usuario haga clic en "Aceptar"
         }
-    }, [success, onSuccess, onClose]);
+    }, [success]);
 
     const validateForm = (): boolean => {
         const errors: Record<string, string> = {};
@@ -68,6 +93,8 @@ const ModalAltaEmpleado: React.FC<ModalAltaEmpleadoProps> = ({ isOpen, onClose, 
 
         if (!formData.nombreEmpleado.trim()) {
             errors.nombreEmpleado = 'El nombre es obligatorio';
+        } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.nombreEmpleado)) {
+            errors.nombreEmpleado = 'El nombre solo puede contener letras';
         } else if (formData.nombreEmpleado.length < 3 || formData.nombreEmpleado.length > 50) {
             errors.nombreEmpleado = 'El nombre debe tener entre 3 y 50 caracteres';
         }
@@ -96,8 +123,8 @@ const ModalAltaEmpleado: React.FC<ModalAltaEmpleadoProps> = ({ isOpen, onClose, 
 
         if (!formData.password.trim()) {
             errors.password = 'La contraseña es obligatoria';
-        } else if (formData.password.length < 8) {
-            errors.password = 'La contraseña debe tener al menos 8 caracteres';
+        } else if (formData.password.length < 8 || formData.password.length > 50) {
+            errors.password = 'La contraseña debe tener entre 8 y 50 caracteres';
         }
 
         setValidationErrors(errors);
@@ -111,8 +138,13 @@ const ModalAltaEmpleado: React.FC<ModalAltaEmpleadoProps> = ({ isOpen, onClose, 
 
         try {
             await altaEmpleado({
-                ...formData,
-                salarioEmpleado: Number(formData.salarioEmpleado)
+                dniEmpleado: formData.dniEmpleado,
+                nombreEmpleado: formData.nombreEmpleado,
+                nroTelefonoEmpleado: formData.nroTelefonoEmpleado,
+                salarioEmpleado: Number(formData.salarioEmpleado),
+                codRoles: formData.codRoles,
+                email: formData.email,
+                password: formData.password
             });
         } catch (err) {
             console.error('Error al crear empleado:', err);
@@ -131,12 +163,17 @@ const ModalAltaEmpleado: React.FC<ModalAltaEmpleadoProps> = ({ isOpen, onClose, 
         }
     };
 
-    const handleRoleToggle = (codRol: string) => {
+    const handleRoleToggle = (codigo: string) => {
+        // No permitir desmarcar el rol "Empleado"
+        if (codigo === rolEmpleadoCodigo) {
+            return;
+        }
+
         setFormData(prev => ({
             ...prev,
-            codRoles: prev.codRoles.includes(codRol)
-                ? prev.codRoles.filter(r => r !== codRol)
-                : [...prev.codRoles, codRol]
+            codRoles: prev.codRoles.includes(codigo)
+                ? prev.codRoles.filter(r => r !== codigo)
+                : [...prev.codRoles, codigo]
         }));
         if (validationErrors.codRoles) {
             setValidationErrors(prev => {
@@ -159,161 +196,224 @@ const ModalAltaEmpleado: React.FC<ModalAltaEmpleadoProps> = ({ isOpen, onClose, 
             <form onSubmit={handleSubmit} className="modal-alta-form modal-alta-form-wide">
                 {error && (
                     <div className="alert-error">
-                        {error}
+                        <strong>Error:</strong> {error}
                     </div>
                 )}
 
                 {success && (
-                    <div className="alert-success">
-                        <p><strong>¡Empleado creado exitosamente!</strong></p>
-                        <p>Email: {success.email}</p>
-                        <p>Contraseña: {success.password}</p>
-                        <p className="alert-note">⚠️ Guarda esta contraseña, no se mostrará nuevamente</p>
+                    <div style={{ textAlign: 'center' }}>
+                        <div className="alert-success" style={{ marginBottom: '24px' }}>
+                            <p style={{ fontSize: '18px', marginBottom: '16px' }}><strong>✓ ¡Empleado creado exitosamente!</strong></p>
+                            <div style={{ backgroundColor: '#f5f5f5', padding: '16px', borderRadius: '4px', marginBottom: '16px' }}>
+                                <p style={{ margin: '8px 0' }}>
+                                    <strong>Email:</strong><br/>
+                                    <code style={{ backgroundColor: '#fff', padding: '8px', borderRadius: '3px', display: 'inline-block', marginTop: '4px' }}>
+                                        {success.email}
+                                    </code>
+                                </p>
+                                <p style={{ margin: '12px 0 0 0' }}>
+                                    <strong>Contraseña:</strong><br/>
+                                    <code style={{ backgroundColor: '#fff', padding: '8px', borderRadius: '3px', display: 'inline-block', marginTop: '4px' }}>
+                                        {success.password}
+                                    </code>
+                                </p>
+                            </div>
+                            <p style={{ fontSize: '14px', color: '#d32f2f', marginBottom: '0' }}>⚠️ Guarda estas credenciales. No se mostrarán nuevamente.</p>
+                        </div>
+
+                        <div className="form-actions" style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
+                            <Button
+                                label="Aceptar"
+                                onClick={() => {
+                                    onSuccess();
+                                    onClose();
+                                }}
+                                className="btn-primary"
+                            />
+                        </div>
                     </div>
                 )}
 
-                <div className="form-row">
-                    <div className="form-group">
-                        <label htmlFor="dniEmpleado">DNI *</label>
-                        <input
-                            type="text"
-                            id="dniEmpleado"
-                            name="dniEmpleado"
-                            value={formData.dniEmpleado}
-                            onChange={handleInputChange}
-                            placeholder="12345678"
-                            disabled={loading}
-                            className={validationErrors.dniEmpleado ? 'input-error' : ''}
-                        />
-                        {validationErrors.dniEmpleado && (
-                            <span className="error-text">{validationErrors.dniEmpleado}</span>
-                        )}
-                    </div>
+                {!success && (
+                    <>
+                        <div style={{ display: 'flex', gap: '24px' }}>
+                            {/* Columna izquierda - Campos de texto */}
+                            <div style={{ flex: '1' }}>
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label htmlFor="dniEmpleado">DNI *</label>
+                                        <input
+                                            type="text"
+                                            id="dniEmpleado"
+                                            name="dniEmpleado"
+                                            value={formData.dniEmpleado}
+                                            onChange={handleInputChange}
+                                            placeholder="12345678"
+                                            disabled={loading}
+                                            className={validationErrors.dniEmpleado ? 'input-error' : ''}
+                                        />
+                                        {validationErrors.dniEmpleado && (
+                                            <span className="error-text">{validationErrors.dniEmpleado}</span>
+                                        )}
+                                    </div>
 
-                    <div className="form-group">
-                        <label htmlFor="nombreEmpleado">Nombre Completo *</label>
-                        <input
-                            type="text"
-                            id="nombreEmpleado"
-                            name="nombreEmpleado"
-                            value={formData.nombreEmpleado}
-                            onChange={handleInputChange}
-                            placeholder="Juan Pérez"
-                            disabled={loading}
-                            className={validationErrors.nombreEmpleado ? 'input-error' : ''}
-                        />
-                        {validationErrors.nombreEmpleado && (
-                            <span className="error-text">{validationErrors.nombreEmpleado}</span>
-                        )}
-                    </div>
-                </div>
+                                    <div className="form-group">
+                                        <label htmlFor="nombreEmpleado">Nombre Completo *</label>
+                                        <input
+                                            type="text"
+                                            id="nombreEmpleado"
+                                            name="nombreEmpleado"
+                                            value={formData.nombreEmpleado}
+                                            onChange={handleInputChange}
+                                            placeholder="Juan Pérez"
+                                            disabled={loading}
+                                            className={validationErrors.nombreEmpleado ? 'input-error' : ''}
+                                        />
+                                        {validationErrors.nombreEmpleado && (
+                                            <span className="error-text">{validationErrors.nombreEmpleado}</span>
+                                        )}
+                                    </div>
+                                </div>
 
-                <div className="form-row">
-                    <div className="form-group">
-                        <label htmlFor="nroTelefonoEmpleado">Teléfono *</label>
-                        <input
-                            type="text"
-                            id="nroTelefonoEmpleado"
-                            name="nroTelefonoEmpleado"
-                            value={formData.nroTelefonoEmpleado}
-                            onChange={handleInputChange}
-                            placeholder="2611234567"
-                            disabled={loading}
-                            className={validationErrors.nroTelefonoEmpleado ? 'input-error' : ''}
-                        />
-                        {validationErrors.nroTelefonoEmpleado && (
-                            <span className="error-text">{validationErrors.nroTelefonoEmpleado}</span>
-                        )}
-                    </div>
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label htmlFor="nroTelefonoEmpleado">Teléfono *</label>
+                                        <input
+                                            type="text"
+                                            id="nroTelefonoEmpleado"
+                                            name="nroTelefonoEmpleado"
+                                            value={formData.nroTelefonoEmpleado}
+                                            onChange={handleInputChange}
+                                            placeholder="2611234567"
+                                            disabled={loading}
+                                            className={validationErrors.nroTelefonoEmpleado ? 'input-error' : ''}
+                                        />
+                                        {validationErrors.nroTelefonoEmpleado && (
+                                            <span className="error-text">{validationErrors.nroTelefonoEmpleado}</span>
+                                        )}
+                                    </div>
 
-                    <div className="form-group">
-                        <label htmlFor="salarioEmpleado">Salario *</label>
-                        <input
-                            type="number"
-                            id="salarioEmpleado"
-                            name="salarioEmpleado"
-                            value={formData.salarioEmpleado}
-                            onChange={handleInputChange}
-                            placeholder="50000"
-                            disabled={loading}
-                            className={validationErrors.salarioEmpleado ? 'input-error' : ''}
-                        />
-                        {validationErrors.salarioEmpleado && (
-                            <span className="error-text">{validationErrors.salarioEmpleado}</span>
-                        )}
-                    </div>
-                </div>
+                                    <div className="form-group">
+                                        <label htmlFor="salarioEmpleado">Salario *</label>
+                                        <input
+                                            type="number"
+                                            id="salarioEmpleado"
+                                            name="salarioEmpleado"
+                                            value={formData.salarioEmpleado}
+                                            onChange={handleInputChange}
+                                            placeholder="50000"
+                                            disabled={loading}
+                                            className={validationErrors.salarioEmpleado ? 'input-error' : ''}
+                                        />
+                                        {validationErrors.salarioEmpleado && (
+                                            <span className="error-text">{validationErrors.salarioEmpleado}</span>
+                                        )}
+                                    </div>
+                                </div>
 
-                <div className="form-row">
-                    <div className="form-group">
-                        <label htmlFor="email">Email *</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            placeholder="empleado@ejemplo.com"
-                            disabled={loading}
-                            className={validationErrors.email ? 'input-error' : ''}
-                        />
-                        {validationErrors.email && (
-                            <span className="error-text">{validationErrors.email}</span>
-                        )}
-                    </div>
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label htmlFor="email">Email *</label>
+                                        <input
+                                            type="email"
+                                            id="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            placeholder="empleado@ejemplo.com"
+                                            disabled={loading}
+                                            className={validationErrors.email ? 'input-error' : ''}
+                                        />
+                                        {validationErrors.email && (
+                                            <span className="error-text">{validationErrors.email}</span>
+                                        )}
+                                    </div>
 
-                    <div className="form-group">
-                        <label htmlFor="password">Contraseña *</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            placeholder="Mínimo 8 caracteres"
-                            disabled={loading}
-                            className={validationErrors.password ? 'input-error' : ''}
-                        />
-                        {validationErrors.password && (
-                            <span className="error-text">{validationErrors.password}</span>
-                        )}
-                    </div>
-                </div>
+                                    <div className="form-group">
+                                        <label htmlFor="password">Contraseña *</label>
+                                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                                            <input
+                                                type={showPassword ? 'text' : 'password'}
+                                                id="password"
+                                                name="password"
+                                                value={formData.password}
+                                                onChange={handleInputChange}
+                                                placeholder="Mínimo 8 caracteres"
+                                                disabled={loading}
+                                                className={validationErrors.password ? 'input-error' : ''}
+                                                style={{ paddingRight: '40px' }}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                disabled={loading}
+                                                style={{
+                                                    position: 'absolute',
+                                                    right: '10px',
+                                                    background: 'none',
+                                                    border: 'none',
+                                                    cursor: loading ? 'not-allowed' : 'pointer',
+                                                    color: '#666',
+                                                    padding: '0',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center'
+                                                }}
+                                                title={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                                            >
+                                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                            </button>
+                                        </div>
+                                        {validationErrors.password && (
+                                            <span className="error-text">{validationErrors.password}</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
 
-                <div className="form-group">
-                    <label>Roles * (seleccione al menos uno)</label>
-                    <div className="roles-container">
-                        {roles?.map(rol => (
-                            <label key={rol.codRol} className="checkbox-label">
-                                <input
-                                    type="checkbox"
-                                    checked={formData.codRoles.includes(rol.codRol)}
-                                    onChange={() => handleRoleToggle(rol.codRol)}
-                                    disabled={loading}
-                                />
-                                <span>{rol.nombreRol}</span>
-                            </label>
-                        ))}
-                    </div>
-                    {validationErrors.codRoles && (
-                        <span className="error-text">{validationErrors.codRoles}</span>
-                    )}
-                </div>
+                            {/* Columna derecha - Roles */}
+                            <div style={{ flex: '0.8', minWidth: '250px' }}>
+                                <div className="form-group">
+                                    <label>Roles * (seleccione al menos uno)</label>
+                                    <div className="roles-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                        {rolesDisponibles.map(rol => (
+                                            <label key={rol.codigo} className="checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.codRoles.includes(rol.codigo)}
+                                                    onChange={() => handleRoleToggle(rol.codigo)}
+                                                    disabled={loading || rol.codigo === rolEmpleadoCodigo}
+                                                    style={{ cursor: rol.codigo === rolEmpleadoCodigo ? 'not-allowed' : 'pointer' }}
+                                                />
+                                                <span>
+                                                    {rol.nombre}
+                                                    {rol.codigo === rolEmpleadoCodigo && <span style={{ marginLeft: '8px', fontSize: '0.85em', color: '#666' }}>(obligatorio)</span>}
+                                                </span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                    {validationErrors.codRoles && (
+                                        <span className="error-text">{validationErrors.codRoles}</span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
 
-                <div className="form-actions">
-                    <Button
-                        type="button"
-                        label="Cancelar"
-                        onClick={onClose}
-                        disabled={loading}
-                    />
-                    <Button
-                        type="submit"
-                        label={loading ? 'Creando...' : 'Crear Empleado'}
-                        disabled={loading}
-                        className="btn-primary"
-                    />
-                </div>
+                        <div className="form-actions" style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
+                            <Button
+                                label="Cancelar"
+                                onClick={onClose}
+                                disabled={loading}
+                            />
+                            <Button
+                                label={loading ? 'Creando...' : 'Crear Empleado'}
+                                disabled={loading}
+                                className="btn-primary"
+                                onClick={(e) => handleSubmit(e as React.FormEvent<HTMLFormElement>)}
+                            />
+                        </div>
+                    </>
+                )}
             </form>
         </Modal>
     );

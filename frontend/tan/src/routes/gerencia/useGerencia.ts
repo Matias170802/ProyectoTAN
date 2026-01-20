@@ -66,13 +66,13 @@ export const useGerencia = () => {
         refetch: refetchClientes 
     } = useFetch<DTOClienteListado[]>('/api/clientes/listar', authOptions);
 
-    // Fetch de empleados (corregido: endpoint con prefijo /api/empleados)
+    // Fetch de empleados
     const { 
         data: empleados, 
         loading: loadingEmpleados, 
         error: errorEmpleados,
         refetch: refetchEmpleados 
-    } = useFetch<DTOEmpleadoListado[]>('/api/empleados/listar', authOptions);
+    } = useFetch<DTOEmpleadoListado[]>('/api/empleado/listar', authOptions);
 
     // Función para dar de baja inmueble
     const bajaInmueble = async (id: number) => {
@@ -118,7 +118,7 @@ export const useGerencia = () => {
 
     // Función para dar de baja empleado
     const bajaEmpleado = async (id: number) => {
-        const response = await fetch(`/api/empleados/baja/${id}`, {
+        const response = await fetch(`/api/empleado/baja/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
