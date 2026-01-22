@@ -216,11 +216,13 @@ const LoginPage: React.FC = () => {
 
     if (!emailRecuperar.trim()) {
       setRecuperarPasswordMensaje('El email es obligatorio');
+      setRecuperarPasswordSuccess(false);
       return;
     }
 
     if (!/^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(emailRecuperar)) {
       setRecuperarPasswordMensaje('Email inválido');
+      setRecuperarPasswordSuccess(false);
       return;
     }
 
