@@ -62,6 +62,7 @@ public class JwtService {
      */
     private List<String> extractUserRoles(Usuario user) {
         if (user.getEmpleado() != null) {
+            // Es empleado - retornar sus roles asignados
             Empleado empleado = user.getEmpleado();
             return empleado.getEmpleadosRoles().stream()
                     .filter(er -> er.getFechaHoraBajaEmpleadoRol() == null)

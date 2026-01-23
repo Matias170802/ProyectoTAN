@@ -1,6 +1,10 @@
 package com.tan.seminario.backend.Initialazer;
-//clase que se encarga de inicializar los datos que se encuentran en resourses cuando inicia la app y ha cambiado algo
+// NOTA: Si obtienes error de "valor demasiado largo para character varying(255)",
+// necesitas modificar la entidad Token para aumentar el tamaño del campo token
 
+import com.tan.seminario.backend.CasosDeUsos.Inmuebles.ABMCliente.DTOs.AltaCliente.DTOAltaClienteRequest;
+import com.tan.seminario.backend.CasosDeUsos.Inmuebles.ABMCliente.DTOs.AltaCliente.DTOAltaClienteResponse;
+import com.tan.seminario.backend.CasosDeUsos.Inmuebles.ABMCliente.ExpertoABMCliente;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpleado.AltaEmpleadoRequest;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.DTOs.AltaEmpleado.AltaEmpleadoResponse;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMEmpleado.ExpertoABMEmpleado;
@@ -10,6 +14,8 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -31,9 +37,22 @@ public class DataInitialazer {
     private final CajaMadreRepository cajaMadreRepository;
     private final TareaRepository tareaRepository;
     private final ExpertoABMEmpleado expertoABMEmpleado;
+    private final ExpertoABMCliente expertoABMCliente;
 
-    // Constructor correcto para la inyección de dependencia
-    public DataInitialazer(EstadoReservaRepository estadoReservaRepository, TipoMovimientoRepository tipoMovimientoRepository, TipoTareaRepository tipoTareaRepository, EstadoTareaRepository estadoTareaRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, RolRepository rolRepository, EmpleadoRepository empleadoRepository, EmpleadoRolRepository empleadoRolRepository, ExpertoABMEmpleado expertoABMEmpleado, EmpleadoCajaRepository empleadoCajaRepository, CajaMadreRepository cajaMadreRepository, TareaRepository tareaRepository) {
+    public DataInitialazer(EstadoReservaRepository estadoReservaRepository,
+                           TipoMovimientoRepository tipoMovimientoRepository,
+                           TipoTareaRepository tipoTareaRepository,
+                           EstadoTareaRepository estadoTareaRepository,
+                           MonedaRepository monedaRepository,
+                           CategoriaMovimientoRepository categoriaMovimientoRepository,
+                           RolRepository rolRepository,
+                           EmpleadoRepository empleadoRepository,
+                           EmpleadoRolRepository empleadoRolRepository,
+                           ExpertoABMEmpleado expertoABMEmpleado,
+                           EmpleadoCajaRepository empleadoCajaRepository,
+                           CajaMadreRepository cajaMadreRepository,
+                           TareaRepository tareaRepository,
+                           ExpertoABMCliente expertoABMCliente) {
         this.estadoReservaRepository = estadoReservaRepository;
         this.tipoMovimientoRepository = tipoMovimientoRepository;
         this.tipoTareaRepository = tipoTareaRepository;
@@ -47,11 +66,9 @@ public class DataInitialazer {
         this.empleadoCajaRepository = empleadoCajaRepository;
         this.cajaMadreRepository = cajaMadreRepository;
         this.tareaRepository = tareaRepository;
+        this.expertoABMCliente = expertoABMCliente;
     }
 
-    // ========================
-    // DATOS DE PRUEBA RESERVAS E INMUEBLES (BORRAR AL FINAL)
-    // ========================
     @Autowired
     private ReservaRepository reservaRepository;
     @Autowired
@@ -59,12 +76,12 @@ public class DataInitialazer {
     @Autowired
     private ClienteRepository clienteRepository;
 
-
-    // ========================
-    // FIN DATOS DE PRUEBA
-    // ========================
     @PostConstruct
     public void initializeData() {
+        StringBuilder credenciales = new StringBuilder();
+        credenciales.append("# Credenciales del Sistema\n\n");
+        credenciales.append("Generado el: ").append(LocalDateTime.now()).append("\n\n");
+        credenciales.append("---\n\n");
 
         //inicializacion de datos estado reserva
         if (estadoReservaRepository.count() == 0) {
@@ -237,80 +254,244 @@ public class DataInitialazer {
         }
         //inicializacion de caja madre
 
-        //Iniciacion de Empleado maestro
-        if (empleadoRepository.count() == 0) {
-            Empleado empleado1 = new Empleado("44310665","EMPL-001","Matias","2615199115", 200L,null,LocalDateTime.now(),null,null);
-            Empleado empleado2 = new Empleado("44000000","EMPL-002","Mauri","2615199115", 200L,null,LocalDateTime.now(),null,null);
-            Empleado empleado3 = new Empleado("44555555", "EMPL-003", "Clara", "2615000000", 200L, null, LocalDateTime.now(), null, null);
-            Empleado empleado4 = new Empleado("44666666", "EMPL-004", "Juan", "2615111111", 200L, null, LocalDateTime.now(), null, null);
-            Empleado empleado5 = new Empleado("44777777", "EMPL-005", "Lucia", "2615222222", 200L, null, LocalDateTime.now(), null, null);
-            empleadoRepository.saveAll(Arrays.asList(empleado1,empleado2,empleado3,empleado4,empleado5));
 
-            // Crear cajas de empleados
-            EmpleadoCaja empleadoCaja1 = EmpleadoCaja.builder()
-                    .empleado(empleado1)
-                    .nroEmpleadoCaja(1L)
-                    .nombreEmpleadoCaja(empleado1.getNombreEmpleado())
-                    .balanceARS(BigDecimal.ZERO)
-                    .balanceUSD(BigDecimal.ZERO)
-                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
-                    .fechaHoraBajaEmpleadoCaja(null)
-                    .build();
-            EmpleadoCaja empleadoCaja2 = EmpleadoCaja.builder()
-                    .empleado(empleado2)
-                    .nroEmpleadoCaja(2L)
-                    .nombreEmpleadoCaja(empleado2.getNombreEmpleado())
-                    .balanceARS(BigDecimal.ZERO)
-                    .balanceUSD(BigDecimal.ZERO)
-                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
-                    .fechaHoraBajaEmpleadoCaja(null)
-                    .build();
-            EmpleadoCaja empleadoCaja3 = EmpleadoCaja.builder()
-                    .empleado(empleado3)
-                    .nroEmpleadoCaja(3L)
-                    .nombreEmpleadoCaja(empleado3.getNombreEmpleado())
-                    .balanceARS(BigDecimal.ZERO)
-                    .balanceUSD(BigDecimal.ZERO)
-                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
-                    .fechaHoraBajaEmpleadoCaja(null)
-                    .build();
-            EmpleadoCaja empleadoCaja4 = EmpleadoCaja.builder()
-                    .empleado(empleado4)
-                    .nroEmpleadoCaja(4L)
-                    .nombreEmpleadoCaja(empleado4.getNombreEmpleado())
-                    .balanceARS(BigDecimal.ZERO)
-                    .balanceUSD(BigDecimal.ZERO)
-                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
-                    .fechaHoraBajaEmpleadoCaja(null)
-                    .build();
-            EmpleadoCaja empleadoCaja5 = EmpleadoCaja.builder()
-                    .empleado(empleado5)
-                    .nroEmpleadoCaja(5L)
-                    .nombreEmpleadoCaja(empleado5.getNombreEmpleado())
-                    .balanceARS(BigDecimal.ZERO)
-                    .balanceUSD(BigDecimal.ZERO)
-                    .fechaHoraAltaEmpleadoCaja(LocalDateTime.now())
-                    .fechaHoraBajaEmpleadoCaja(null)
-                    .build();
-            empleadoCajaRepository.saveAll(Arrays.asList(empleadoCaja1, empleadoCaja2, empleadoCaja3, empleadoCaja4, empleadoCaja5));
-            System.out.println("Datos iniciales de Empleado insertados correctamente.");
-        }
 
+
+
+        // Crear empleados con diferentes combinaciones de roles
+        credenciales.append("## Empleados\n\n");
+
+        // 1. Mauricio - SUPER USUARIO (Empleado Maestro Original)
         if (empleadoRepository.findByDniEmpleado("44564456").isEmpty()) {
-            // Empleado Maestro
-            AltaEmpleadoRequest empleadoRequest = AltaEmpleadoRequest.builder()
+            AltaEmpleadoRequest mauricio = AltaEmpleadoRequest.builder()
                     .dniEmpleado("44564456")
                     .nombreEmpleado("Mauricio")
                     .nroTelefonoEmpleado("2615199115")
-                    .salarioEmpleado(200L)
+                    .salarioEmpleado(500000L)
                     .codRoles(Arrays.asList("ROL001", "ROL002", "ROL003", "ROL004", "ROL005"))
                     .email("mauricio@gmail.com")
                     .password("Passw0rd!")
                     .build();
-
-            AltaEmpleadoResponse empleadoMaestro = expertoABMEmpleado.altaEmpleado(empleadoRequest);
-        } else {
-            System.out.println("Empleado maestro ya existente!");
+            expertoABMEmpleado.altaEmpleado(mauricio);
+            credenciales.append("### 1. Mauricio - SUPER USUARIO (Todos los roles)\n");
+            credenciales.append("- **Email:** mauricio@gmail.com\n");
+            credenciales.append("- **Password:** Passw0rd!\n");
+            credenciales.append("- **DNI:** 44564456\n");
+            credenciales.append("- **Teléfono:** 2615199115\n");
+            credenciales.append("- **Roles:** Administrador Financiero, Gerencia, Empleado, Administrador de Reservas, Administrador del Sistema\n");
+            credenciales.append("- **Nota:** ⭐ Empleado maestro original del sistema\n\n");
         }
+
+        // 2. Solo Empleado
+        if (empleadoRepository.findByDniEmpleado("22222222").isEmpty()) {
+            AltaEmpleadoRequest emp2 = AltaEmpleadoRequest.builder()
+                    .dniEmpleado("22222222")
+                    .nombreEmpleado("Juan Perez")
+                    .nroTelefonoEmpleado("2615000002")
+                    .salarioEmpleado(200000L)
+                    .codRoles(Arrays.asList("ROL003"))
+                    .email("juan.perez@empresa.com")
+                    .password("Juan123!")
+                    .build();
+            expertoABMEmpleado.altaEmpleado(emp2);
+            credenciales.append("### 2. Juan Perez (Solo Empleado)\n");
+            credenciales.append("- **Email:** juan.perez@empresa.com\n");
+            credenciales.append("- **Password:** Juan123!\n");
+            credenciales.append("- **DNI:** 22222222\n");
+            credenciales.append("- **Roles:** Empleado\n\n");
+        }
+
+        // 3. Gerencia + Empleado
+        if (empleadoRepository.findByDniEmpleado("33333333").isEmpty()) {
+            AltaEmpleadoRequest emp3 = AltaEmpleadoRequest.builder()
+                    .dniEmpleado("33333333")
+                    .nombreEmpleado("Maria Garcia")
+                    .nroTelefonoEmpleado("2615000003")
+                    .salarioEmpleado(400000L)
+                    .codRoles(Arrays.asList("ROL002", "ROL003"))
+                    .email("maria.garcia@empresa.com")
+                    .password("Maria123!")
+                    .build();
+            expertoABMEmpleado.altaEmpleado(emp3);
+            credenciales.append("### 3. Maria Garcia (Gerencia + Empleado)\n");
+            credenciales.append("- **Email:** maria.garcia@empresa.com\n");
+            credenciales.append("- **Password:** Maria123!\n");
+            credenciales.append("- **DNI:** 33333333\n");
+            credenciales.append("- **Roles:** Gerencia, Empleado\n\n");
+        }
+
+        // 4. Administrador Financiero + Empleado
+        if (empleadoRepository.findByDniEmpleado("44444444").isEmpty()) {
+            AltaEmpleadoRequest emp4 = AltaEmpleadoRequest.builder()
+                    .dniEmpleado("44444444")
+                    .nombreEmpleado("Carlos Rodriguez")
+                    .nroTelefonoEmpleado("2615000004")
+                    .salarioEmpleado(350000L)
+                    .codRoles(Arrays.asList("ROL001", "ROL003"))
+                    .email("carlos.rodriguez@empresa.com")
+                    .password("Carlos123!")
+                    .build();
+            expertoABMEmpleado.altaEmpleado(emp4);
+            credenciales.append("### 4. Carlos Rodriguez (Administrador Financiero + Empleado)\n");
+            credenciales.append("- **Email:** carlos.rodriguez@empresa.com\n");
+            credenciales.append("- **Password:** Carlos123!\n");
+            credenciales.append("- **DNI:** 44444444\n");
+            credenciales.append("- **Roles:** Administrador Financiero, Empleado\n\n");
+        }
+
+        // 5. Administrador de Reservas + Empleado
+        if (empleadoRepository.findByDniEmpleado("55555555").isEmpty()) {
+            AltaEmpleadoRequest emp5 = AltaEmpleadoRequest.builder()
+                    .dniEmpleado("55555555")
+                    .nombreEmpleado("Laura Martinez")
+                    .nroTelefonoEmpleado("2615000005")
+                    .salarioEmpleado(300000L)
+                    .codRoles(Arrays.asList("ROL004", "ROL003"))
+                    .email("laura.martinez@empresa.com")
+                    .password("Laura123!")
+                    .build();
+            expertoABMEmpleado.altaEmpleado(emp5);
+            credenciales.append("### 5. Laura Martinez (Administrador de Reservas + Empleado)\n");
+            credenciales.append("- **Email:** laura.martinez@empresa.com\n");
+            credenciales.append("- **Password:** Laura123!\n");
+            credenciales.append("- **DNI:** 55555555\n");
+            credenciales.append("- **Roles:** Administrador de Reservas, Empleado\n\n");
+        }
+
+        // 6. Administrador del Sistema + Empleado
+        if (empleadoRepository.findByDniEmpleado("66666666").isEmpty()) {
+            AltaEmpleadoRequest emp6 = AltaEmpleadoRequest.builder()
+                    .dniEmpleado("66666666")
+                    .nombreEmpleado("Pedro Fernandez")
+                    .nroTelefonoEmpleado("2615000006")
+                    .salarioEmpleado(380000L)
+                    .codRoles(Arrays.asList("ROL005", "ROL003"))
+                    .email("pedro.fernandez@empresa.com")
+                    .password("Pedro123!")
+                    .build();
+            expertoABMEmpleado.altaEmpleado(emp6);
+            credenciales.append("### 6. Pedro Fernandez (Administrador del Sistema + Empleado)\n");
+            credenciales.append("- **Email:** pedro.fernandez@empresa.com\n");
+            credenciales.append("- **Password:** Pedro123!\n");
+            credenciales.append("- **DNI:** 66666666\n");
+            credenciales.append("- **Roles:** Administrador del Sistema, Empleado\n\n");
+        }
+
+        // 7. Gerencia + Administrador Financiero + Empleado
+        if (empleadoRepository.findByDniEmpleado("77777777").isEmpty()) {
+            AltaEmpleadoRequest emp7 = AltaEmpleadoRequest.builder()
+                    .dniEmpleado("77777777")
+                    .nombreEmpleado("Ana Lopez")
+                    .nroTelefonoEmpleado("2615000007")
+                    .salarioEmpleado(450000L)
+                    .codRoles(Arrays.asList("ROL002", "ROL001", "ROL003"))
+                    .email("ana.lopez@empresa.com")
+                    .password("Ana123!")
+                    .build();
+            expertoABMEmpleado.altaEmpleado(emp7);
+            credenciales.append("### 7. Ana Lopez (Gerencia + Administrador Financiero + Empleado)\n");
+            credenciales.append("- **Email:** ana.lopez@empresa.com\n");
+            credenciales.append("- **Password:** Ana123!\n");
+            credenciales.append("- **DNI:** 77777777\n");
+            credenciales.append("- **Roles:** Gerencia, Administrador Financiero, Empleado\n\n");
+        }
+
+        // 8. Gerencia + Administrador de Reservas + Empleado
+        if (empleadoRepository.findByDniEmpleado("88888888").isEmpty()) {
+            AltaEmpleadoRequest emp8 = AltaEmpleadoRequest.builder()
+                    .dniEmpleado("88888888")
+                    .nombreEmpleado("Roberto Sanchez")
+                    .nroTelefonoEmpleado("2615000008")
+                    .salarioEmpleado(420000L)
+                    .codRoles(Arrays.asList("ROL002", "ROL004", "ROL003"))
+                    .email("roberto.sanchez@empresa.com")
+                    .password("Roberto123!")
+                    .build();
+            expertoABMEmpleado.altaEmpleado(emp8);
+            credenciales.append("### 8. Roberto Sanchez (Gerencia + Administrador de Reservas + Empleado)\n");
+            credenciales.append("- **Email:** roberto.sanchez@empresa.com\n");
+            credenciales.append("- **Password:** Roberto123!\n");
+            credenciales.append("- **DNI:** 88888888\n");
+            credenciales.append("- **Roles:** Gerencia, Administrador de Reservas, Empleado\n\n");
+        }
+
+        // 9. Administrador Financiero + Administrador de Reservas + Empleado
+        if (empleadoRepository.findByDniEmpleado("99999999").isEmpty()) {
+            AltaEmpleadoRequest emp9 = AltaEmpleadoRequest.builder()
+                    .dniEmpleado("99999999")
+                    .nombreEmpleado("Sofia Torres")
+                    .nroTelefonoEmpleado("2615000009")
+                    .salarioEmpleado(380000L)
+                    .codRoles(Arrays.asList("ROL001", "ROL004", "ROL003"))
+                    .email("sofia.torres@empresa.com")
+                    .password("Sofia123!")
+                    .build();
+            expertoABMEmpleado.altaEmpleado(emp9);
+            credenciales.append("### 9. Sofia Torres (Administrador Financiero + Administrador de Reservas + Empleado)\n");
+            credenciales.append("- **Email:** sofia.torres@empresa.com\n");
+            credenciales.append("- **Password:** Sofia123!\n");
+            credenciales.append("- **DNI:** 99999999\n");
+            credenciales.append("- **Roles:** Administrador Financiero, Administrador de Reservas, Empleado\n\n");
+        }
+
+        // 10. Administrador del Sistema + Gerencia + Empleado
+        if (empleadoRepository.findByDniEmpleado("10101010").isEmpty()) {
+            AltaEmpleadoRequest emp10 = AltaEmpleadoRequest.builder()
+                    .dniEmpleado("10101010")
+                    .nombreEmpleado("Diego Ramirez")
+                    .nroTelefonoEmpleado("2615000010")
+                    .salarioEmpleado(470000L)
+                    .codRoles(Arrays.asList("ROL005", "ROL002", "ROL003"))
+                    .email("diego.ramirez@empresa.com")
+                    .password("Diego123!")
+                    .build();
+            expertoABMEmpleado.altaEmpleado(emp10);
+            credenciales.append("### 10. Diego Ramirez (Administrador del Sistema + Gerencia + Empleado)\n");
+            credenciales.append("- **Email:** diego.ramirez@empresa.com\n");
+            credenciales.append("- **Password:** Diego123!\n");
+            credenciales.append("- **DNI:** 10101010\n");
+            credenciales.append("- **Roles:** Administrador del Sistema, Gerencia, Empleado\n\n");
+        }
+
+        // Crear Cliente
+        credenciales.append("---\n\n");
+        credenciales.append("## Cliente\n\n");
+
+        if (clienteRepository.findByDniCliente("20202020").isEmpty()) {
+            DTOAltaClienteRequest clienteRequest = DTOAltaClienteRequest.builder()
+                    .dniCliente("20202020")
+                    .nombreCliente("Cliente Demo")
+                    .email("cliente.demo@gmail.com")
+                    .build();
+
+            DTOAltaClienteResponse clienteResponse = expertoABMCliente.altaCliente(clienteRequest);
+
+            credenciales.append("### Cliente Demo\n");
+            credenciales.append("- **Email:** ").append(clienteResponse.getEmail()).append("\n");
+            credenciales.append("- **Password:** ").append(clienteResponse.getPassword()).append("\n");
+            credenciales.append("- **DNI:** 20202020\n");
+            credenciales.append("- **Código Cliente:** ").append(clienteResponse.getCodCliente()).append("\n\n");
+        }
+
+        credenciales.append("---\n\n");
+        credenciales.append("## Notas\n\n");
+        credenciales.append("- Todas las contraseñas siguen el formato: `NombreCapitalizado123!`\n");
+        credenciales.append("- Los empleados tienen el rol \"Empleado\" (ROL003) como base\n");
+        credenciales.append("- La contraseña del cliente fue generada automáticamente por el sistema\n");
+        credenciales.append("- Para cambiar las credenciales, usar los endpoints de cambio de contraseña/email\n");
+
+        // Guardar credenciales en archivo
+        try {
+            FileWriter writer = new FileWriter("CREDENCIALES.md");
+            writer.write(credenciales.toString());
+            writer.close();
+            System.out.println("\n✅ Archivo CREDENCIALES.md generado exitosamente");
+        } catch (IOException e) {
+            System.err.println("❌ Error al generar archivo de credenciales: " + e.getMessage());
+        }
+
+        System.out.println("\n========================================");
+        System.out.println("✅ Inicialización de datos completada");
+        System.out.println("========================================\n");
     }
 }

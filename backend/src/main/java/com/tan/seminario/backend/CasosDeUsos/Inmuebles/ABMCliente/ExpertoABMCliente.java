@@ -32,6 +32,7 @@ public class ExpertoABMCliente {
     private final AuthService authService;
     private final TokenRepository tokenRepository;
     private final UsuarioRepository usuarioRepository;
+    private final RolRepository rolRepository;
 
     private static final String DEFAULT_PASSWORD = "Passw0rd!";
 

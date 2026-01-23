@@ -12,4 +12,5 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     Optional<Cliente> findByCodCliente(String cod);
 
     Optional<Cliente> findByIdAndFechaHoraBajaClienteIsNull(Long id);
+    Optional<Cliente> findByDniCliente(String dni);
 }

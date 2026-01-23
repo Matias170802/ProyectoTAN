@@ -14,12 +14,14 @@ public class RolService {
     @Autowired
     private RolRepository rolRepository;
 
-    //Obtiene todos los roles disponibles
+    //Obtiene todos los roles disponibles (excluyendo ROL000 que es solo para clientes)
     public List<DTORolResponse> obtenerTodosLosRolesActivos() {
         List<Rol> roles = rolRepository.findByFechaHoraBajaRolIsNull();
-        return roles.stream() //Un Stream permite aplicar operaciones funcionales (como map, filter, etc.) sobre la colección
+        return roles.stream()
+                // Filtrar el rol Cliente (ROL000) - solo para clientes
+                .filter(rol -> !"ROL000".equals(rol.getCodRol()))
                 .map(this::convertirADTO)
-                .collect(Collectors.toList()); //Convierte Stream<DTORolResponse> → List<DTORolResponse>
+                .collect(Collectors.toList());
     }
 
     // ========== MÉTODOS PRIVADOS ==========

@@ -1,5 +1,6 @@
 package com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios;
 
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.DTOUserInfo;
 import com.tan.seminario.backend.Entity.Usuario;
 import com.tan.seminario.backend.Repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +26,9 @@ public class UserInfoController {
      * Endpoint para obtener información del usuario actual desde el token
      */
     @GetMapping("/me")
-    public ResponseEntity<Map<String, Object>> getCurrentUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<DTOUserInfo> getCurrentUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Token no proporcionado"));
+            return ResponseEntity.badRequest().build();
         }
 
         try {
@@ -41,32 +41,39 @@ public class UserInfoController {
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
             // Determinar el tipo de usuario
-            String tipoUsuario;
+            DTOUserInfo.TipoUsuario tipoUsuario;
             String nombre;
             String codigo;
+            boolean esEmpleado = false;
+            boolean esCliente = false;
 
             if (usuario.getEmpleado() != null) {
-                tipoUsuario = "EMPLEADO";
+                tipoUsuario = DTOUserInfo.TipoUsuario.EMPLEADO;
                 nombre = usuario.getEmpleado().getNombreEmpleado();
                 codigo = usuario.getEmpleado().getCodEmpleado();
+                esEmpleado = true;
             } else if (usuario.getCliente() != null) {
-                tipoUsuario = "CLIENTE";
+                tipoUsuario = DTOUserInfo.TipoUsuario.CLIENTE;
                 nombre = usuario.getCliente().getNombreCliente();
                 codigo = usuario.getCliente().getCodCliente();
+                esCliente = true;
             } else {
                 throw new RuntimeException("Usuario sin tipo definido");
             }
 
-            Map<String, Object> userInfo = new HashMap<>();
-            userInfo.put("email", email);
-            userInfo.put("nombre", nombre);
-            userInfo.put("codigo", codigo);
-            userInfo.put("tipoUsuario", tipoUsuario);
-            userInfo.put("roles", roles);
+            DTOUserInfo userInfo = DTOUserInfo.builder()
+                    .email(email)
+                    .nombre(nombre)
+                    .codigo(codigo)
+                    .tipoUsuario(tipoUsuario)
+                    .roles(roles)
+                    .esEmpleado(esEmpleado)
+                    .esCliente(esCliente)
+                    .build();
 
             return ResponseEntity.ok(userInfo);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Token inválido"));
+            return ResponseEntity.badRequest().build();
         }
     }
 }
