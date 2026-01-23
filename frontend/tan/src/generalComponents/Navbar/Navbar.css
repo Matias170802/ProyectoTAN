@@ -19,6 +19,13 @@ nav p {
     text-align: center;
 }
 
+/* Ensure navbar stays above modal overlays so links remain clickable */
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 1101; /* higher than modal overlay z-index (999) */
+}
+
 nav ul {
     display: flex;
     align-items: center;

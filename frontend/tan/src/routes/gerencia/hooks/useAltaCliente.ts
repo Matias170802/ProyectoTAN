@@ -38,8 +38,21 @@ export const useAltaCliente = () => {
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(errorText || 'Error al crear el cliente');
+                // Try to parse a JSON error body and extract a friendly message
+                const contentType = response.headers.get('content-type') || '';
+                let message = 'Error al crear el cliente';
+                try {
+                    if (contentType.includes('application/json')) {
+                        const errJson = await response.json();
+                        message = errJson.message || errJson.mensaje || JSON.stringify(errJson);
+                    } else {
+                        const text = await response.text();
+                        message = text || message;
+                    }
+                } catch (e) {
+                    // fallback
+                }
+                throw new Error(message);
             }
 
             const result: DTOAltaClienteResponse = await response.json();
