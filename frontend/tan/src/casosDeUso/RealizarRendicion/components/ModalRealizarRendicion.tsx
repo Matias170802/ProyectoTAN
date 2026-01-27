@@ -158,8 +158,8 @@ export const ModalRealizarRendicion: React.FC<PropsModalRealizarRendicion> = ({i
         onClose={onClose}
         showCloseButton={showCloseButton}
         title='Realizar Rendición'
-        description='Realice la rendicion de la caja de un empleado a caja madre. Siempre y cuando cuente con saldo.
-        Realice la rendicion a un inmueble.
+        description='Realice la rendicion de la caja de un empleado a caja madre, siempre y cuando cuente con saldo positivo, o
+        realice la rendicion a un inmueble.
         '
         >
 

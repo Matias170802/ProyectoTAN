@@ -5,7 +5,8 @@ export const registrarCotizacion = async (cotizacion: formSchemaRegistrarCotizac
     const response = await fetch ('/api/finanzas/registrarCotizacionMoneda', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token') ? localStorage.getItem('access_token') : sessionStorage.getItem('access_token')}`
         },
         body: JSON.stringify(cotizacion)
     })
