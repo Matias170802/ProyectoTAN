@@ -1,7 +1,7 @@
 import type { Reserva, ReservaFormData, Inmueble, MedioReserva, DTOReserva } from './types';
 
 // Base URL para las APIs - ajusta según tu configuración
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = '';
 
 // Función para generar código único de reserva
 const generateReservationCode = (): string => {
@@ -33,7 +33,16 @@ const mapFormDataToDTO = (formData: ReservaFormData): DTOReserva => {
 // Funciones para manejar inmuebles
 export const getInmuebles = async (): Promise<Inmueble[]> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/inmuebles/inmuebles`);
+        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+
+        const response = await fetch(`${API_BASE_URL}/api/inmuebles/inmuebles`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+        })
+
         if (!response.ok) {
             throw new Error('Error al cargar inmuebles');
         }
@@ -68,12 +77,25 @@ export const getMediosReserva = async (): Promise<MedioReserva[]> => {
 // Funciones para manejar reservas
 export const getReservas = async (): Promise<Reserva[]> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/reservas/reservas`);
+
+        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+
+        const response = await fetch(`${API_BASE_URL}/api/reservas/reservas`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+        })
+
         if (!response.ok) {
             throw new Error('Error al cargar reservas');
         }
+
         const data: DTOReserva[] = await response.json();
+
         return data;
+
     } catch (error) {
         console.error('Error fetching reservas:', error);
         // Retornar array vacío en caso de error
@@ -86,10 +108,13 @@ export const createReserva = async (reservaData: ReservaFormData): Promise<Reser
         // Convertir FormData a DTO
         const dtoReserva = mapFormDataToDTO(reservaData);
         
+        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+        
         const response = await fetch(`${API_BASE_URL}/api/reserva/altaReserva`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(dtoReserva)
         });
@@ -98,8 +123,18 @@ export const createReserva = async (reservaData: ReservaFormData): Promise<Reser
         // El backend puede devolver mensajes informativos (por ejemplo conflicto de fechas).
         // Detectamos el mensaje y lanzamos error para que la UI lo maneje.
         console.log('Respuesta del servidor (alta):', responseText);
+        console.log('Status del servidor:', response.status);
+        
         if (!response.ok) {
-            throw new Error(responseText || 'Error al crear la reserva');
+            // Intentar parsear como JSON si es posible
+            let errorMessage = responseText || 'Error al crear la reserva';
+            try {
+                const jsonError = JSON.parse(responseText);
+                errorMessage = jsonError.message || jsonError.mensaje || errorMessage;
+            } catch (e) {
+                // Si no es JSON, usar el texto tal cual
+            }
+            throw new Error(errorMessage);
         }
 
         if (responseText && responseText.toLowerCase().includes('ya existe una reserva')) {

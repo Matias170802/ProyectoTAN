@@ -1,11 +1,16 @@
 import type { DTOTarea, Empleado } from './types';
 
-const API_BASE_URL = 'http://localhost:8080';
-
 // Obtener lista de empleados
 export const getEmpleados = async (): Promise<Empleado[]> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/administrador/empleados`);
+        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+        
+        const response = await fetch(`/api/administrador/empleados`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
         if (!response.ok) {
             throw new Error('Error al cargar empleados');
         }
@@ -27,11 +32,14 @@ export const getEmpleados = async (): Promise<Empleado[]> => {
 export const asignarCheckIn = async (dtoTarea: DTOTarea): Promise<string> => {
     try {
         console.log('[asignarCheckIn] Enviando DTO:', dtoTarea);
+
+        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
         
-        const response = await fetch(`${API_BASE_URL}/api/reserva/asignarCheckIn`, {
+        const response = await fetch(`/api/reserva/asignarCheckInOut`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`                
             },
             body: JSON.stringify(dtoTarea),
         });
@@ -57,11 +65,14 @@ export const asignarCheckIn = async (dtoTarea: DTOTarea): Promise<string> => {
 export const asignarCheckOut = async (dtoTarea: DTOTarea): Promise<string> => {
     try {
         console.log('[asignarCheckOut] Enviando DTO:', dtoTarea);
+
+        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
         
-        const response = await fetch(`${API_BASE_URL}/api/reserva/asignarCheckIn`, {
+        const response = await fetch(`/api/reserva/asignarCheckInOut`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(dtoTarea),
         });

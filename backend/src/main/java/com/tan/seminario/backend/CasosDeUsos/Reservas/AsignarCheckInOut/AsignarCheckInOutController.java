@@ -17,7 +17,7 @@ public class AsignarCheckInOutController {
     @Autowired
     ExpertoAsignarCheckInOut experto;
 
-    @PostMapping("/asignarCheckIn")
+    @PostMapping("/asignarCheckInOut")
     public ResponseEntity<?> asignarCheckInOut(@RequestBody DTOTarea dtoTarea){
         try{
             String respuesta = experto.asignarCheckInOut(dtoTarea);

@@ -1,5 +1,5 @@
 // frontend/tan/src/routes/gerencia/hooks/useAltaEmpleado.ts
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 interface DTOAltaEmpleadoRequest {
     dniEmpleado: string;
@@ -23,7 +23,7 @@ export const useAltaEmpleado = () => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<DTOAltaEmpleadoResponse | null>(null);
 
-    const altaEmpleado = async (data: DTOAltaEmpleadoRequest): Promise<DTOAltaEmpleadoResponse> => {
+    const altaEmpleado = useCallback(async (data: DTOAltaEmpleadoRequest): Promise<DTOAltaEmpleadoResponse> => {
         setLoading(true);
         setError(null);
         setSuccess(null);
@@ -55,12 +55,12 @@ export const useAltaEmpleado = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const resetState = () => {
+    const resetState = useCallback(() => {
         setError(null);
         setSuccess(null);
-    };
+    }, []);
 
     return {
         altaEmpleado,

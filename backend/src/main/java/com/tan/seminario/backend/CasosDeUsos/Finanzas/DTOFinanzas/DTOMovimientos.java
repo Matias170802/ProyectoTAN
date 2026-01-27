@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 
 public class DTOMovimientos {
+    private String monedaMovimiento;
     private Double montoMovimiento;
     private LocalDateTime fechaMovimiento;
     private String tipoMovimiento;

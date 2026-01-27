@@ -113,6 +113,7 @@ public class ExpertoFinanzas {
 
         for (Movimiento movimiento: movimientos) {
             DTOMovimientos dto = DTOMovimientos.builder()
+                    .monedaMovimiento(movimiento.getMoneda().getNombreMoneda())
                     .fechaMovimiento(movimiento.getFechaMovimiento())
                     .montoMovimiento(movimiento.getMontoMovimiento())
                     .categoriaMovimiento(movimiento.getCategoriaMovimiento().getNombreCategoriaMovimiento())

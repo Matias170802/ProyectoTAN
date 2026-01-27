@@ -1,5 +1,5 @@
 // frontend/tan/src/routes/gerencia/hooks/useAltaCliente.ts
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 interface DTOAltaClienteRequest {
     dniCliente: string;
@@ -20,7 +20,7 @@ export const useAltaCliente = () => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<DTOAltaClienteResponse | null>(null);
 
-    const altaCliente = async (data: DTOAltaClienteRequest): Promise<DTOAltaClienteResponse> => {
+    const altaCliente = useCallback(async (data: DTOAltaClienteRequest): Promise<DTOAltaClienteResponse> => {
         setLoading(true);
         setError(null);
         setSuccess(null);
@@ -65,12 +65,12 @@ export const useAltaCliente = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const resetState = () => {
+    const resetState = useCallback(() => {
         setError(null);
         setSuccess(null);
-    };
+    }, []);
 
     return {
         altaCliente,

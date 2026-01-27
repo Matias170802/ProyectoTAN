@@ -24,8 +24,8 @@ const MainPageMiCaja: React.FC = () => {
                 })
                 : '-',
             Tipo: item.tipoMovimiento,
-            Monto: item.montoMovimiento,
-            Descripcion: item.descripcionMovimiento,
+            Monto: item.monedaMovimiento == "Dolar" ? `$USD${item.montoMovimiento}` : `$${item.montoMovimiento}`,
+            Descripcion: item.descripcionMovimiento ? item.descripcionMovimiento : '-',
             Categoria: item.categoriaMovimiento
         }));
         

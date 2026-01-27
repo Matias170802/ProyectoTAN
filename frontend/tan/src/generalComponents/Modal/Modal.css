@@ -5,7 +5,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 999; /* arriba de todo */
+    z-index: 2000; /* ensure it sits above sticky navbar */
 }
 
 

@@ -45,6 +45,11 @@ public class ExpertoFinalizarTarea {
             throw new RuntimeException("No se encuentra la Tarea con el Nro de Tarea: " + tareaFinalizadaARegistrar.getNroTarea());
         }
 
+        //verifico que si se esta queriendo finalizar una tarea que todavia no inicia
+        if (tareaAFinalizar.getFechaHoraInicioTarea().isAfter(LocalDateTime.now())) {
+            throw new RuntimeException("No se puede finalizar la tarea ya que todavia no ha iniciado");
+        }
+
         if (tareaAFinalizar.getTipoTarea().getNombreTipoTarea().equals("Check-Out")) {
 
             //busco la reserva relacionada a la tarea

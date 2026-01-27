@@ -2,6 +2,7 @@ import { useFetch } from "@/generalHooks/useFetch"
 
 interface Movimiento {
 
+    monedaMovimiento: string;
     montoMovimiento:number;
     fechaMovimiento: Date;
     tipoMovimiento: string;

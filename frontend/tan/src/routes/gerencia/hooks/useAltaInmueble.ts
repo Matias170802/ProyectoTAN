@@ -1,5 +1,5 @@
 // frontend/tan/src/routes/gerencia/hooks/useAltaInmueble.ts
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 interface DTOAltaInmuebleRequest {
     cantidadBaños: number;
@@ -26,7 +26,7 @@ export const useAltaInmueble = () => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<DTOAltaInmuebleResponse | null>(null);
 
-    const altaInmueble = async (data: DTOAltaInmuebleRequest): Promise<DTOAltaInmuebleResponse> => {
+    const altaInmueble = useCallback(async (data: DTOAltaInmuebleRequest): Promise<DTOAltaInmuebleResponse> => {
         setLoading(true);
         setError(null);
         setSuccess(null);
@@ -58,12 +58,12 @@ export const useAltaInmueble = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const resetState = () => {
+    const resetState = useCallback(() => {
         setError(null);
         setSuccess(null);
-    };
+    }, []);
 
     return {
         altaInmueble,
