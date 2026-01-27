@@ -10,6 +10,7 @@ import { FaCreditCard } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { IoMdAdd } from "react-icons/io";
 import { MdBusinessCenter } from "react-icons/md";
+import { BsBuilding } from "react-icons/bs";
 
 
 const Navbar: React.FC = () => {
@@ -19,6 +20,7 @@ const Navbar: React.FC = () => {
             <p>Gestión de<br/>Propiedades</p>
             <ul>
                 <li><Link to="/"><Button label="Inicio" icon={<FaHome/>}/></Link></li>
+                <li><Link to="/cliente"><Button label="Mis Propiedades" icon={<BsBuilding />}/></Link></li>
                 <li><Link to="/reservas"><Button label="Reservas" icon={<FaCalendarAlt />}/></Link></li>
                 <li><Link to="/finanzas"><Button label="Finanzas" icon={<MdOutlineAttachMoney />}/></Link></li>
                 <li><Link to="/gerencia"><Button label="Gerencia" icon={<MdBusinessCenter />}/></Link></li>
