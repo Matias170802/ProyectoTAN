@@ -375,22 +375,42 @@ const ModalAltaEmpleado: React.FC<ModalAltaEmpleadoProps> = ({ isOpen, onClose, 
                             <div style={{ flex: '0.8', minWidth: '250px' }}>
                                 <div className="form-group">
                                     <label>Roles * (seleccione al menos uno)</label>
-                                    <div className="roles-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                        {rolesDisponibles.map(rol => (
-                                            <label key={rol.codigo} className="checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                <input
-                                                    type="checkbox"
-                                                    checked={formData.codRoles.includes(rol.codigo)}
-                                                    onChange={() => handleRoleToggle(rol.codigo)}
-                                                    disabled={loading || rol.codigo === rolEmpleadoCodigo}
-                                                    style={{ cursor: rol.codigo === rolEmpleadoCodigo ? 'not-allowed' : 'pointer' }}
-                                                />
-                                                <span>
-                                                    {rol.nombre}
-                                                    {rol.codigo === rolEmpleadoCodigo && <span style={{ marginLeft: '8px', fontSize: '0.85em', color: '#666' }}>(obligatorio)</span>}
-                                                </span>
-                                            </label>
-                                        ))}
+                                    <div className="roles-container" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                        {/* Mostrar primero el rol "Empleado" obligatorio */}
+                                        {rolesDisponibles
+                                            .filter(rol => rol.codigo === rolEmpleadoCodigo)
+                                            .map(rol => (
+                                                <label key={rol.codigo} className="checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px', backgroundColor: '#f0f7ff', borderRadius: '4px', border: '1px solid #b3d9ff', margin: '0' }}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={formData.codRoles.includes(rol.codigo)}
+                                                        onChange={() => handleRoleToggle(rol.codigo)}
+                                                        disabled={loading || rol.codigo === rolEmpleadoCodigo}
+                                                        style={{ cursor: 'not-allowed', flexShrink: 0, width: '18px', height: '18px', margin: '0' }}
+                                                    />
+                                                    <span style={{ fontWeight: '500', color: '#1565c0', margin: '0' }}>
+                                                        {rol.nombre} <span style={{ fontSize: '0.85em', color: '#0d47a1', fontWeight: '400' }}>(obligatorio)</span>
+                                                    </span>
+                                                </label>
+                                            ))}
+                                        
+                                        {/* Luego mostrar el resto de roles opcionales */}
+                                        {rolesDisponibles
+                                            .filter(rol => rol.codigo !== rolEmpleadoCodigo)
+                                            .map(rol => (
+                                                <label key={rol.codigo} className="checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px', borderRadius: '4px', border: '1px solid #e0e0e0', margin: '0' }}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={formData.codRoles.includes(rol.codigo)}
+                                                        onChange={() => handleRoleToggle(rol.codigo)}
+                                                        disabled={loading}
+                                                        style={{ cursor: 'pointer', flexShrink: 0, width: '18px', height: '18px', margin: '0' }}
+                                                    />
+                                                    <span style={{ color: '#333', margin: '0' }}>
+                                                        {rol.nombre}
+                                                    </span>
+                                                </label>
+                                            ))}
                                     </div>
                                     {validationErrors.codRoles && (
                                         <span className="error-text">{validationErrors.codRoles}</span>

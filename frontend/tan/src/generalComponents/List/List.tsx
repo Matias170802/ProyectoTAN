@@ -146,7 +146,7 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                         className="btn-action btn-delete"
                         onClick={(e) => {
                             e.stopPropagation(); // ⬅️ MANTENER stopPropagation
-                            onItemDelete(getItemId(item)); // ⬅️ USAR getItemId como en tu código original
+                            onItemDelete(item); // ⬅️ PASAR EL ITEM COMPLETO
                         }}
                         title="Eliminar configuración"
                         aria-label="Eliminar"
