@@ -1,9 +1,13 @@
+import { mapRoleCodesToNames } from '../constants/roles';
+
 export interface CurrentUser {
   email: string;
   nombre: string;
   codigo: string;
   tipoUsuario: 'EMPLEADO' | 'CLIENTE';
   roles: string[];
+  esEmpleado: boolean;
+  esCliente: boolean;
 }
 
 const ACCESS_KEY = 'access_token';
@@ -38,19 +42,12 @@ export async function fetchCurrentUser(): Promise<CurrentUser> {
   }
 
   const data = await r.json();
-  // Expected shape: { email, nombre, codigo, tipoUsuario, roles } where roles are role codes (e.g. ROL001)
+  // Expected shape: { email, nombre, codigo, tipoUsuario, roles, esEmpleado, esCliente } 
+  // where roles are role codes (e.g. ROL001)
 
-  // Map role codes from backend to frontend canonical role names used in the app
-  const roleCodeToName: Record<string, string> = {
-    'ROL001': 'FINANZAS', // Administrador Financiero
-    'ROL002': 'GERENCIA', // Gerencia
-    'ROL003': 'EMPLEADO', // Empleado
-    'ROL004': 'RESERVAS', // Administrador de Reservas
-    'ROL005': 'ADMIN_SISTEMA' // Administrador del Sistema
-  };
-
+  // Map role codes from backend to frontend canonical role names
   const mappedRoles: string[] = Array.isArray(data.roles)
-    ? data.roles.map((rc: string) => roleCodeToName[rc] || rc)
+    ? mapRoleCodesToNames(data.roles)
     : [];
 
   return {
@@ -59,6 +56,8 @@ export async function fetchCurrentUser(): Promise<CurrentUser> {
     codigo: data.codigo,
     tipoUsuario: data.tipoUsuario,
     roles: mappedRoles,
+    esEmpleado: data.esEmpleado ?? false,
+    esCliente: data.esCliente ?? false,
   } as CurrentUser;
 }
 
