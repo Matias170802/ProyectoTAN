@@ -1,8 +1,5 @@
 import type { Reserva, ReservaFormData, Inmueble, MedioReserva, DTOReserva } from './types';
 
-// Base URL para las APIs - ajusta según tu configuración
-const API_BASE_URL = '';
-
 // Función para generar código único de reserva
 const generateReservationCode = (): string => {
     const timestamp = Date.now().toString();
@@ -35,7 +32,7 @@ export const getInmuebles = async (): Promise<Inmueble[]> => {
     try {
         const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
 
-        const response = await fetch(`${API_BASE_URL}/api/inmuebles/inmuebles`, {
+        const response = await fetch(`/api/inmuebles/inmuebles`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -174,10 +171,13 @@ export const updateReserva = async (codReserva: string, reservaData: Partial<Res
         if (reservaData.plataformaOrigen) payload.plataformaOrigen = reservaData.plataformaOrigen;
         if (reservaData.descripcionReserva) payload.descripcionReserva = reservaData.descripcionReserva;
 
+        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+
         const response = await fetch(`${API_BASE_URL}/api/reserva/reservas/${encodeURIComponent(codReserva)}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(payload)
         });
@@ -235,10 +235,14 @@ export const deleteReserva = async (codReserva: string): Promise<void> => {
 export const cancelarReserva = async (codReserva: string): Promise<string> => {
     try {
         console.log('[serviceAMReservas] Cancelling reserva:', codReserva);
+
+        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+
         const response = await fetch(`${API_BASE_URL}/api/reserva/cancelarReserva/${encodeURIComponent(codReserva)}`, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             }
         });
 
@@ -258,8 +262,17 @@ export const cancelarReserva = async (codReserva: string): Promise<string> => {
 // Obtener estados desde backend
 export const getEstadosReserva = async (): Promise<{ codEstadoReserva: string; nombreEstadoReserva: string }[]> => {
     try {
+        
+        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+
         // Endpoint moved to Reservas controller: GET /api/reservas/estados
-        const response = await fetch(`${API_BASE_URL}/api/reservas/estados`);
+        const response = await fetch(`${API_BASE_URL}/api/reservas/estados`, {
+            method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+        });
         if (!response.ok) {
             throw new Error('Error al cargar estados');
         }
