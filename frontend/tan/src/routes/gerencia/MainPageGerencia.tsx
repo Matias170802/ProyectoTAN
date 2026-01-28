@@ -5,6 +5,9 @@ import { useGerencia } from './useGerencia';
 import ModalAltaCliente from './components/ModalAltaCliente';
 import ModalAltaEmpleado from './components/ModalAltaEmpleado';
 import ModalAltaInmueble from './components/ModalAltaInmueble';
+import ModalBajaCliente from './components/ModalBajaCliente';
+import ModalBajaEmpleado from './components/ModalBajaEmpleado';
+import ModalBajaInmueble from './components/ModalBajaInmueble';
 import './MainPageGerencia.css';
 
 type VistaActual = 'inmuebles' | 'clientes' | 'empleados';
@@ -12,6 +15,8 @@ type VistaActual = 'inmuebles' | 'clientes' | 'empleados';
 const MainPageGerencia: React.FC = () => {
     const [vistaActual, setVistaActual] = useState<VistaActual>('inmuebles');
     const [modalAltaAbierto, setModalAltaAbierto] = useState(false);
+    const [modalBajaAbierto, setModalBajaAbierto] = useState(false);
+    const [itemSeleccionadoParaBaja, setItemSeleccionadoParaBaja] = useState<any>(null);
     
     const {
         inmuebles,
@@ -35,7 +40,9 @@ const MainPageGerencia: React.FC = () => {
         nombreCliente: i.nombreCliente,
         direccion: i.direccion,
         m2Inmueble: `${i.m2Inmueble} m²`,
-        activo: i.activo
+        activo: i.activo,
+        // Datos completos para el modal de baja
+        codInmueble: i.codInmueble
     }));
 
     const clientesAdaptados = (clientes || []).map(c => ({
@@ -44,7 +51,9 @@ const MainPageGerencia: React.FC = () => {
         nombreCliente: c.nombreCliente,
         dniCliente: c.dniCliente,
         cantidadInmuebles: c.cantidadInmuebles,
-        activo: c.activo
+        activo: c.activo,
+        // Datos completos para el modal de baja
+        codCliente: c.codCliente
     }));
 
     const empleadosAdaptados = (empleados || []).map(e => ({
@@ -55,25 +64,40 @@ const MainPageGerencia: React.FC = () => {
         nombresRoles: e.nombresRoles?.join(', ') || 'Sin roles',
         balanceCajaARS: `$${e.balanceCajaARS?.toFixed(2) || '0.00'}`,
         balanceCajaUSD: `$${e.balanceCajaUSD?.toFixed(2) || '0.00'}`,
-        activo: e.activo
+        activo: e.activo,
+        // Datos completos para el modal de baja
+        codEmpleado: e.codEmpleado
     }));
 
     const handleBaja = async (id: number | string) => {
-        const confirmMessage = '¿Está seguro que desea dar de baja este elemento?';
-        if (!window.confirm(confirmMessage)) return;
+        // Encontrar el item completo según la vista actual
+        let item;
+        if (vistaActual === 'inmuebles') {
+            item = inmueblesAdaptados.find(i => i.id === id);
+        } else if (vistaActual === 'clientes') {
+            item = clientesAdaptados.find(c => c.id === id);
+        } else if (vistaActual === 'empleados') {
+            item = empleadosAdaptados.find(e => e.id === id);
+        }
 
+        if (item) {
+            setItemSeleccionadoParaBaja(item);
+            setModalBajaAbierto(true);
+        }
+    };
+
+    const confirmarBaja = async (id: number): Promise<void> => {
         try {
             if (vistaActual === 'inmuebles') {
-                await bajaInmueble(Number(id));
+                await bajaInmueble(id);
             } else if (vistaActual === 'clientes') {
-                await bajaCliente(Number(id));
+                await bajaCliente(id);
             } else if (vistaActual === 'empleados') {
-                await bajaEmpleado(Number(id));
+                await bajaEmpleado(id);
             }
         } catch (error) {
             console.error('Error al dar de baja:', error);
-            const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
-            alert('Error al dar de baja el elemento: ' + errorMessage);
+            throw error; // Re-lanzar el error para que el modal lo maneje
         }
     };
 
@@ -90,7 +114,23 @@ const MainPageGerencia: React.FC = () => {
         setModalAltaAbierto(false);
     };
 
+    const handleCerrarModalBaja = () => {
+        setModalBajaAbierto(false);
+        setItemSeleccionadoParaBaja(null);
+    };
+
     const handleSuccessAlta = () => {
+        // Refrescar la lista correspondiente
+        if (vistaActual === 'inmuebles' && refetchInmuebles) {
+            refetchInmuebles();
+        } else if (vistaActual === 'clientes' && refetchClientes) {
+            refetchClientes();
+        } else if (vistaActual === 'empleados' && refetchEmpleados) {
+            refetchEmpleados();
+        }
+    };
+
+    const handleSuccessBaja = () => {
         // Refrescar la lista correspondiente
         if (vistaActual === 'inmuebles' && refetchInmuebles) {
             refetchInmuebles();
@@ -126,6 +166,7 @@ const MainPageGerencia: React.FC = () => {
                 return [];
         }
     };
+    
     const getTituloActual = (): string => {
         switch (vistaActual) {
             case 'inmuebles':
@@ -201,6 +242,7 @@ const MainPageGerencia: React.FC = () => {
                             items={getItemsActuales()}
                             columnas={getColumnasActuales()}
                             showActions={true}
+                            actionsPosition="left"
                             idField="id"
                             onItemEdit={handleEditar}
                             onItemDelete={handleBaja}
@@ -232,6 +274,37 @@ const MainPageGerencia: React.FC = () => {
                     isOpen={modalAltaAbierto}
                     onClose={handleCerrarModalAlta}
                     onSuccess={handleSuccessAlta}
+                />
+            )}
+
+            {/* Modales de Baja */}
+            {vistaActual === 'clientes' && modalBajaAbierto && itemSeleccionadoParaBaja && (
+                <ModalBajaCliente
+                    isOpen={modalBajaAbierto}
+                    onClose={handleCerrarModalBaja}
+                    onSuccess={handleSuccessBaja}
+                    cliente={itemSeleccionadoParaBaja}
+                    onConfirm={confirmarBaja}
+                />
+            )}
+
+            {vistaActual === 'empleados' && modalBajaAbierto && itemSeleccionadoParaBaja && (
+                <ModalBajaEmpleado
+                    isOpen={modalBajaAbierto}
+                    onClose={handleCerrarModalBaja}
+                    onSuccess={handleSuccessBaja}
+                    empleado={itemSeleccionadoParaBaja}
+                    onConfirm={confirmarBaja}
+                />
+            )}
+
+            {vistaActual === 'inmuebles' && modalBajaAbierto && itemSeleccionadoParaBaja && (
+                <ModalBajaInmueble
+                    isOpen={modalBajaAbierto}
+                    onClose={handleCerrarModalBaja}
+                    onSuccess={handleSuccessBaja}
+                    inmueble={itemSeleccionadoParaBaja}
+                    onConfirm={confirmarBaja}
                 />
             )}
         </div>
