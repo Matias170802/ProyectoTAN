@@ -23,9 +23,9 @@ export const ROLE_DESCRIPTIONS: Record<string, string> = {
  * Mapeo de roles a rutas a las que pueden acceder
  */
 export const ROLE_ROUTE_MAP: Record<string, string[]> = {
-  'FINANZAS': ['/finanzas'],
-  'GERENCIA': ['/gerencia'],
-  'EMPLEADO': ['/reportes', '/registrarIngresoEgresoCaja', '/perfil', '/micaja', '/'],
+  'FINANZAS': ['/finanzas', '/reportes'],
+  'GERENCIA': ['/gerencia', '/reportes'],
+  'EMPLEADO': ['/registrarIngresoEgresoCaja', '/perfil', '/micaja', '/'],
   'RESERVAS': ['/reservas'],
   'ADMIN_SISTEMA': ['/admin', '/admin/roles']
 };
