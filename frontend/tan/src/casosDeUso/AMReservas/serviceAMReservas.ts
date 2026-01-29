@@ -2,8 +2,8 @@ import type { Reserva, ReservaFormData, Inmueble, MedioReserva, DTOReserva } fro
 
 // Función para generar código único de reserva
 const generateReservationCode = (): string => {
-    const timestamp = Date.now().toString();
-    const random = Math.random().toString(36).substring(2, 8);
+    const timestamp = Date.now().toString().substring(6,8);
+    const random = Math.random().toString(36).substring(2, 4);
     return `RES-${timestamp}-${random.toUpperCase()}`;
 };
 
@@ -32,7 +32,7 @@ export const getInmuebles = async (): Promise<Inmueble[]> => {
     try {
         const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
 
-        const response = await fetch(`/api/inmuebles/inmuebles`, {
+        const response = await fetch('/api/reservas/inmuebles', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ export const getReservas = async (): Promise<Reserva[]> => {
 
         const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
 
-        const response = await fetch(`${API_BASE_URL}/api/reservas/reservas`, {
+        const response = await fetch(`/api/reservas/reservas`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ export const createReserva = async (reservaData: ReservaFormData): Promise<Reser
         
         const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
         
-        const response = await fetch(`${API_BASE_URL}/api/reserva/altaReserva`, {
+        const response = await fetch(`/api/reserva/altaReserva`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -173,7 +173,7 @@ export const updateReserva = async (codReserva: string, reservaData: Partial<Res
 
         const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
 
-        const response = await fetch(`${API_BASE_URL}/api/reserva/reservas/${encodeURIComponent(codReserva)}`, {
+        const response = await fetch(`/api/reserva/reservas/${encodeURIComponent(codReserva)}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -218,19 +218,6 @@ export const updateReserva = async (codReserva: string, reservaData: Partial<Res
     }
 };
 
-
-
-export const deleteReserva = async (codReserva: string): Promise<void> => {
-    try {
-        // TODO: Implementar cuando el backend tenga endpoint de eliminación
-        console.warn('deleteReserva no implementado. codReserva:', codReserva);
-        throw new Error('Funcionalidad de eliminación no implementada en el backend');
-    } catch (error) {
-        console.error('Error deleting reserva:', error);
-        throw error;
-    }
-};
-
 // Función para cancelar una reserva (PATCH -> /api/reserva/cancelarReserva/{codReserva})
 export const cancelarReserva = async (codReserva: string): Promise<string> => {
     try {
@@ -238,7 +225,7 @@ export const cancelarReserva = async (codReserva: string): Promise<string> => {
 
         const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
 
-        const response = await fetch(`${API_BASE_URL}/api/reserva/cancelarReserva/${encodeURIComponent(codReserva)}`, {
+        const response = await fetch(`/api/reserva/cancelarReserva/${encodeURIComponent(codReserva)}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -266,13 +253,14 @@ export const getEstadosReserva = async (): Promise<{ codEstadoReserva: string; n
         const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
 
         // Endpoint moved to Reservas controller: GET /api/reservas/estados
-        const response = await fetch(`${API_BASE_URL}/api/reservas/estados`, {
+        const response = await fetch('/api/reservas/estados', {
             method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 }
         });
+
         if (!response.ok) {
             throw new Error('Error al cargar estados');
         }

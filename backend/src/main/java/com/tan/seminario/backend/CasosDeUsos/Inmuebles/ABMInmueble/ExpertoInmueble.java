@@ -399,19 +399,4 @@ public class ExpertoInmueble {
                 .activo(inmueble.getFechaHoraBajaInmueble() == null)
                 .build();
     }
-
-    // METODO DEL MATI
-    public List<DTOInmueble> obtenerInmuebles() {
-        List<Inmueble> inmuebles = inmuebleRepository.findAll();
-        List<DTOInmueble> dtos = new ArrayList<>();
-        for (Inmueble in : inmuebles) {
-            DTOInmueble dto = new DTOInmueble();
-            dto.setCodInmueble(in.getCodInmueble());
-            dto.setNombreInmueble(in.getNombreInmueble());
-            dto.setCapacidad(in.getCapacidad());
-            dto.setPrecioPorNocheUSD(in.getPrecioPorNocheUSD());
-            dtos.add(dto);
-        }
-        return dtos;
-    }
 }

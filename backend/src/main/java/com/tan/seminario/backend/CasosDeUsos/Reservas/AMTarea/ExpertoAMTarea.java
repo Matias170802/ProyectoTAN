@@ -31,6 +31,7 @@ public class ExpertoAMTarea {
         Long nroTarea = dtoTarea.getNroTarea();
 
         List<Tarea> tareasModificacion = tareaRepository.findByNroTarea(nroTarea);
+
         if (tareasModificacion.isEmpty()) {
             //Alta Tarea
             String nombreTarea = dtoTarea.getNombreTarea();
@@ -44,10 +45,20 @@ public class ExpertoAMTarea {
             List<Empleado> empleados = empleadoRepository.findByCodEmpleado(codEmpleado);
             if (empleados.isEmpty()) {throw new RuntimeException("No se encuentra el Empleado con el Codigo: " + codEmpleado);}
             List<Reserva> reservas = reservaRepository.findByCodReserva(codReserva);
-            LocalDateTime fechaCheckIn = reservas.get(0).getFechaHoraInicioReserva();
+
             if (reservas.isEmpty()) {throw new RuntimeException("No se encuentra la Reserva con el Codigo: " + codReserva);}
             List<TipoTarea> tipoTareas = tipoTareaRepository.findByCodTipoTarea(codTipoTarea);
             if (tipoTareas.isEmpty()) {throw new RuntimeException("No se encuentra el Tipo de Tarea con el Codigo: " + codTipoTarea);}
+
+            //asigno la fecha de inicio de la tarea dependiendo si es de tipo checkin o check out
+            LocalDateTime fechaInicioTarea;
+
+            if (tipoTareas.get(0).getNombreTipoTarea().equals("Check-In")){
+                 fechaInicioTarea = reservas.get(0).getFechaHoraInicioReserva();
+            } else {
+                fechaInicioTarea = reservas.get(0).getFechaHoraFinReserva();
+            }
+
 
             if (nombreTarea == null){
                 nombreTarea = tipoTareas.get(0).getNombreTipoTarea();
@@ -63,7 +74,7 @@ public class ExpertoAMTarea {
                     tarea.setDescripcionTarea(descripcionTarea);
                 }
                 tarea.setFechaHoraAsignacionTarea(LocalDateTime.now());
-                tarea.setFechaHoraInicioTarea(fechaCheckIn);
+                tarea.setFechaHoraInicioTarea(fechaInicioTarea);
 
                 tarea.setEstadoTarea(estadoTipoTarea);
                 tarea.setEmpleado(empleados.get(0));

@@ -4,6 +4,7 @@ import com.tan.seminario.backend.Entity.EstadoReserva;
 import com.tan.seminario.backend.Entity.Inmueble;
 import com.tan.seminario.backend.Entity.Reserva;
 import com.tan.seminario.backend.Repository.EstadoReservaRepository;
+import com.tan.seminario.backend.Repository.InmuebleRepository;
 import com.tan.seminario.backend.Repository.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,10 @@ import java.util.List;
 public class ExpertoReserva {
     @Autowired
     private ReservaRepository reservaRepository;
+    @Autowired
     private EstadoReservaRepository estadoReservaRepository;
+    @Autowired
+    private InmuebleRepository inmuebleRepository;
 
 
     public List<DTOReserva> obtenerReservas(){
@@ -79,6 +83,20 @@ public class ExpertoReserva {
             DTOEstadoReserva dto = new DTOEstadoReserva();
             dto.setCodEstadoReserva(e.getCodEstadoReserva());
             dto.setNombreEstadoReserva(e.getNombreEstadoReserva());
+        }
+        return dtos;
+    }
+
+    public List<DTOInmueble> obtenerInmuebles() {
+        List<Inmueble> inmuebles = inmuebleRepository.findByFechaHoraBajaInmuebleIsNull();
+        List<DTOInmueble> dtos = new ArrayList<>();
+        for (Inmueble in : inmuebles) {
+            DTOInmueble dto = new DTOInmueble();
+            dto.setCodInmueble(in.getCodInmueble());
+            dto.setNombreInmueble(in.getNombreInmueble());
+            dto.setCapacidad(in.getCapacidad());
+            dto.setPrecioPorNocheUSD(in.getPrecioPorNocheUSD());
+            dtos.add(dto);
         }
         return dtos;
     }
