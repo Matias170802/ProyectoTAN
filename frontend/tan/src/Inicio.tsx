@@ -11,7 +11,7 @@ import { useInicio } from './useInicio'
 
 
 
-//*Componente principal de la aplicacion
+//*Componente principal de la aplicacion!
 function AppContent() {
   
   const {tareas,  isLoadingTareas, errorTareas} = useInicio();
