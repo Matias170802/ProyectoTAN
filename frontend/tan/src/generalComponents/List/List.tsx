@@ -133,7 +133,7 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                             e.stopPropagation(); // ⬅️ MANTENER stopPropagation
                             onItemEdit(item);
                         }}
-                        title="Modificar Reserva"
+                        title="Modificar"
                         aria-label="Editar"
                     >
                         ✏️
@@ -148,7 +148,7 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                             e.stopPropagation(); // ⬅️ MANTENER stopPropagation
                             onItemDelete(getItemId(item));
                         }}
-                        title="Cancelar Reserva"
+                        title="Cancelar"
                         aria-label="Eliminar"
                     >
                         🗑️

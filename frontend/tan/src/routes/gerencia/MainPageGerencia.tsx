@@ -104,13 +104,26 @@ const MainPageGerencia: React.FC = () => {
         }))
         .sort((a, b) => extraerNumeroDelCodigo(a.codigoEmpleado) - extraerNumeroDelCodigo(b.codigoEmpleado));
 
-    const handleBaja = (item: Record<string, unknown>) => {
-        // El item ya viene completo del componente List
-        const id = item.id as number;
-        
-        // Usar directamente el item recibido
-        setItemSeleccionadoParaBaja(item);
-        setModalBajaAbierto(true);
+    const handleBaja = (item: any) => {
+        // Accept either the whole item object or an id (string|number)
+        const id = (item !== null && typeof item === 'object') ? (item as any).id : item;
+
+        // Buscar el item completo según la vista actual y el id recibido
+        let itemCompleto: any = null;
+        if (vistaActual === 'inmuebles') {
+            itemCompleto = inmuebles?.find(i => i.id == id);
+        } else if (vistaActual === 'clientes') {
+            itemCompleto = clientes?.find(c => c.id == id);
+        } else if (vistaActual === 'empleados') {
+            itemCompleto = empleados?.find(e => e.id == id);
+        }
+
+        if (itemCompleto) {
+            setItemSeleccionadoParaBaja(itemCompleto);
+            setModalBajaAbierto(true);
+        } else {
+            console.warn('handleBaja: item not found for id', id);
+        }
     };
 
     const confirmarBaja = async (id: number): Promise<void> => {
@@ -143,23 +156,25 @@ const MainPageGerencia: React.FC = () => {
         }
     };
 
-    const handleEditar = (item: Record<string, unknown>) => {
-        // El item ya viene completo del componente List
-        const id = item.id as number;
-        
-        // Encontrar el item original completo según la vista actual
-        let itemCompleto;
+    const handleEditar = (item: any) => {
+        // Accept either the whole item object or an id (string|number)
+        const id = (item !== null && typeof item === 'object') ? (item as any).id : item;
+
+        // Buscar el item completo según la vista actual y el id recibido
+        let itemCompleto: any = null;
         if (vistaActual === 'inmuebles') {
-            itemCompleto = inmuebles?.find(i => i.id === id);
+            itemCompleto = inmuebles?.find(i => i.id == id);
         } else if (vistaActual === 'clientes') {
-            itemCompleto = clientes?.find(c => c.id === id);
+            itemCompleto = clientes?.find(c => c.id == id);
         } else if (vistaActual === 'empleados') {
-            itemCompleto = empleados?.find(e => e.id === id);
+            itemCompleto = empleados?.find(e => e.id == id);
         }
 
         if (itemCompleto) {
             setItemSeleccionadoParaModificar(itemCompleto);
             setModalModificarAbierto(true);
+        } else {
+            console.warn('handleEditar: item not found for id', id);
         }
     };
 
