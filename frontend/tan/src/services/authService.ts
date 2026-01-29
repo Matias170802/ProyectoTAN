@@ -61,8 +61,68 @@ export async function fetchCurrentUser(): Promise<CurrentUser> {
   } as CurrentUser;
 }
 
+export async function changePassword(
+  passwordActual: string,
+  nuevaPassword: string,
+  confirmarNuevaPassword: string
+): Promise<{ mensaje: string; exito: boolean; tokens: { access_token: string; refresh_token: string } }> {
+  const token = getStoredToken();
+  if (!token) throw new Error('Token no proporcionado');
+
+  const r = await fetch('/api/credenciales/cambiar-password', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      passwordActual,
+      nuevaPassword,
+      confirmarNuevaPassword
+    })
+  });
+
+  if (!r.ok) {
+    const body = await r.json().catch(() => ({}));
+    const errorMessage = body.message || body.error || 'Error al cambiar contraseña';
+    throw new Error(JSON.stringify({ message: errorMessage }));
+  }
+
+  return await r.json();
+}
+
+export async function changeEmail(
+  nuevoEmail: string,
+  passwordActual: string
+): Promise<{ mensaje: string; exito: boolean; tokens: { access_token: string; refresh_token: string } }> {
+  const token = getStoredToken();
+  if (!token) throw new Error('Token no proporcionado');
+
+  const r = await fetch('/api/credenciales/cambiar-email', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      nuevoEmail,
+      passwordActual
+    })
+  });
+
+  if (!r.ok) {
+    const body = await r.json().catch(() => ({}));
+    const errorMessage = body.message || body.error || 'Error al cambiar email';
+    throw new Error(JSON.stringify({ message: errorMessage }));
+  }
+
+  return await r.json();
+}
+
 export default {
   getStoredToken,
   clearTokens,
   fetchCurrentUser,
+  changePassword,
+  changeEmail,
 };

@@ -1,6 +1,8 @@
 package com.tan.seminario.backend.CasosDeUsos.Seguridad.CambioCredenciales;
 
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.JwtService;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.CambioCredenciales.DTOs.*;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.TokenResponse;
 import com.tan.seminario.backend.Entity.*;
 import com.tan.seminario.backend.Repository.*;
 import jakarta.transaction.Transactional;
@@ -25,6 +27,7 @@ public class ExpertoCambioCredenciales {
     private final TokenRecuperacionRepository tokenRecuperacionRepository;
     private final TokenRepository tokenJwtRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     private static final int HORAS_EXPIRACION_TOKEN = 1;
     private static final int MAX_INTENTOS_RECUPERACION_POR_HORA = 3;
@@ -35,6 +38,7 @@ public class ExpertoCambioCredenciales {
 
     /**
      * Cambiar email (requiere contraseña actual)
+     * GENERA NUEVOS TOKENS AUTOMÁTICAMENTE
      */
     @Transactional
     public DTOResponseGenerico cambiarEmail(String emailActual, DTOCambiarEmail request) {
@@ -70,19 +74,24 @@ public class ExpertoCambioCredenciales {
         usuario.setEmail(nuevoEmail);
         usuarioRepository.save(usuario);
 
-        // 7. Invalidar todos los tokens JWT del usuario (debe iniciar sesión nuevamente)
+        // 7. Invalidar todos los tokens JWT anteriores
         revocarTodosLosTokensJWT(usuario);
+
+        // 8. GENERAR NUEVOS TOKENS AUTOMÁTICAMENTE
+        TokenResponse nuevosTokens = generarNuevosTokens(usuario);
 
         log.info("Email cambiado exitosamente para usuario: {} -> {}", emailActual, nuevoEmail);
 
         return DTOResponseGenerico.builder()
-                .mensaje("Email actualizado correctamente. Por favor, inicie sesión nuevamente con su nuevo email.")
+                .mensaje("Email actualizado correctamente. Tus tokens de sesión han sido renovados automáticamente.")
                 .exito(true)
+                .tokens(nuevosTokens)
                 .build();
     }
 
     /**
      * Cambiar contraseña (requiere contraseña actual + confirmación)
+     * GENERA NUEVOS TOKENS AUTOMÁTICAMENTE
      */
     @Transactional
     public DTOResponseGenerico cambiarPassword(String emailUsuario, DTOCambiarPassword request) {
@@ -117,14 +126,18 @@ public class ExpertoCambioCredenciales {
         usuario.setPassword(passwordEncoder.encode(request.getNuevaPassword()));
         usuarioRepository.save(usuario);
 
-        // 7. Invalidar todos los tokens JWT (debe iniciar sesión nuevamente)
+        // 7. Invalidar todos los tokens JWT anteriores
         revocarTodosLosTokensJWT(usuario);
+
+        // 8. GENERAR NUEVOS TOKENS AUTOMÁTICAMENTE
+        TokenResponse nuevosTokens = generarNuevosTokens(usuario);
 
         log.info("Contraseña cambiada exitosamente para usuario: {}", emailUsuario);
 
         return DTOResponseGenerico.builder()
-                .mensaje("Contraseña actualizada correctamente. Por favor, inicie sesión nuevamente.")
+                .mensaje("Contraseña actualizada correctamente. Tus tokens de sesión han sido renovados automáticamente.")
                 .exito(true)
+                .tokens(nuevosTokens)
                 .build();
     }
 
@@ -151,6 +164,7 @@ public class ExpertoCambioCredenciales {
             return DTOResponseGenerico.builder()
                     .mensaje("Si el email está registrado, recibirás un enlace de recuperación.")
                     .exito(true)
+                    .tokens(null)
                     .build();
         }
 
@@ -164,6 +178,7 @@ public class ExpertoCambioCredenciales {
             return DTOResponseGenerico.builder()
                     .mensaje("Si el email está registrado, recibirás un enlace de recuperación.")
                     .exito(true)
+                    .tokens(null)
                     .build();
         }
 
@@ -202,11 +217,13 @@ public class ExpertoCambioCredenciales {
         return DTOResponseGenerico.builder()
                 .mensaje("Si el email está registrado, recibirás un enlace de recuperación.")
                 .exito(true)
+                .tokens(null)
                 .build();
     }
 
     /**
      * Reestablecer contraseña usando el token recibido por email
+     * NO GENERA TOKENS (el usuario debe iniciar sesión manualmente)
      */
     @Transactional
     public DTOResponseGenerico reestablecerPassword(DTOReestablecerPassword request) {
@@ -251,6 +268,7 @@ public class ExpertoCambioCredenciales {
         return DTOResponseGenerico.builder()
                 .mensaje("Contraseña reestablecida correctamente. Ya puedes iniciar sesión.")
                 .exito(true)
+                .tokens(null)
                 .build();
     }
 
@@ -332,6 +350,28 @@ public class ExpertoCambioCredenciales {
         });
         tokenJwtRepository.saveAll(tokensActivos);
         log.info("Tokens JWT revocados para usuario: {}", usuario.getEmail());
+    }
+
+    /**
+     * Genera nuevos tokens JWT para el usuario y los guarda en la BD
+     */
+    private TokenResponse generarNuevosTokens(Usuario usuario) {
+        String jwtToken = jwtService.generateToken(usuario);
+        String refreshToken = jwtService.generateRefreshToken(usuario);
+
+        // Guardar el nuevo token en la BD
+        Token token = Token.builder()
+                .usuario(usuario)
+                .token(jwtToken)
+                .tokenType(Token.TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
+        tokenJwtRepository.save(token);
+
+        log.info("Nuevos tokens generados para usuario: {}", usuario.getEmail());
+
+        return new TokenResponse(jwtToken, refreshToken);
     }
 
     /**
