@@ -42,14 +42,14 @@ const MainPageMiCaja: React.FC = () => {
                 <div id="balanceARS" className={balance?.balanceARS && balance.balanceARS < 0 ? 'negative' : 'positive'}>
                     <h3>Balance en Pesos</h3>
                     <p>Tu saldo actual en ARS</p>
-                    <p>${balance?.balanceARS}</p>
+                    <p>${balance?.balanceARS ? balance.balanceARS : '0'}</p>
 
                 </div>
 
                 <div id="balanceUSD" className={balance?.balanceUSD && balance.balanceUSD < 0 ? 'negative' : 'positive'}>
                     <h3>Balance en Dólares</h3>
                     <p>Tu saldo actual en USD</p>
-                    <p>$USD{balance?.balanceUSD}</p>
+                    <p>$USD{balance?.balanceUSD ? balance.balanceUSD : '0'}</p>
                 </div>
             </section>
 

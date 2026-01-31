@@ -22,9 +22,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
     return <Navigate to="/login" replace />;
   }
 
-  // Si el usuario es cliente, no puede acceder a rutas de empleados
+  // Si el usuario es cliente puro, solo puede acceder a rutas del cliente
   if (user.esCliente && !user.esEmpleado) {
-    return <Navigate to="/" replace />;
+    // Permitir solo rutas permitidas para clientes
+    const clienteRoutes = ['/cliente', '/perfil', '/micaja'];
+    if (!clienteRoutes.includes(location.pathname)) {
+      return <Navigate to="/cliente" replace />;
+    }
   }
 
   // Verificar acceso a la ruta según los roles (solo para empleados)

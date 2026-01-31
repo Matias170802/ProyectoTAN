@@ -25,7 +25,7 @@ export const ROLE_DESCRIPTIONS: Record<string, string> = {
 export const ROLE_ROUTE_MAP: Record<string, string[]> = {
   'FINANZAS': ['/finanzas', '/reportes'],
   'GERENCIA': ['/gerencia', '/reportes'],
-  'EMPLEADO': ['/registrarIngresoEgresoCaja', '/perfil', '/micaja', '/'],
+  'EMPLEADO': ['/registrarIngresoEgresoCaja', '/perfil', '/micaja', '/', '/finalizar-tarea/agregar-ie'],
   'RESERVAS': ['/reservas'],
   'ADMIN_SISTEMA': ['/admin', '/admin/roles']
 };
@@ -51,7 +51,9 @@ export function canAccessRoute(userRoles: string[], routePath: string): boolean 
   // Verificar si alguno de los roles del usuario permite acceder a la ruta
   return userRoles.some(role => {
     const allowedRoutes = ROLE_ROUTE_MAP[role] || [];
-    return allowedRoutes.includes(routePath);
+    return allowedRoutes.some(allowedRoute => {
+      return routePath === allowedRoute || routePath.startsWith(`${allowedRoute}/`);
+    });
   });
 }
 

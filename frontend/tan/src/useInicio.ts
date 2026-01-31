@@ -13,6 +13,8 @@ interface Tarea {
 export const useInicio = () => {
     const {data: tareas, loading: isLoadingTareas, error: errorTareas} = useFetch<Tarea[]>('/api/inicio/tareas');
 
+    console.log('Tareas obtenidas en useInicio:', tareas);
+    
     return {
         tareas,
         isLoadingTareas,

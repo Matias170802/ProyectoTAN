@@ -50,7 +50,7 @@ function AppContent() {
 
         <div id='contenedorItemsTareasAsignadas'>
 
-          {tareas && tareas.length >0 && (
+          {tareas && tareas.length >0 && !isLoadingTareas && (
             tareas.map((tarea) => (
               <section key={tarea.nroTarea} className='itemTareaAsignada'>
 

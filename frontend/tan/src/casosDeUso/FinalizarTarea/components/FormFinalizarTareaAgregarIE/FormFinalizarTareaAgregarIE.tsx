@@ -13,6 +13,7 @@ export const FormFinalizarTareaAgregarIE: React.FC = () => {
     const [transacciones, setTransacciones] = useState<Transaccion[]>([]);
 
     useEffect(() => {
+
         // Recupera la tarea desde sessionStorage
         const tareaGuardada = sessionStorage.getItem('tareaActual');
         if (tareaGuardada) {

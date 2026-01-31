@@ -1,2 +1,2 @@
-export { FormFinalizarTareaAgregarIE } from './FormFinalizarTareaAgregarIE/FormFinalizarTareaAregarIE';
+export { FormFinalizarTareaAgregarIE } from './FormFinalizarTareaAgregarIE/FormFinalizarTareaAgregarIE';
 export {ModalFinalizarTarea} from './ModalFinalizarTarea/ModalFinalizarTarea'; 

@@ -25,8 +25,8 @@ const Navbar: React.FC = () => {
         navigate('/login');
     };
 
-    // Si no hay usuario o es cliente, no mostrar navbar
-    if (!user || (user.esCliente && !user.esEmpleado)) {
+    // Si no hay usuario, no mostrar navbar
+    if (!user) {
         return null;
     }
 
@@ -36,7 +36,8 @@ const Navbar: React.FC = () => {
     
         <nav>
             <p>Gestión de<br/>Propiedades</p>
-            <ul>
+            {!user.esCliente && user.esEmpleado && (
+                <ul>
                 {/* Inicio - accesible para todos los empleados */}
                 <li><Link to="/"><Button label="Inicio" icon={<FaHome/>}/></Link></li>
 
@@ -83,6 +84,21 @@ const Navbar: React.FC = () => {
                 {/* Logout - siempre disponible */}
                 <li><button onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><Button label="Salir" icon={<MdLogout/>}/></button></li>
             </ul>
+            )}
+            
+            {user.esCliente && !user.esEmpleado && (
+                <ul>
+                    {/* Mi Caja */}
+                    <li><Link to="/micaja"><Button label="Mi Caja" icon={<FaCreditCard />}/></Link></li>
+
+                    {/* Perfil */}
+                    <li><Link to="/perfil"><Button label="Perfil" icon={<CgProfile />}/></Link></li>
+
+                    {/* Logout - siempre disponible */}
+                <li><button onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><Button label="Salir" icon={<MdLogout/>}/></button></li>
+                
+                </ul>
+            )}
         </nav>
     
     );
