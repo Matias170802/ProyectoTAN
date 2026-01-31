@@ -17,6 +17,7 @@ public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
     Optional<Movimiento> findTopByInmuebleCajaOrderByFechaMovimientoDesc(InmuebleCaja inmuebleCaja);
     Movimiento findByNroMovimiento(Long nroMovimiento);
     Optional<List<Movimiento>> findByEmpleadoCajaOrderByFechaMovimientoDesc(EmpleadoCaja empleadoCaja);
+    Optional<List<Movimiento>> findByCajaMadreOrderByFechaMovimientoDesc(CajaMadre cajaMadre);
     @Query("SELECT MAX(m.nroMovimiento) FROM Movimiento m")
     Long findMaxNroMovimiento();
 }
