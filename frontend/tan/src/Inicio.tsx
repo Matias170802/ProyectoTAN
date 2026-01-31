@@ -11,7 +11,7 @@ import { useInicio } from './useInicio'
 
 
 
-//*Componente principal de la aplicacion
+//*Componente principal de la aplicacion!
 function AppContent() {
   
   const {tareas,  isLoadingTareas, errorTareas} = useInicio();
@@ -133,10 +133,7 @@ function AppContent() {
                           <span className="titulo-detalle">Descripción</span>
                         </div>
                         <p className="valor-detalle">
-                          {tarea.tipoTarea === 'Check-in' 
-                            ? `Recibir a Juan Pérez y familia (2 adultos, 1 niño)` 
-                            : `Despedir a los huéspedes y revisar el estado de la propiedad`
-                          }
+                          {tarea.descripcionTarea}
                         </p>
                       </div>
                     </div>

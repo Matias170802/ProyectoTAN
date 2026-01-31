@@ -1,7 +1,5 @@
 .modal-alta-reserva {
     width: 100%;
-    max-width: 1100px;
-    min-width: 800px;
     margin: 0 auto;
     display: block;
     /* Eliminar align-items para que el contenido no quede centrado */

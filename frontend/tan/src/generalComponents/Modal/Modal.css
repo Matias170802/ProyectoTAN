@@ -5,9 +5,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 2000; /* ensure it sits above sticky navbar */
+    z-index: 9999 !important; /* ensure it sits above sticky navbar and all other elements */
 }
-
 
 .modal-content--wide {
     max-width: 1100px;

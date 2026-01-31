@@ -5,6 +5,12 @@ import { useGerencia } from './useGerencia';
 import ModalAltaCliente from './components/ModalAltaCliente';
 import ModalAltaEmpleado from './components/ModalAltaEmpleado';
 import ModalAltaInmueble from './components/ModalAltaInmueble';
+import ModalBajaCliente from './components/ModalBajaCliente';
+import ModalBajaEmpleado from './components/ModalBajaEmpleado';
+import ModalBajaInmueble from './components/ModalBajaInmueble';
+import ModalModificarCliente from './components/ModalModificarCliente';
+import ModalModificarEmpleado from './components/ModalModificarEmpleado';
+import ModalModificarInmueble from './components/ModalModificarInmueble';
 import './MainPageGerencia.css';
 
 type VistaActual = 'inmuebles' | 'clientes' | 'empleados';
@@ -12,6 +18,10 @@ type VistaActual = 'inmuebles' | 'clientes' | 'empleados';
 const MainPageGerencia: React.FC = () => {
     const [vistaActual, setVistaActual] = useState<VistaActual>('inmuebles');
     const [modalAltaAbierto, setModalAltaAbierto] = useState(false);
+    const [modalBajaAbierto, setModalBajaAbierto] = useState(false);
+    const [modalModificarAbierto, setModalModificarAbierto] = useState(false);
+    const [itemSeleccionadoParaBaja, setItemSeleccionadoParaBaja] = useState<any>(null);
+    const [itemSeleccionadoParaModificar, setItemSeleccionadoParaModificar] = useState<any>(null);
     
     const {
         inmuebles,
@@ -22,64 +32,150 @@ const MainPageGerencia: React.FC = () => {
         bajaInmueble,
         bajaCliente,
         bajaEmpleado,
+        modificarInmueble,
+        modificarCliente,
+        modificarEmpleado,
         refetchInmuebles,
         refetchClientes,
         refetchEmpleados
     } = useGerencia();
 
+    // Función para extraer el número del código (últimos 3 dígitos)
+    const extraerNumeroDelCodigo = (codigo: string): number => {
+        // Extrae los últimos 3 dígitos del código (ej: "EMPL-001" → 1, "CLI-010" → 10)
+        const numeros = codigo.match(/\d+$/);
+        return numeros ? parseInt(numeros[0], 10) : 0;
+    };
+
     // Adaptadores para mostrar los datos en formato tabla
-    const inmueblesAdaptados = (inmuebles || []).map(i => ({
-        id: i.id,
-        codigoInmueble: i.codInmueble,
-        nombreInmueble: i.nombreInmueble,
-        nombreCliente: i.nombreCliente,
-        direccion: i.direccion,
-        m2Inmueble: `${i.m2Inmueble} m²`,
-        activo: i.activo
-    }));
+    const inmueblesAdaptados = (inmuebles || [])
+        .map(i => ({
+            id: i.id,
+            codigoInmueble: i.codInmueble,
+            nombreInmueble: i.nombreInmueble,
+            nombreCliente: i.nombreCliente,
+            direccion: i.direccion,
+            m2Inmueble: `${i.m2Inmueble} m²`,
+            activo: i.activo,
+            // Datos completos para los modales
+            codInmueble: i.codInmueble,
+            cantidadBaños: i.cantidadBaños,
+            cantidadDormitorios: i.cantidadDormitorios,
+            capacidad: i.capacidad,
+            m2InmuebleNumero: i.m2Inmueble,
+            precioPorNocheUSD: i.precioPorNocheUSD,
+            fechaHoraAltaInmueble: i.fechaHoraAltaInmueble,
+            codCliente: i.codCliente
+        }))
+        .sort((a, b) => extraerNumeroDelCodigo(a.codigoInmueble) - extraerNumeroDelCodigo(b.codigoInmueble));
 
-    const clientesAdaptados = (clientes || []).map(c => ({
-        id: c.id,
-        codigoCliente: c.codCliente,
-        nombreCliente: c.nombreCliente,
-        dniCliente: c.dniCliente,
-        cantidadInmuebles: c.cantidadInmuebles,
-        activo: c.activo
-    }));
+    const clientesAdaptados = (clientes || [])
+        .map(c => ({
+            id: c.id,
+            codigoCliente: c.codCliente,
+            nombreCliente: c.nombreCliente,
+            dniCliente: c.dniCliente,
+            cantidadInmuebles: c.cantidadInmuebles,
+            activo: c.activo,
+            // Datos completos para los modales
+            codCliente: c.codCliente,
+            fechaHoraAltaCliente: c.fechaHoraAltaCliente,
+            codigosInmuebles: c.codigosInmuebles,
+            nombresInmuebles: c.nombresInmuebles
+        }))
+        .sort((a, b) => extraerNumeroDelCodigo(a.codigoCliente) - extraerNumeroDelCodigo(b.codigoCliente));
 
-    const empleadosAdaptados = (empleados || []).map(e => ({
-        id: e.id,
-        codigoEmpleado: e.codEmpleado,
-        nombreEmpleado: e.nombreEmpleado,
-        dniEmpleado: e.dniEmpleado,
-        nombresRoles: e.nombresRoles?.join(', ') || 'Sin roles',
-        balanceCajaARS: `$${e.balanceCajaARS?.toFixed(2) || '0.00'}`,
-        balanceCajaUSD: `$${e.balanceCajaUSD?.toFixed(2) || '0.00'}`,
-        activo: e.activo
-    }));
+    const empleadosAdaptados = (empleados || [])
+        .map(e => ({
+            id: e.id,
+            codigoEmpleado: e.codEmpleado,
+            nombreEmpleado: e.nombreEmpleado,
+            dniEmpleado: e.dniEmpleado,
+            nombresRoles: e.nombresRoles?.join(', ') || 'Sin roles',
+            balanceCajaARS: `$${e.balanceCajaARS?.toFixed(2) || '0.00'}`,
+            balanceCajaUSD: `$${e.balanceCajaUSD?.toFixed(2) || '0.00'}`,
+            activo: e.activo,
+            // Datos completos para los modales
+            codEmpleado: e.codEmpleado,
+            codigosRoles: e.codigosRoles,
+            nombresRolesArray: e.nombresRoles,
+            balanceCajaARSNumero: e.balanceCajaARS,
+            balanceCajaUSDNumero: e.balanceCajaUSD
+        }))
+        .sort((a, b) => extraerNumeroDelCodigo(a.codigoEmpleado) - extraerNumeroDelCodigo(b.codigoEmpleado));
 
-    const handleBaja = async (id: number | string) => {
-        const confirmMessage = '¿Está seguro que desea dar de baja este elemento?';
-        if (!window.confirm(confirmMessage)) return;
+    const handleBaja = (item: any) => {
+        // Accept either the whole item object or an id (string|number)
+        const id = (item !== null && typeof item === 'object') ? (item as any).id : item;
 
-        try {
-            if (vistaActual === 'inmuebles') {
-                await bajaInmueble(Number(id));
-            } else if (vistaActual === 'clientes') {
-                await bajaCliente(Number(id));
-            } else if (vistaActual === 'empleados') {
-                await bajaEmpleado(Number(id));
-            }
-        } catch (error) {
-            console.error('Error al dar de baja:', error);
-            const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
-            alert('Error al dar de baja el elemento: ' + errorMessage);
+        // Buscar el item completo según la vista actual y el id recibido
+        let itemCompleto: any = null;
+        if (vistaActual === 'inmuebles') {
+            itemCompleto = inmuebles?.find(i => i.id == id);
+        } else if (vistaActual === 'clientes') {
+            itemCompleto = clientes?.find(c => c.id == id);
+        } else if (vistaActual === 'empleados') {
+            itemCompleto = empleados?.find(e => e.id == id);
+        }
+
+        if (itemCompleto) {
+            setItemSeleccionadoParaBaja(itemCompleto);
+            setModalBajaAbierto(true);
+        } else {
+            console.warn('handleBaja: item not found for id', id);
         }
     };
 
-    const handleEditar = (item: Record<string, unknown>) => {
-        console.log('Editar:', item);
-        alert('Función de edición en desarrollo');
+    const confirmarBaja = async (id: number): Promise<void> => {
+        try {
+            if (vistaActual === 'inmuebles') {
+                await bajaInmueble(id);
+            } else if (vistaActual === 'clientes') {
+                await bajaCliente(id);
+            } else if (vistaActual === 'empleados') {
+                await bajaEmpleado(id);
+            }
+        } catch (error) {
+            console.error('Error al dar de baja:', error);
+            throw error; // Re-lanzar el error para que el modal lo maneje
+        }
+    };
+
+    const confirmarModificacion = async (id: number, data: any): Promise<any> => {
+        try {
+            if (vistaActual === 'inmuebles') {
+                return await modificarInmueble(id, data);
+            } else if (vistaActual === 'clientes') {
+                return await modificarCliente(id, data);
+            } else if (vistaActual === 'empleados') {
+                return await modificarEmpleado(id, data);
+            }
+        } catch (error) {
+            console.error('Error al modificar:', error);
+            throw error; // Re-lanzar el error para que el modal lo maneje
+        }
+    };
+
+    const handleEditar = (item: any) => {
+        // Accept either the whole item object or an id (string|number)
+        const id = (item !== null && typeof item === 'object') ? (item as any).id : item;
+
+        // Buscar el item completo según la vista actual y el id recibido
+        let itemCompleto: any = null;
+        if (vistaActual === 'inmuebles') {
+            itemCompleto = inmuebles?.find(i => i.id == id);
+        } else if (vistaActual === 'clientes') {
+            itemCompleto = clientes?.find(c => c.id == id);
+        } else if (vistaActual === 'empleados') {
+            itemCompleto = empleados?.find(e => e.id == id);
+        }
+
+        if (itemCompleto) {
+            setItemSeleccionadoParaModificar(itemCompleto);
+            setModalModificarAbierto(true);
+        } else {
+            console.warn('handleEditar: item not found for id', id);
+        }
     };
 
     const handleAbrirModalAlta = () => {
@@ -90,7 +186,39 @@ const MainPageGerencia: React.FC = () => {
         setModalAltaAbierto(false);
     };
 
+    const handleCerrarModalBaja = () => {
+        setModalBajaAbierto(false);
+        setItemSeleccionadoParaBaja(null);
+    };
+
+    const handleCerrarModalModificar = () => {
+        setModalModificarAbierto(false);
+        setItemSeleccionadoParaModificar(null);
+    };
+
     const handleSuccessAlta = () => {
+        // Refrescar la lista correspondiente
+        if (vistaActual === 'inmuebles' && refetchInmuebles) {
+            refetchInmuebles();
+        } else if (vistaActual === 'clientes' && refetchClientes) {
+            refetchClientes();
+        } else if (vistaActual === 'empleados' && refetchEmpleados) {
+            refetchEmpleados();
+        }
+    };
+
+    const handleSuccessBaja = () => {
+        // Refrescar la lista correspondiente
+        if (vistaActual === 'inmuebles' && refetchInmuebles) {
+            refetchInmuebles();
+        } else if (vistaActual === 'clientes' && refetchClientes) {
+            refetchClientes();
+        } else if (vistaActual === 'empleados' && refetchEmpleados) {
+            refetchEmpleados();
+        }
+    };
+
+    const handleSuccessModificar = () => {
         // Refrescar la lista correspondiente
         if (vistaActual === 'inmuebles' && refetchInmuebles) {
             refetchInmuebles();
@@ -126,6 +254,7 @@ const MainPageGerencia: React.FC = () => {
                 return [];
         }
     };
+    
     const getTituloActual = (): string => {
         switch (vistaActual) {
             case 'inmuebles':
@@ -201,6 +330,7 @@ const MainPageGerencia: React.FC = () => {
                             items={getItemsActuales()}
                             columnas={getColumnasActuales()}
                             showActions={true}
+                            actionsPosition="left"
                             idField="id"
                             onItemEdit={handleEditar}
                             onItemDelete={handleBaja}
@@ -232,6 +362,68 @@ const MainPageGerencia: React.FC = () => {
                     isOpen={modalAltaAbierto}
                     onClose={handleCerrarModalAlta}
                     onSuccess={handleSuccessAlta}
+                />
+            )}
+
+            {/* Modales de Baja */}
+            {vistaActual === 'clientes' && modalBajaAbierto && itemSeleccionadoParaBaja && (
+                <ModalBajaCliente
+                    isOpen={modalBajaAbierto}
+                    onClose={handleCerrarModalBaja}
+                    onSuccess={handleSuccessBaja}
+                    cliente={itemSeleccionadoParaBaja}
+                    onConfirm={confirmarBaja}
+                />
+            )}
+
+            {vistaActual === 'empleados' && modalBajaAbierto && itemSeleccionadoParaBaja && (
+                <ModalBajaEmpleado
+                    isOpen={modalBajaAbierto}
+                    onClose={handleCerrarModalBaja}
+                    onSuccess={handleSuccessBaja}
+                    empleado={itemSeleccionadoParaBaja}
+                    onConfirm={confirmarBaja}
+                />
+            )}
+
+            {vistaActual === 'inmuebles' && modalBajaAbierto && itemSeleccionadoParaBaja && (
+                <ModalBajaInmueble
+                    isOpen={modalBajaAbierto}
+                    onClose={handleCerrarModalBaja}
+                    onSuccess={handleSuccessBaja}
+                    inmueble={itemSeleccionadoParaBaja}
+                    onConfirm={confirmarBaja}
+                />
+            )}
+
+            {/* Modales de Modificación */}
+            {vistaActual === 'clientes' && modalModificarAbierto && itemSeleccionadoParaModificar && (
+                <ModalModificarCliente
+                    isOpen={modalModificarAbierto}
+                    onClose={handleCerrarModalModificar}
+                    onSuccess={handleSuccessModificar}
+                    cliente={itemSeleccionadoParaModificar}
+                    onConfirm={confirmarModificacion}
+                />
+            )}
+
+            {vistaActual === 'empleados' && modalModificarAbierto && itemSeleccionadoParaModificar && (
+                <ModalModificarEmpleado
+                    isOpen={modalModificarAbierto}
+                    onClose={handleCerrarModalModificar}
+                    onSuccess={handleSuccessModificar}
+                    empleado={itemSeleccionadoParaModificar}
+                    onConfirm={confirmarModificacion}
+                />
+            )}
+
+            {vistaActual === 'inmuebles' && modalModificarAbierto && itemSeleccionadoParaModificar && (
+                <ModalModificarInmueble
+                    isOpen={modalModificarAbierto}
+                    onClose={handleCerrarModalModificar}
+                    onSuccess={handleSuccessModificar}
+                    inmueble={itemSeleccionadoParaModificar}
+                    onConfirm={confirmarModificacion}
                 />
             )}
         </div>

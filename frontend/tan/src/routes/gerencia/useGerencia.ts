@@ -44,6 +44,26 @@ export interface DTOEmpleadoListado {
     activo: boolean;
 }
 
+export interface ModificarEmpleadoData {
+    dniEmpleado?: string;
+    nombreEmpleado?: string;
+    nroTelefonoEmpleado?: string;
+    salarioEmpleado?: number;
+}
+
+export interface ModificarClienteData {
+    dniCliente?: string;
+    nombreCliente?: string;
+}
+
+export interface ModificarInmuebleData {
+    cantidadBaños?: number;
+    cantidadDormitorios?: number;
+    capacidad?: number;
+    m2Inmueble?: number;
+    precioPorNocheUSD?: number;
+}
+
 export const useGerencia = () => {
     const token = useMemo(() => localStorage.getItem('access_token') || sessionStorage.getItem('access_token'), []);
 
@@ -137,6 +157,93 @@ export const useGerencia = () => {
         return await response.json();
     };
 
+    // Función para modificar inmueble
+    const modificarInmueble = async (id: number, data: ModificarInmuebleData): Promise<any> => {
+        console.log('Ejecutando modificación de inmueble:', id, data);
+        
+        const response = await fetch(`/api/inmuebles/modificar/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data),
+        });
+
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(error || 'Error al modificar el inmueble');
+        }
+
+        const responseData = await response.json();
+        console.log('Inmueble modificado:', responseData);
+        
+        // Refrescar la lista
+        if (refetchInmuebles) refetchInmuebles();
+        
+        return responseData;
+    };
+
+    // Función para modificar cliente
+    const modificarCliente = async (id: number, data: ModificarClienteData): Promise<any> => {
+        console.log('Ejecutando modificación de cliente:', id, data);
+        
+        const response = await fetch(`/api/clientes/modificar/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data),
+        });
+
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(error || 'Error al modificar el cliente');
+        }
+
+        const responseData = await response.json();
+        console.log('Cliente modificado:', responseData);
+        
+        // Refrescar la lista
+        if (refetchClientes) refetchClientes();
+        
+        return responseData;
+    };
+
+    // Función para modificar empleado
+    const modificarEmpleado = async (id: number, data: ModificarEmpleadoData): Promise<any> => {
+        console.log('Ejecutando modificación de empleado:', id, data);
+        
+        const response = await fetch(`/api/empleado/modificar/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data),
+        });
+
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(error || 'Error al modificar el empleado');
+        }
+
+        const responseData = await response.json();
+        console.log('Empleado modificado:', responseData);
+        
+        // Refrescar la lista
+        if (refetchEmpleados) refetchEmpleados();
+        
+        return responseData;
+    };
+
     return {
         inmuebles: inmuebles || [],
         clientes: clientes || [],
@@ -146,6 +253,9 @@ export const useGerencia = () => {
         bajaInmueble,
         bajaCliente,
         bajaEmpleado,
+        modificarInmueble,
+        modificarCliente,
+        modificarEmpleado,
         refetchInmuebles,
         refetchClientes,
         refetchEmpleados

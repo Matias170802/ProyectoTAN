@@ -14,6 +14,8 @@ const MainPageReservas: React.FC = () => {
     const am = useAMReservas();
     const { reservas, loading, error, refreshReservas, inmuebles, mediosReserva, createReserva, updateReserva } = am;
 
+    console.log("Inmuebles: ", inmuebles)
+
     // Cancel modal state
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
     const [cancelingReservaCod, setCancelingReservaCod] = useState<string | null>(null);
@@ -94,13 +96,13 @@ const MainPageReservas: React.FC = () => {
         checkin: r.fechaHoraCheckin ? new Date(r.fechaHoraCheckin).toLocaleDateString() : "",
         checkout: r.fechaHoraCheckout ? new Date(r.fechaHoraCheckout).toLocaleDateString() : "",
         personas: r.cantHuespedes,
-        total: `$${r.totalMonto}`,
-        sena: `$${r.totalMontoSenia}`,
+        total: `USD$ ${r.totalMonto}`,
+        sena: `USD$ ${r.totalMontoSenia}`,
         estado: r.nombreEstadoReserva,
         origen: r.plataformaOrigen || "-",
-        huesped: r.nombreHuesped || "",
-        email: r.emailHuesped || "",
-        descripcion: r.descripcionReserva || "",
+        huesped: r.nombreHuesped || "-",
+        email: r.emailHuesped || "-",
+        descripcion: r.descripcionReserva || "-",
         dias: r.totalDias ?? '',
     }));
 
@@ -225,7 +227,8 @@ const MainPageReservas: React.FC = () => {
                         getVisibleActions={(item) => {
                             const estado = (item as any).estado || '';
                             const normalized = String(estado).toLowerCase();
-                            if (normalized === 'señada' || normalized === 'preparada' || normalized === 'en curso') return ['edit', 'delete'];
+                            if (normalized === 'señada' || normalized === 'preparada') return ['edit', 'delete'];
+                            if (normalized === 'en curso') return ['edit'];
                             return [];
                         }}
                         // Hacer seleccionable (y marcar) solo las filas sobre las que se puede asignar check-in/out

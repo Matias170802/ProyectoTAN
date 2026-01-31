@@ -133,7 +133,7 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                             e.stopPropagation(); // ⬅️ MANTENER stopPropagation
                             onItemEdit(item);
                         }}
-                        title="Modificar configuración"
+                        title="Modificar"
                         aria-label="Editar"
                     >
                         ✏️
@@ -146,9 +146,9 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                         className="btn-action btn-delete"
                         onClick={(e) => {
                             e.stopPropagation(); // ⬅️ MANTENER stopPropagation
-                            onItemDelete(getItemId(item)); // ⬅️ USAR getItemId como en tu código original
+                            onItemDelete(getItemId(item));
                         }}
-                        title="Eliminar configuración"
+                        title="Cancelar"
                         aria-label="Eliminar"
                     >
                         🗑️

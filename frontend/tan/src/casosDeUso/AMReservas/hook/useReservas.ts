@@ -4,7 +4,6 @@ import {
     getReservas, 
     createReserva, 
     updateReserva, 
-    deleteReserva,
     getInmuebles,
     getMediosReserva,
     getEstadosReserva,
@@ -30,7 +29,8 @@ export const useReservas = () => {
         setState(prev => ({ ...prev, loading: true, error: null }));
         
         try {
-            const [reservasData, inmueblesData, mediosData, estadosData] = await Promise.all([
+            // Usar Promise.allSettled para que si una petición falla, las demás continúen
+            const results = await Promise.allSettled([
                 getReservas(),
                 getInmuebles(),
                 getMediosReserva(),
@@ -39,12 +39,21 @@ export const useReservas = () => {
 
             setState(prev => ({
                 ...prev,
-                reservas: reservasData,
-                inmuebles: inmueblesData,
-                mediosReserva: mediosData,
-                estados: estadosData,
-                loading: false
+                reservas: results[0].status === 'fulfilled' ? results[0].value : [],
+                inmuebles: results[1].status === 'fulfilled' ? results[1].value : [],
+                mediosReserva: results[2].status === 'fulfilled' ? results[2].value : [],
+                estados: results[3].status === 'fulfilled' ? results[3].value : [],
+                loading: false,
+                error: results[0].status === 'rejected' ? 'Error al cargar reservas' : null
             }));
+
+            // Advertir sobre peticiones fallidas no críticas
+            if (results[1].status === 'rejected') {
+                console.warn('No se pudieron cargar inmuebles:', results[1].reason);
+            }
+            if (results[3].status === 'rejected') {
+                console.warn('No se pudieron cargar estados:', results[3].reason);
+            }
         } catch (error) {
             console.error('Error loading initial data:', error);
             setState(prev => ({
@@ -94,27 +103,6 @@ export const useReservas = () => {
                 ...prev,
                 loading: false,
                 error: 'Error al actualizar la reserva'
-            }));
-            throw error;
-        }
-    };
-
-    const deleteExistingReserva = async (codReserva: string): Promise<void> => {
-        setState(prev => ({ ...prev, loading: true, error: null }));
-
-        try {
-            await deleteReserva(codReserva);
-            setState(prev => ({
-                ...prev,
-                reservas: prev.reservas.filter(r => r.codReserva !== codReserva),
-                loading: false
-            }));
-        } catch (error) {
-            console.error('Error deleting reservation:', error);
-            setState(prev => ({
-                ...prev,
-                loading: false,
-                error: 'Error al eliminar la reserva'
             }));
             throw error;
         }
@@ -206,8 +194,7 @@ export const useReservas = () => {
         // Actions
         createReserva: createNewReserva,
         updateReserva: updateExistingReserva,
-    cancelReserva: cancelExistingReserva,
-        deleteReserva: deleteExistingReserva,
+        cancelReserva: cancelExistingReserva,
         refreshReservas,
         clearError,
 

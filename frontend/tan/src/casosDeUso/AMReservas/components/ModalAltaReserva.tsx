@@ -383,7 +383,7 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
                     <div className="form-row">
                         <div className="form-group">
                             <label htmlFor="totalMonto" className="form-label">
-                                Monto Total
+                                Monto Total en USD
                             </label>
                             <input
                                 type="number"
@@ -400,7 +400,7 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
                         </div>
                         <div className="form-group">
                             <label htmlFor="totalMontoSenia" className="form-label">
-                                Monto de Seña
+                                Monto de Seña en USD
                             </label>
                             <input
                                 type="number"

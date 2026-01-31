@@ -77,15 +77,4 @@ public class InmuebleController {
         DTOInmuebleListado inmueble = expertoABMInmueble.listarInmueblePorId(id);
         return ResponseEntity.ok(inmueble);
     }
-
-    // Este metodo no se que hace pero lo dejo pq el mati lo usa
-    @GetMapping("/inmuebles")
-    public ResponseEntity<List<DTOInmueble>> obtenerInmuebles() {
-        try {
-            List<DTOInmueble> inmuebles = expertoABMInmueble.obtenerInmuebles();
-            return ResponseEntity.ok(inmuebles);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of());
-        }
-    }
 }
