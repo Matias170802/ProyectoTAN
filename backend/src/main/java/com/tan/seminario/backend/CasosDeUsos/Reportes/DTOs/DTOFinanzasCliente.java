@@ -10,14 +10,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 
-public class DTOReporteInmuebleCliente {
+public class DTOFinanzasCliente {
     private LocalDateTime fechaMovimiento;
     private Double montoMovimiento;
     private String monedaMovimiento;
     private String descripcionMovimiento;
     private String nombreCategoriaMovimiento;
-
-    private LocalDateTime fechaInicioReserva;
-    private LocalDateTime fechaFinReserva;
-    private String 
 }
