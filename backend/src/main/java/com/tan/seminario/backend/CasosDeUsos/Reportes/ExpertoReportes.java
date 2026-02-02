@@ -22,17 +22,17 @@ public class ExpertoReportes {
     private final UsuarioRepository usuarioRepository;
     private final ClienteRepository clienteRepository;
     private final MovimientoRepository movimientoRepository;
-    private final CategoriaMovimientoRepository categoriaMovimientoRepository;
+    private final InmuebleCajaRepository inmuebleCajaRepository;
 
 
-    public ExpertoReportes(InmuebleRepository inmuebleRepository, ReservaRepository reservaRepository, EstadoReservaRepository estadoReservaRepository, UsuarioRepository usuarioRepository, ClienteRepository clienteRepository, MovimientoRepository movimientoRepository, CategoriaMovimientoRepository categoriaMovimientoRepository) {
+    public ExpertoReportes(InmuebleRepository inmuebleRepository, ReservaRepository reservaRepository, EstadoReservaRepository estadoReservaRepository, UsuarioRepository usuarioRepository, ClienteRepository clienteRepository, MovimientoRepository movimientoRepository, InmuebleCajaRepository inmuebleCajaRepository) {
         this.inmuebleRepository = inmuebleRepository;
         this.reservaRepository = reservaRepository;
         this.estadoReservaRepository = estadoReservaRepository;
         this.usuarioRepository = usuarioRepository;
         this.clienteRepository = clienteRepository;
         this.movimientoRepository = movimientoRepository;
-        this.categoriaMovimientoRepository = categoriaMovimientoRepository;
+        this.inmuebleCajaRepository = inmuebleCajaRepository;
     }
 
     //obtener roles
@@ -432,6 +432,7 @@ public class ExpertoReportes {
     public List<DTOFinanzasCliente> obtenerMovimientosInmueble(String anio, String mes,String codInmueble) {
 
         Inmueble inmueble = inmuebleRepository.findByCodInmueble(codInmueble);
+        InmuebleCaja inmuebleCaja = inmuebleCajaRepository.findByInmueble(inmueble);
 
         //defino las fechas limites para buscar en la bd como condiciones
         LocalDateTime fechaInicio;
@@ -455,7 +456,7 @@ public class ExpertoReportes {
             fechaFin = yearMonth.atEndOfMonth().atTime(23, 59, 59);
         }
 
-        List<Movimiento> movimientosInmueble = movimientoRepository.findByFechaMovimientoBetween(fechaInicio,fechaFin);
+        List<Movimiento> movimientosInmueble = movimientoRepository.findByFechaMovimientoBetweenAndInmuebleCaja(fechaInicio, fechaFin, inmuebleCaja);
 
         List<DTOFinanzasCliente> dtosMovimientos = new ArrayList<>();
 
@@ -503,7 +504,7 @@ public class ExpertoReportes {
             fechaFin = yearMonth.atEndOfMonth().atTime(23, 59, 59);
         }
 
-        List<Reserva> reservasCliente = reservaRepository.findByFechaHoraInicioReservaBetween(fechaInicio,fechaFin);
+        List<Reserva> reservasCliente = reservaRepository.findByFechaHoraInicioReservaBetweenAndInmueble(fechaInicio,fechaFin,inmueble);
         List<DTOReservasCliente> dtosReservas = new ArrayList<>();
 
         for (Reserva reserva: reservasCliente) {

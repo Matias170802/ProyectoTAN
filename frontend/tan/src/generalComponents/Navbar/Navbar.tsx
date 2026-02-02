@@ -88,6 +88,9 @@ const Navbar: React.FC = () => {
             
             {user.esCliente && !user.esEmpleado && (
                 <ul>
+                    {/* Mis Propiedades - predeterminado */}
+                    <li><Link to="/"><Button label="Mis Propiedades" icon={<MdBusinessCenter />}/></Link></li>
+
                     {/* Mi Caja */}
                     <li><Link to="/micaja"><Button label="Mi Caja" icon={<FaCreditCard />}/></Link></li>
 

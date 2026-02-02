@@ -1,21 +1,13 @@
 /* Contenedor principal */
-.mainPageClienteContainer {
-    background-color: oklch(0.985 0 0);
-    width: 100%;
-    min-height: 100vh;
-}
 
 #mainPageClienteContent {
-    padding: 30px 60px;
-    max-width: 1400px;
-    margin: 0 auto;
+padding: 30px 60px 30px 60px;
 }
 
 .titulo {
     font-size: 30px;
     font-weight: 600;
-    margin-bottom: 30px;
-    color: #1f2937;
+    margin-bottom: 20px;
 }
 
 /* Sección de selector de propiedad */

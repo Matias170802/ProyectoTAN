@@ -1,21 +1,12 @@
 import './MainPageCliente.css';
+import { ModalConsultarEstadisticasCliente } from '@/casosDeUso/ConsultarEstadisticas/components/ModalConsultarEstadisticasCliente/ModalConsultarEstadisticasCliente';
 
 const MainPageCliente: React.FC = () => {
     return (
-        <div className="mainPageClienteContainer">
+        <div className="App">
             <div id="mainPageClienteContent">
-                <h1 className="titulo">Portal del Cliente</h1>
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    minHeight: '400px',
-                    fontSize: '24px',
-                    color: '#1f2937',
-                    fontWeight: '500'
-                }}>
-                    ✅ Esta es la MainPage del Cliente
-                </div>
+                <h1 className="titulo">Mis Propiedades</h1>
+                <ModalConsultarEstadisticasCliente />
             </div>
         </div>
     );

@@ -24,4 +24,6 @@ public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
     Long findMaxNroMovimiento();
 
     List<Movimiento> findByFechaMovimientoBetween(LocalDateTime fechaMovimientoAfter, LocalDateTime fechaMovimientoBefore);
+
+    List<Movimiento> findByFechaMovimientoBetweenAndInmuebleCaja(LocalDateTime fechaMovimientoAfter, LocalDateTime fechaMovimientoBefore, InmuebleCaja inmuebleCaja);
 }
