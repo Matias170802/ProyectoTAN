@@ -138,7 +138,8 @@
 ## 🏠 Cliente
 
 ### Cliente Demo
-- **Email:** `cliente.demo@gmail.com`
+- **NOMBRES DE CLIENTES:** Matias, Clara, Jose, Mau y Maria
+- **Email:** `(nombreCliente)@gmail.com` ejemplo `Maria@gmail.com`
 - **Password:** `Passw0rd!` *(Contraseña por defecto)*
 - **DNI:** `20202020`
 - **Código Cliente:** Se genera automáticamente (formato: CLI###)

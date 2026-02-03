@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface CajaMadreRepository extends JpaRepository<CajaMadre, Long> {
     List<CajaMadre> findCajaMadreByFechaHoraBajaCajaMadreIsNull();
+
+    CajaMadre findByNroCajaMadre(Long nroCajaMadre);
 }

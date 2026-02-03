@@ -3,30 +3,33 @@ import {List, Button} from '../../generalComponents/index';
 import { useMainPageMiCaja, type Movimiento } from './useMainPageMiCaja';
 import './MainPageMiCaja.css'
 import type { Rol } from './TypesMainPageMiCaja';
-import { useFetch } from '@/generalHooks/useFetch';
+import { useUserContext } from '@/context/UserContext';
+
 
 const MainPageMiCaja: React.FC = () => {
 
     const [filter, setFilter] = useState<'todas' | 'ingresos' | 'egresos'>('todas');
     const [esGerencia, setEsGerencia] = useState<boolean>(false);
     const [reporteSeleccionado, setReporteSeleccionado] = useState<'cajaMadre' | 'miCaja'>('miCaja');
+    const { user} = useUserContext();
 
     const columnas = ["Fecha", "Tipo", "Monto", "Descripcion", "Categoria"];
-    const {movimientos, loadingMovimientos, errorMovimientos, refetchMovimientos, balance, errorBalance, loadingBalance, refetchBalance} = useMainPageMiCaja(esGerencia, reporteSeleccionado);
-    const {data: roles, loading: loadingRoles, error: errorRoles} = useFetch<Rol[]>('/api/finanzas/rolesUsuario');
+    const {movimientos, loadingMovimientos, errorMovimientos, refetchMovimientos, balance, errorBalance, loadingBalance, refetchBalance, roles, errorRoles, loadingRoles} = useMainPageMiCaja(esGerencia, reporteSeleccionado, user?.esCliente || false);
+
 
     const definirReportesAMostrar = (roles: Rol[] | null) => {
-            
-        if (roles &&roles.some((rol) => rol.nombreRol.includes('Gerencia'))) {
+        if (roles && roles.some((rol) => rol.nombreRol.includes('Gerencia'))) {
             setEsGerencia(true);
-        }  
+        } else {
+            setEsGerencia(false);
+        }
     }
     
     useEffect(() => {
-        definirReportesAMostrar(roles);
+        definirReportesAMostrar(roles? roles : null);
     }, [roles]);
-
     
+    console.log(balance)
     const filteredMovimientos = useMemo(() => {
         const items = movimientos ?? [];
         

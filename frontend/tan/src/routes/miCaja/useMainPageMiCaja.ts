@@ -1,4 +1,5 @@
 import { useFetch } from "@/generalHooks/useFetch"
+import type { Rol } from "./TypesMainPageMiCaja";
 
 export interface Movimiento {
 
@@ -11,13 +12,14 @@ export interface Movimiento {
 }
 
 
-export const useMainPageMiCaja = (esGerencia: boolean, reporteSeleccionado: 'cajaMadre' | 'miCaja') => {
+export const useMainPageMiCaja = (esGerencia: boolean, reporteSeleccionado: 'cajaMadre' | 'miCaja', esCliente: boolean) => {
     
     //en caso de que no tenga el rol de gerencia o tenga el rol de gerencia péro esté seleccionado el boton de mostrar "Mi Caja"
-    if (!esGerencia || (esGerencia && reporteSeleccionado === 'miCaja')) {
+    if ((!esGerencia || (esGerencia && reporteSeleccionado === 'miCaja')) && !esCliente) {
         const {data: movimientos, loading: loadingMovimientos, error: errorMovimientos, refetch: refetchMovimientos} = useFetch<Movimiento[] | []>('/api/finanzas/movimientos');
         const {data: balance, loading: loadingBalance, error: errorBalance, refetch: refetchBalance} = useFetch<{balanceARS: number, balanceUSD: number}>('/api/finanzas/balance');
-    
+        const {data: roles, loading: loadingRoles, error: errorRoles} = useFetch<Rol[]>('/api/finanzas/rolesUsuario');
+
         return {
         movimientos,
         loadingMovimientos,
@@ -26,14 +28,37 @@ export const useMainPageMiCaja = (esGerencia: boolean, reporteSeleccionado: 'caj
         balance,
         loadingBalance,
         errorBalance,
-        refetchBalance
+        refetchBalance,
+        roles,
+        loadingRoles,
+        errorRoles
         }
     }
 
     //caso de que sea gerencia y tenga seleccionado el boton de mostrar "Caja Madre"
-    if (esGerencia && reporteSeleccionado === 'cajaMadre') {
+    if (esGerencia && reporteSeleccionado === 'cajaMadre' && !esCliente) {
         const {data: movimientos, loading: loadingMovimientos, error: errorMovimientos, refetch: refetchMovimientos} = useFetch<Movimiento[] | []>('/api/finanzas/movimientosCajaMadre');
         const {data: balance, loading: loadingBalance, error: errorBalance, refetch: refetchBalance} = useFetch<{balanceARS: number, balanceUSD: number}>('/api/finanzas/balanceCajaMadre');
+        const {data: roles, loading: loadingRoles, error: errorRoles} = useFetch<Rol[]>('/api/finanzas/rolesUsuario');
+
+        return {
+        movimientos,
+        loadingMovimientos,
+        errorMovimientos,
+        refetchMovimientos,
+        balance,
+        loadingBalance,
+        errorBalance,
+        refetchBalance,
+        roles,
+        loadingRoles,
+        errorRoles
+        }
+    }
+
+    if (esCliente) {
+        const {data: movimientos, loading: loadingMovimientos, error: errorMovimientos, refetch: refetchMovimientos} = useFetch<Movimiento[] | []>('/api/finanzas/movimientos');
+        const {data: balance, loading: loadingBalance, error: errorBalance, refetch: refetchBalance} = useFetch<{balanceARS: number, balanceUSD: number}>('/api/finanzas/balance');
     
         return {
         movimientos,
