@@ -4,6 +4,7 @@ import { List } from '../../../../generalComponents/index';
 import { useState } from 'react';
 import { type FiltrosClienteReportes, useInmueblesCliente, useFinanzasCliente, useReservasCliente } from '../../hooks/useClienteReportes';
 import { useUserContext } from '../../../../context/UserContext';
+import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Bar } from 'recharts';
 
 export const ModalConsultarEstadisticasCliente: React.FC<PropsConsultarEstadisticasCliente> = () => {
     const { user } = useUserContext();
@@ -48,6 +49,52 @@ export const ModalConsultarEstadisticasCliente: React.FC<PropsConsultarEstadisti
             [name]: value
         }));
     };
+
+    // Meses en español
+    const MESES_CORTOS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+    // Procesar datos de finanzas por mes
+    const procesarFinanzasPorMes = () => {
+        if (!finanzas || finanzas.length === 0) return [];
+        
+        const dataPorMes: Record<number, number> = {};
+        
+        finanzas.forEach(finanza => {
+            const fecha = new Date(finanza.fechaMovimiento);
+            const mes = fecha.getMonth() + 1;
+            dataPorMes[mes] = (dataPorMes[mes] || 0) + finanza.montoMovimiento;
+        });
+
+        return Object.entries(dataPorMes)
+            .map(([mes, monto]) => ({
+                mes: MESES_CORTOS[parseInt(mes) - 1],
+                Recaudado: parseFloat(monto.toFixed(2))
+            }))
+            .sort((a, b) => MESES_CORTOS.indexOf(a.mes) - MESES_CORTOS.indexOf(b.mes));
+    };
+
+    // Procesar datos de reservas por mes
+    const procesarReservasPorMes = () => {
+        if (!reservas || reservas.length === 0) return [];
+        
+        const dataPorMes: Record<number, number> = {};
+        
+        reservas.forEach(reserva => {
+            const fecha = new Date(reserva.fechaInicioReserva);
+            const mes = fecha.getMonth() + 1;
+            dataPorMes[mes] = (dataPorMes[mes] || 0) + 1;
+        });
+
+        return Object.entries(dataPorMes)
+            .map(([mes, cantidad]) => ({
+                mes: MESES_CORTOS[parseInt(mes) - 1],
+                Cantidad: cantidad
+            }))
+            .sort((a, b) => MESES_CORTOS.indexOf(a.mes) - MESES_CORTOS.indexOf(b.mes));
+    };
+
+    const datosGraficosFinanzas = procesarFinanzasPorMes();
+    const datosGraficosReservas = procesarReservasPorMes();
 
     // Convertir datos de finanzas para la tabla
     const columnasFinanzas = ['Fecha', 'Descripción', 'Categoría', 'Moneda', 'Monto'];
@@ -112,6 +159,7 @@ export const ModalConsultarEstadisticasCliente: React.FC<PropsConsultarEstadisti
                                         value={filtros.anio || ''}
                                         onChange={handleFiltroChange}
                                     >
+                                        <option value="2027">2027</option>
                                         <option value="2026">2026</option>
                                         <option value="2025">2025</option>
                                         <option value="2024">2024</option>
@@ -163,6 +211,24 @@ export const ModalConsultarEstadisticasCliente: React.FC<PropsConsultarEstadisti
                                         <h3>
                                             Reporte de Ganancias
                                         </h3>
+                                        
+                                        {finanzas && finanzas.length > 0 && datosGraficosFinanzas.length > 0 && (
+                                            <section id='contenedorGraficosCliente'>
+                                                <p>Recaudación por Mes</p>
+                                                <div className='chartWrapper'>
+                                                    <ResponsiveContainer width="100%" height={320}>
+                                                        <BarChart data={datosGraficosFinanzas} margin={{ top: 20, right: 30, left: 60, bottom: 5 }}>
+                                                            <CartesianGrid strokeDasharray="3 3" />
+                                                            <XAxis dataKey="mes" />
+                                                            <YAxis label={{ value: 'USD', angle: -90, position: 'left' }} />
+                                                            <Tooltip formatter={(value) => `USD$ ${value}`} />
+                                                            <Bar dataKey="Recaudado" fill="#4CAF50" name="Recaudado" />
+                                                        </BarChart>
+                                                    </ResponsiveContainer>
+                                                </div>
+                                            </section>
+                                        )}
+                                        
                                         {finanzas && finanzas.length > 0 ? (
                                             <List columnas={columnasFinanzas} items={itemsFinanzas} />
                                         ) : (
@@ -175,6 +241,24 @@ export const ModalConsultarEstadisticasCliente: React.FC<PropsConsultarEstadisti
                                         <h3>
                                             Reporte de Reservas
                                         </h3>
+                                        
+                                        {reservas && reservas.length > 0 && datosGraficosReservas.length > 0 && (
+                                            <section id='contenedorGraficosCliente'>
+                                                <p>Cantidad de Reservas por Mes</p>
+                                                <div className='chartWrapper'>
+                                                    <ResponsiveContainer width="100%" height={320}>
+                                                        <BarChart data={datosGraficosReservas} margin={{ top: 20, right: 30, left: 60, bottom: 5 }}>
+                                                            <CartesianGrid strokeDasharray="3 3" />
+                                                            <XAxis dataKey="mes" />
+                                                            <YAxis label={{ value: 'Cantidad', angle: -90, position: 'left' }} />
+                                                            <Tooltip />
+                                                            <Bar dataKey="Cantidad" fill="#1E88E5" name="Cantidad de Reservas" />
+                                                        </BarChart>
+                                                    </ResponsiveContainer>
+                                                </div>
+                                            </section>
+                                        )}
+                                        
                                         {reservas && reservas.length > 0 ? (
                                             <List columnas={columnasReservas} items={itemsReservas} />
                                         ) : (
