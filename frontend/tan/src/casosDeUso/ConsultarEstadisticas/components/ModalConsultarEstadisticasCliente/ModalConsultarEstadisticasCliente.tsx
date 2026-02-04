@@ -57,18 +57,28 @@ export const ModalConsultarEstadisticasCliente: React.FC<PropsConsultarEstadisti
     const procesarFinanzasPorMes = () => {
         if (!finanzas || finanzas.length === 0) return [];
         
-        const dataPorMes: Record<number, number> = {};
+        const dataPorMes: Record<number, { ars: number; usd: number }> = {};
         
         finanzas.forEach(finanza => {
             const fecha = new Date(finanza.fechaMovimiento);
             const mes = fecha.getMonth() + 1;
-            dataPorMes[mes] = (dataPorMes[mes] || 0) + finanza.montoMovimiento;
+            if (!dataPorMes[mes]) {
+                dataPorMes[mes] = { ars: 0, usd: 0 };
+            }
+
+            const moneda = (finanza.monedaMovimiento || '').toString().toLowerCase();
+            if (moneda.includes('peso') || moneda.includes('ars')) {
+                dataPorMes[mes].ars += finanza.montoMovimiento;
+            } else if (moneda.includes('dolar') || moneda.includes('usd')) {
+                dataPorMes[mes].usd += finanza.montoMovimiento;
+            }
         });
 
         return Object.entries(dataPorMes)
-            .map(([mes, monto]) => ({
+            .map(([mes, montos]) => ({
                 mes: MESES_CORTOS[parseInt(mes) - 1],
-                Recaudado: parseFloat(monto.toFixed(2))
+                ARS: parseFloat(montos.ars.toFixed(2)),
+                USD: parseFloat(montos.usd.toFixed(2))
             }))
             .sort((a, b) => MESES_CORTOS.indexOf(a.mes) - MESES_CORTOS.indexOf(b.mes));
     };
@@ -220,9 +230,10 @@ export const ModalConsultarEstadisticasCliente: React.FC<PropsConsultarEstadisti
                                                         <BarChart data={datosGraficosFinanzas} margin={{ top: 20, right: 30, left: 60, bottom: 5 }}>
                                                             <CartesianGrid strokeDasharray="3 3" />
                                                             <XAxis dataKey="mes" />
-                                                            <YAxis label={{ value: 'USD', angle: -90, position: 'left' }} />
-                                                            <Tooltip formatter={(value) => `USD$ ${value}`} />
-                                                            <Bar dataKey="Recaudado" fill="#4CAF50" name="Recaudado" />
+                                                            <YAxis label={{ value: 'Monto', angle: -90, position: 'left' }} />
+                                                            <Tooltip formatter={(value, name) => `${name === 'ARS' ? 'ARS$' : 'USD$'} ${value}`} />
+                                                            <Bar dataKey="ARS" fill="#4CAF50" name="ARS" />
+                                                            <Bar dataKey="USD" fill="#1E88E5" name="USD" />
                                                         </BarChart>
                                                     </ResponsiveContainer>
                                                 </div>

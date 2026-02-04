@@ -18,9 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class DataInitialazer {
@@ -149,21 +147,21 @@ public class DataInitialazer {
             Inmueble in14 = new Inmueble("INM014", "Rancho", 2, 3, 7, "Campo Verde", LocalDateTime.now().minusMonths(8), null, 85.0, 150.0, cli7);
             Inmueble in15 = new Inmueble("INM015", "Studio", 1, 1, 2, "Centro Comercial", LocalDateTime.now().minusMonths(3), null, 40.0, 70.0, cli7);
 
-            InmuebleCaja inmuebleCaja1 = new InmuebleCaja(1L,"Chacras",BigDecimal.valueOf(0.0),BigDecimal.valueOf(600.0),LocalDateTime.now().minusDays(240),null,in1 );
-            InmuebleCaja inmuebleCaja2 = new InmuebleCaja(2L,"Godoy",BigDecimal.valueOf(0.0),BigDecimal.valueOf(1200.0),LocalDateTime.now().minusDays(210),null,in2 );
-            InmuebleCaja inmuebleCaja3 = new InmuebleCaja(3L,"Montana",BigDecimal.valueOf(0.0),BigDecimal.valueOf(800.0),LocalDateTime.now().minusDays(150),null,in3 );
-            InmuebleCaja inmuebleCaja4 = new InmuebleCaja(4L,"Terraoliva",BigDecimal.valueOf(0.0),BigDecimal.valueOf(400.0),LocalDateTime.now().minusDays(270),null,in4 );
-            InmuebleCaja inmuebleCaja5 = new InmuebleCaja(5L,"Chalet",BigDecimal.valueOf(0.0),BigDecimal.valueOf(1000.0),LocalDateTime.now().minusDays(180),null,in5 );
-            InmuebleCaja inmuebleCaja6 = new InmuebleCaja(6L,"Departamento",BigDecimal.valueOf(0.0),BigDecimal.valueOf(500.0),LocalDateTime.now().minusDays(120),null,in6 );
-            InmuebleCaja inmuebleCaja7 = new InmuebleCaja(7L,"Villa",BigDecimal.valueOf(0.0),BigDecimal.valueOf(1500.0),LocalDateTime.now().minusDays(90),null,in7 );
-            InmuebleCaja inmuebleCaja8 = new InmuebleCaja(8L,"Bungalow",BigDecimal.valueOf(0.0),BigDecimal.valueOf(650.0),LocalDateTime.now().minusDays(330),null,in8 );
-            InmuebleCaja inmuebleCaja9 = new InmuebleCaja(9L,"Casita",BigDecimal.valueOf(0.0),BigDecimal.valueOf(450.0),LocalDateTime.now().minusDays(60),null,in9 );
-            InmuebleCaja inmuebleCaja10 = new InmuebleCaja(10L,"Finca",BigDecimal.valueOf(0.0),BigDecimal.valueOf(900.0),LocalDateTime.now().minusDays(300),null,in10 );
-            InmuebleCaja inmuebleCaja11 = new InmuebleCaja(11L,"Mansión",BigDecimal.valueOf(0.0),BigDecimal.valueOf(2000.0),LocalDateTime.now().minusDays(30),null,in11 );
-            InmuebleCaja inmuebleCaja12 = new InmuebleCaja(12L,"Cottage",BigDecimal.valueOf(0.0),BigDecimal.valueOf(700.0),LocalDateTime.now().minusDays(210),null,in12 );
-            InmuebleCaja inmuebleCaja13 = new InmuebleCaja(13L,"Penthouse",BigDecimal.valueOf(0.0),BigDecimal.valueOf(1100.0),LocalDateTime.now().minusDays(150),null,in13 );
-            InmuebleCaja inmuebleCaja14 = new InmuebleCaja(14L,"Rancho",BigDecimal.valueOf(0.0),BigDecimal.valueOf(850.0),LocalDateTime.now().minusDays(240),null,in14 );
-            InmuebleCaja inmuebleCaja15 = new InmuebleCaja(15L,"Studio",BigDecimal.valueOf(0.0),BigDecimal.valueOf(400.0),LocalDateTime.now().minusDays(90),null,in15 );
+            InmuebleCaja inmuebleCaja1 = new InmuebleCaja(1L,"Chacras",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(240),null,in1 );
+            InmuebleCaja inmuebleCaja2 = new InmuebleCaja(2L,"Godoy",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(210),null,in2 );
+            InmuebleCaja inmuebleCaja3 = new InmuebleCaja(3L,"Montana",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(150),null,in3 );
+            InmuebleCaja inmuebleCaja4 = new InmuebleCaja(4L,"Terraoliva",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(270),null,in4 );
+            InmuebleCaja inmuebleCaja5 = new InmuebleCaja(5L,"Chalet",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(180),null,in5 );
+            InmuebleCaja inmuebleCaja6 = new InmuebleCaja(6L,"Departamento",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(120),null,in6 );
+            InmuebleCaja inmuebleCaja7 = new InmuebleCaja(7L,"Villa",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(90),null,in7 );
+            InmuebleCaja inmuebleCaja8 = new InmuebleCaja(8L,"Bungalow",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(330),null,in8 );
+            InmuebleCaja inmuebleCaja9 = new InmuebleCaja(9L,"Casita",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(60),null,in9 );
+            InmuebleCaja inmuebleCaja10 = new InmuebleCaja(10L,"Finca",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(300),null,in10 );
+            InmuebleCaja inmuebleCaja11 = new InmuebleCaja(11L,"Mansión",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(30),null,in11 );
+            InmuebleCaja inmuebleCaja12 = new InmuebleCaja(12L,"Cottage",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(210),null,in12 );
+            InmuebleCaja inmuebleCaja13 = new InmuebleCaja(13L,"Penthouse",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(150),null,in13 );
+            InmuebleCaja inmuebleCaja14 = new InmuebleCaja(14L,"Rancho",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(240),null,in14 );
+            InmuebleCaja inmuebleCaja15 = new InmuebleCaja(15L,"Studio",BigDecimal.valueOf(0.0),BigDecimal.valueOf(0.0),LocalDateTime.now().minusDays(90),null,in15 );
             
             inmuebleRepository.saveAll(Arrays.asList(in1, in2, in3, in4, in5, in6, in7, in8, in9, in10, in11, in12, in13, in14, in15));
 
@@ -215,6 +213,21 @@ public class DataInitialazer {
             Reserva r16 = new Reserva("RES016", LocalDateTime.now().minusDays(75), LocalDateTime.now().minusDays(70), LocalDateTime.now().minusDays(120), 3, 2,"Eduardo","261500011","eduardo@gmail.com", 1900.0, 750.0, 75.0, "Airbnb","Negocio",Boolean.FALSE, in14, estFinalizada);
             Reserva r17 = new Reserva("RES017", LocalDateTime.now().minusDays(50), LocalDateTime.now().minusDays(45), LocalDateTime.now().minusDays(95), 6, 4,"Valeria","261500012","valeria@gmail.com", 3500.0, 1400.0, 140.0, "Booking","Corporativo",Boolean.FALSE, in15, estFinalizada);
 
+            // FINALIZADAS 2024 (fechas en 2024)
+            Reserva r26 = new Reserva("RES026", LocalDateTime.of(2024, 3, 12, 14, 0), LocalDateTime.of(2024, 3, 17, 10, 0), LocalDateTime.of(2024, 2, 20, 9, 30), 5, 2, "Marta", "261500021", "marta@gmail.com", 2100.0, 800.0, 80.0, "Airbnb", "Viaje familiar", Boolean.FALSE, in1, estFinalizada);
+            Reserva r27 = new Reserva("RES027", LocalDateTime.of(2024, 7, 5, 15, 0), LocalDateTime.of(2024, 7, 10, 11, 0), LocalDateTime.of(2024, 6, 1, 12, 0), 5, 3, "Sergio", "261500022", "sergio@gmail.com", 2800.0, 1100.0, 110.0, "Booking", "Vacaciones", Boolean.FALSE, in3, estFinalizada);
+            Reserva r28 = new Reserva("RES028", LocalDateTime.of(2024, 11, 2, 13, 0), LocalDateTime.of(2024, 11, 6, 10, 0), LocalDateTime.of(2024, 10, 10, 16, 0), 4, 2, "Carla", "261500023", "carla@gmail.com", 1900.0, 700.0, 70.0, "Directo", "Escapada", Boolean.FALSE, in5, estFinalizada);
+
+            // FINALIZADAS 2025 (fechas en 2025)
+            Reserva r29 = new Reserva("RES029", LocalDateTime.of(2025, 1, 18, 14, 0), LocalDateTime.of(2025, 1, 23, 10, 0), LocalDateTime.of(2024, 12, 20, 9, 0), 5, 2, "Nadia", "261500024", "nadia@gmail.com", 2300.0, 900.0, 90.0, "Airbnb", "Verano", Boolean.FALSE, in6, estFinalizada);
+            Reserva r30 = new Reserva("RES030", LocalDateTime.of(2025, 5, 3, 15, 0), LocalDateTime.of(2025, 5, 8, 11, 0), LocalDateTime.of(2025, 4, 12, 10, 0), 5, 4, "Pablo", "261500025", "pablo@gmail.com", 3200.0, 1250.0, 125.0, "Booking", "Reunión", Boolean.FALSE, in8, estFinalizada);
+            Reserva r31 = new Reserva("RES031", LocalDateTime.of(2025, 9, 14, 13, 0), LocalDateTime.of(2025, 9, 18, 10, 0), LocalDateTime.of(2025, 8, 20, 14, 0), 4, 3, "Lucia", "261500026", "lucia@gmail.com", 2600.0, 1000.0, 100.0, "Directo", "Descanso", Boolean.FALSE, in10, estFinalizada);
+
+            // FINALIZADAS 2026 (lo que va del año)
+            Reserva r32 = new Reserva("RES032", LocalDateTime.of(2026, 1, 6, 14, 0), LocalDateTime.of(2026, 1, 10, 10, 0), LocalDateTime.of(2025, 12, 15, 9, 0), 4, 2, "Brenda", "261500027", "brenda@gmail.com", 2000.0, 780.0, 78.0, "Airbnb", "Inicio de año", Boolean.FALSE, in11, estFinalizada);
+            Reserva r33 = new Reserva("RES033", LocalDateTime.of(2026, 1, 20, 15, 0), LocalDateTime.of(2026, 1, 24, 10, 0), LocalDateTime.of(2026, 1, 5, 12, 0), 4, 3, "Oscar", "261500028", "oscar@gmail.com", 2700.0, 1050.0, 105.0, "Booking", "Trabajo", Boolean.FALSE, in12, estFinalizada);
+            Reserva r34 = new Reserva("RES034", LocalDateTime.of(2026, 2, 1, 14, 0), LocalDateTime.of(2026, 2, 4, 10, 0), LocalDateTime.of(2026, 1, 12, 11, 0), 3, 2, "Florencia", "261500029", "florencia@gmail.com", 1800.0, 700.0, 70.0, "Directo", "Corto", Boolean.FALSE, in13, estFinalizada);
+
             // CANCELADA - 5 reservas (fechas en el pasado, sin llegar a completarse)
             Reserva r5 = new Reserva("RES005", LocalDateTime.now().plusDays(40), LocalDateTime.now().plusDays(45), LocalDateTime.now().minusDays(10), 5, 2, "Nico", "261500001", "nico@gmail.com", 2700.0, 900.0, 90.0, "Booking", "Pareja",Boolean.FALSE, in1, estCancelada);
             Reserva r18 = new Reserva("RES018", LocalDateTime.now().minusDays(20), LocalDateTime.now().minusDays(15), LocalDateTime.now().minusDays(50), 2, 2,"Javier","261500013","javier@gmail.com", 1400.0, 550.0, 55.0, "Airbnb","Cancelada por enfermedad",Boolean.FALSE, in2, estCancelada);
@@ -229,7 +242,7 @@ public class DataInitialazer {
             Reserva r24 = new Reserva("RES024", LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(6), LocalDateTime.now().minusDays(45), 3, 2,"Ricardo","261500019","ricardo@gmail.com", 1800.0, 720.0, 72.0, "Airbnb","En progreso",Boolean.TRUE, in9, estEnCurso);
             Reserva r25 = new Reserva("RES025", LocalDateTime.now().minusDays(4), LocalDateTime.now().plusDays(3), LocalDateTime.now().minusDays(55), 6, 4,"Daniela","261500020","daniela@gmail.com", 3400.0, 1360.0, 136.0, "Booking","Grupo en progreso",Boolean.TRUE, in10, estEnCurso);
 
-            reservaRepository.saveAll(Arrays.asList(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, r20, r21, r22, r23, r24, r25));
+            reservaRepository.saveAll(Arrays.asList(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, r20, r21, r22, r23, r24, r25, r26, r27, r28, r29, r30, r31, r32, r33, r34));
         }
 
 
@@ -321,7 +334,7 @@ public class DataInitialazer {
             CajaMadre cajaMadre = CajaMadre.builder()
                     .nroCajaMadre(1L)
                     .nombreCajaMadre("Caja Madre")
-                    .balanceTotalARS(BigDecimal.valueOf(153250.0))
+                    .balanceTotalARS(BigDecimal.valueOf(1530250.0))
                     .balanceTotalUSD(BigDecimal.valueOf(8250.0))
                     .fechaHoraAltaCajaMadre(LocalDateTime.now())
                     .build();
@@ -569,52 +582,201 @@ public class DataInitialazer {
             Movimiento mov24 = new Movimiento(24L,null,72.0,LocalDateTime.now().minusDays(45),ingreso,senia,Dolar,cajaMadre,null,null,reserva24.get(0),null);
             Movimiento mov25 = new Movimiento(25L,null,136.0,LocalDateTime.now().minusDays(55),ingreso,senia,Dolar,cajaMadre,null,null,reserva25.get(0),null);
 
-            // EGRESOS POR SUELDOS - 10 movimientos en PESOS (uno por cada empleado)
-            Movimiento mov26 = new Movimiento(26L,null,200000.0,LocalDateTime.now().minusDays(30),egreso,sueldo,Ars,cajaMadre,null,cajaEmpleado2,null,null);
-            Movimiento mov27 = new Movimiento(27L,null,400000.0,LocalDateTime.now().minusDays(25),egreso,sueldo,Ars,cajaMadre,null,cajaEmpleado3,null,null);
-            Movimiento mov28 = new Movimiento(28L,null,350000.0,LocalDateTime.now().minusDays(20),egreso,sueldo,Ars,cajaMadre,null,cajaEmpleado4,null,null);
-            Movimiento mov29 = new Movimiento(29L,null,300000.0,LocalDateTime.now().minusDays(15),egreso,sueldo,Ars,cajaMadre,null,cajaEmpleado5,null,null);
-            Movimiento mov30 = new Movimiento(30L,null,380000.0,LocalDateTime.now().minusDays(10),egreso,sueldo,Ars,cajaMadre,null,cajaEmpleado6,null,null);
-            Movimiento mov31 = new Movimiento(31L,null,450000.0,LocalDateTime.now().minusDays(8),egreso,sueldo,Ars,cajaMadre,null,cajaEmpleado7,null,null);
-            Movimiento mov32 = new Movimiento(32L,null,420000.0,LocalDateTime.now().minusDays(7),egreso,sueldo,Ars,cajaMadre,null,cajaEmpleado8,null,null);
-            Movimiento mov33 = new Movimiento(33L,null,380000.0,LocalDateTime.now().minusDays(6),egreso,sueldo,Ars,cajaMadre,null,cajaEmpleado9,null,null);
-            Movimiento mov34 = new Movimiento(34L,null,470000.0,LocalDateTime.now().minusDays(5),egreso,sueldo,Ars,cajaMadre,null,cajaEmpleado10,null,null);
+            // SUELDOS - EGRESO CAJA MADRE + INGRESO CAJA EMPLEADO
+            Movimiento mov26 = new Movimiento(26L,null,200000.0,LocalDateTime.now().minusDays(30),egreso,sueldo,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov27 = new Movimiento(27L,null,400000.0,LocalDateTime.now().minusDays(25),egreso,sueldo,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov28 = new Movimiento(28L,null,350000.0,LocalDateTime.now().minusDays(20),egreso,sueldo,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov29 = new Movimiento(29L,null,300000.0,LocalDateTime.now().minusDays(15),egreso,sueldo,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov30 = new Movimiento(30L,null,380000.0,LocalDateTime.now().minusDays(10),egreso,sueldo,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov31 = new Movimiento(31L,null,450000.0,LocalDateTime.now().minusDays(8),egreso,sueldo,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov32 = new Movimiento(32L,null,420000.0,LocalDateTime.now().minusDays(7),egreso,sueldo,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov33 = new Movimiento(33L,null,380000.0,LocalDateTime.now().minusDays(6),egreso,sueldo,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov34 = new Movimiento(34L,null,470000.0,LocalDateTime.now().minusDays(5),egreso,sueldo,Ars,cajaMadre,null,null,null,null);
 
-            // EGRESOS POR RENDICIÓN DE INMUEBLES EN DÓLARES - 15 movimientos
-            Movimiento mov35 = new Movimiento(35L,null,200.0,LocalDateTime.now().minusDays(80),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja1,null,null,null);
-            Movimiento mov36 = new Movimiento(36L,null,300.0,LocalDateTime.now().minusDays(60),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja2,null,null,null);
-            Movimiento mov37 = new Movimiento(37L,null,150.0,LocalDateTime.now().minusDays(40),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja3,null,null,null);
-            Movimiento mov38 = new Movimiento(38L,null,400.0,LocalDateTime.now().minusDays(20),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja4,null,null,null);
-            Movimiento mov39 = new Movimiento(39L,null,250.0,LocalDateTime.now().minusDays(55),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja5,null,null,null);
-            Movimiento mov40 = new Movimiento(40L,null,180.0,LocalDateTime.now().minusDays(35),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja6,null,null,null);
-            Movimiento mov41 = new Movimiento(41L,null,350.0,LocalDateTime.now().minusDays(65),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja7,null,null,null);
-            Movimiento mov42 = new Movimiento(42L,null,220.0,LocalDateTime.now().minusDays(75),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja8,null,null,null);
-            Movimiento mov43 = new Movimiento(43L,null,120.0,LocalDateTime.now().minusDays(25),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja9,null,null,null);
-            Movimiento mov44 = new Movimiento(44L,null,280.0,LocalDateTime.now().minusDays(70),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja10,null,null,null);
-            Movimiento mov45 = new Movimiento(45L,null,450.0,LocalDateTime.now().minusDays(15),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja11,null,null,null);
-            Movimiento mov46 = new Movimiento(46L,null,190.0,LocalDateTime.now().minusDays(50),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja12,null,null,null);
-            Movimiento mov47 = new Movimiento(47L,null,310.0,LocalDateTime.now().minusDays(45),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja13,null,null,null);
-            Movimiento mov48 = new Movimiento(48L,null,260.0,LocalDateTime.now().minusDays(85),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja14,null,null,null);
-            Movimiento mov49 = new Movimiento(49L,null,170.0,LocalDateTime.now().minusDays(30),egreso,rendicionInmueble,Dolar,cajaMadre,inmuebleCaja15,null,null,null);
+            Movimiento mov65 = new Movimiento(65L,null,200000.0,LocalDateTime.now().minusDays(30),ingreso,sueldo,Ars,null,null,cajaEmpleado2,null,null);
+            Movimiento mov66 = new Movimiento(66L,null,400000.0,LocalDateTime.now().minusDays(25),ingreso,sueldo,Ars,null,null,cajaEmpleado3,null,null);
+            Movimiento mov67 = new Movimiento(67L,null,350000.0,LocalDateTime.now().minusDays(20),ingreso,sueldo,Ars,null,null,cajaEmpleado4,null,null);
+            Movimiento mov68 = new Movimiento(68L,null,300000.0,LocalDateTime.now().minusDays(15),ingreso,sueldo,Ars,null,null,cajaEmpleado5,null,null);
+            Movimiento mov69 = new Movimiento(69L,null,380000.0,LocalDateTime.now().minusDays(10),ingreso,sueldo,Ars,null,null,cajaEmpleado6,null,null);
+            Movimiento mov70 = new Movimiento(70L,null,450000.0,LocalDateTime.now().minusDays(8),ingreso,sueldo,Ars,null,null,cajaEmpleado7,null,null);
+            Movimiento mov71 = new Movimiento(71L,null,420000.0,LocalDateTime.now().minusDays(7),ingreso,sueldo,Ars,null,null,cajaEmpleado8,null,null);
+            Movimiento mov72 = new Movimiento(72L,null,380000.0,LocalDateTime.now().minusDays(6),ingreso,sueldo,Ars,null,null,cajaEmpleado9,null,null);
+            Movimiento mov73 = new Movimiento(73L,null,470000.0,LocalDateTime.now().minusDays(5),ingreso,sueldo,Ars,null,null,cajaEmpleado10,null,null);
 
-            // EGRESOS POR RENDICIÓN DE INMUEBLES EN PESOS - 15 movimientos
-            Movimiento mov50 = new Movimiento(50L,null,80000.0,LocalDateTime.now().minusDays(80),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja1,null,null,null);
-            Movimiento mov51 = new Movimiento(51L,null,120000.0,LocalDateTime.now().minusDays(60),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja2,null,null,null);
-            Movimiento mov52 = new Movimiento(52L,null,95000.0,LocalDateTime.now().minusDays(40),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja3,null,null,null);
-            Movimiento mov53 = new Movimiento(53L,null,200000.0,LocalDateTime.now().minusDays(20),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja4,null,null,null);
-            Movimiento mov54 = new Movimiento(54L,null,150000.0,LocalDateTime.now().minusDays(55),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja5,null,null,null);
-            Movimiento mov55 = new Movimiento(55L,null,110000.0,LocalDateTime.now().minusDays(35),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja6,null,null,null);
-            Movimiento mov56 = new Movimiento(56L,null,180000.0,LocalDateTime.now().minusDays(65),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja7,null,null,null);
-            Movimiento mov57 = new Movimiento(57L,null,140000.0,LocalDateTime.now().minusDays(75),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja8,null,null,null);
-            Movimiento mov58 = new Movimiento(58L,null,75000.0,LocalDateTime.now().minusDays(25),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja9,null,null,null);
-            Movimiento mov59 = new Movimiento(59L,null,165000.0,LocalDateTime.now().minusDays(70),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja10,null,null,null);
-            Movimiento mov60 = new Movimiento(60L,null,250000.0,LocalDateTime.now().minusDays(15),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja11,null,null,null);
-            Movimiento mov61 = new Movimiento(61L,null,130000.0,LocalDateTime.now().minusDays(50),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja12,null,null,null);
-            Movimiento mov62 = new Movimiento(62L,null,175000.0,LocalDateTime.now().minusDays(45),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja13,null,null,null);
-            Movimiento mov63 = new Movimiento(63L,null,145000.0,LocalDateTime.now().minusDays(85),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja14,null,null,null);
-            Movimiento mov64 = new Movimiento(64L,null,105000.0,LocalDateTime.now().minusDays(30),egreso,rendicionInmueble,Ars,cajaMadre,inmuebleCaja15,null,null,null);
+            // RENDICIÓN INMUEBLES USD - EGRESO CAJA MADRE + INGRESO CAJA INMUEBLE
+            Movimiento mov35 = new Movimiento(35L,null,200.0,LocalDateTime.now().minusDays(80),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
+            Movimiento mov36 = new Movimiento(36L,null,300.0,LocalDateTime.now().minusDays(60),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
+            Movimiento mov37 = new Movimiento(37L,null,150.0,LocalDateTime.now().minusDays(40),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
+            Movimiento mov38 = new Movimiento(38L,null,400.0,LocalDateTime.now().minusDays(20),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
+            Movimiento mov39 = new Movimiento(39L,null,250.0,LocalDateTime.now().minusDays(55),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
+            Movimiento mov40 = new Movimiento(40L,null,180.0,LocalDateTime.now().minusDays(35),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
+            Movimiento mov41 = new Movimiento(41L,null,350.0,LocalDateTime.now().minusDays(65),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
+            Movimiento mov42 = new Movimiento(42L,null,220.0,LocalDateTime.now().minusDays(75),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
+            Movimiento mov43 = new Movimiento(43L,null,120.0,LocalDateTime.now().minusDays(25),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
+            Movimiento mov44 = new Movimiento(44L,null,280.0,LocalDateTime.now().minusDays(70),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
+            Movimiento mov45 = new Movimiento(45L,null,450.0,LocalDateTime.now().minusDays(15),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
+            Movimiento mov46 = new Movimiento(46L,null,190.0,LocalDateTime.now().minusDays(50),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
+            Movimiento mov47 = new Movimiento(47L,null,310.0,LocalDateTime.now().minusDays(45),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
+            Movimiento mov48 = new Movimiento(48L,null,260.0,LocalDateTime.now().minusDays(85),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
+            Movimiento mov49 = new Movimiento(49L,null,170.0,LocalDateTime.now().minusDays(30),egreso,rendicionInmueble,Dolar,cajaMadre,null,null,null,null);
 
-            movimientoRepository.saveAll(Arrays.asList(mov1, mov2, mov3, mov4, mov5, mov6, mov7, mov8, mov9, mov10, mov11, mov12, mov13, mov14, mov15, mov16, mov17, mov18, mov19, mov20, mov21, mov22, mov23, mov24, mov25, mov26, mov27, mov28, mov29, mov30, mov31, mov32, mov33, mov34, mov35, mov36, mov37, mov38, mov39, mov40, mov41, mov42, mov43, mov44, mov45, mov46, mov47, mov48, mov49, mov50, mov51, mov52, mov53, mov54, mov55, mov56, mov57, mov58, mov59, mov60, mov61, mov62, mov63, mov64));
+            Movimiento mov74 = new Movimiento(74L,null,200.0,LocalDateTime.now().minusDays(80),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja1,null,null,null);
+            Movimiento mov75 = new Movimiento(75L,null,300.0,LocalDateTime.now().minusDays(60),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja2,null,null,null);
+            Movimiento mov76 = new Movimiento(76L,null,150.0,LocalDateTime.now().minusDays(40),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja3,null,null,null);
+            Movimiento mov77 = new Movimiento(77L,null,400.0,LocalDateTime.now().minusDays(20),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja4,null,null,null);
+            Movimiento mov78 = new Movimiento(78L,null,250.0,LocalDateTime.now().minusDays(55),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja5,null,null,null);
+            Movimiento mov79 = new Movimiento(79L,null,180.0,LocalDateTime.now().minusDays(35),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja6,null,null,null);
+            Movimiento mov80 = new Movimiento(80L,null,350.0,LocalDateTime.now().minusDays(65),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja7,null,null,null);
+            Movimiento mov81 = new Movimiento(81L,null,220.0,LocalDateTime.now().minusDays(75),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja8,null,null,null);
+            Movimiento mov82 = new Movimiento(82L,null,120.0,LocalDateTime.now().minusDays(25),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja9,null,null,null);
+            Movimiento mov83 = new Movimiento(83L,null,280.0,LocalDateTime.now().minusDays(70),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja10,null,null,null);
+            Movimiento mov84 = new Movimiento(84L,null,450.0,LocalDateTime.now().minusDays(15),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja11,null,null,null);
+            Movimiento mov85 = new Movimiento(85L,null,190.0,LocalDateTime.now().minusDays(50),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja12,null,null,null);
+            Movimiento mov86 = new Movimiento(86L,null,310.0,LocalDateTime.now().minusDays(45),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja13,null,null,null);
+            Movimiento mov87 = new Movimiento(87L,null,260.0,LocalDateTime.now().minusDays(85),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja14,null,null,null);
+            Movimiento mov88 = new Movimiento(88L,null,170.0,LocalDateTime.now().minusDays(30),ingreso,rendicionInmueble,Dolar,null,inmuebleCaja15,null,null,null);
+
+            // RENDICIÓN INMUEBLES ARS - EGRESO CAJA MADRE + INGRESO CAJA INMUEBLE
+            Movimiento mov50 = new Movimiento(50L,null,80000.0,LocalDateTime.now().minusDays(80),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov51 = new Movimiento(51L,null,120000.0,LocalDateTime.now().minusDays(60),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov52 = new Movimiento(52L,null,95000.0,LocalDateTime.now().minusDays(40),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov53 = new Movimiento(53L,null,200000.0,LocalDateTime.now().minusDays(20),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov54 = new Movimiento(54L,null,150000.0,LocalDateTime.now().minusDays(55),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov55 = new Movimiento(55L,null,110000.0,LocalDateTime.now().minusDays(35),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov56 = new Movimiento(56L,null,180000.0,LocalDateTime.now().minusDays(65),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov57 = new Movimiento(57L,null,140000.0,LocalDateTime.now().minusDays(75),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov58 = new Movimiento(58L,null,75000.0,LocalDateTime.now().minusDays(25),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov59 = new Movimiento(59L,null,165000.0,LocalDateTime.now().minusDays(70),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov60 = new Movimiento(60L,null,250000.0,LocalDateTime.now().minusDays(15),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov61 = new Movimiento(61L,null,130000.0,LocalDateTime.now().minusDays(50),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov62 = new Movimiento(62L,null,175000.0,LocalDateTime.now().minusDays(45),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov63 = new Movimiento(63L,null,145000.0,LocalDateTime.now().minusDays(85),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+            Movimiento mov64 = new Movimiento(64L,null,105000.0,LocalDateTime.now().minusDays(30),egreso,rendicionInmueble,Ars,cajaMadre,null,null,null,null);
+
+            Movimiento mov89 = new Movimiento(89L,null,80000.0,LocalDateTime.now().minusDays(80),ingreso,rendicionInmueble,Ars,null,inmuebleCaja1,null,null,null);
+            Movimiento mov90 = new Movimiento(90L,null,120000.0,LocalDateTime.now().minusDays(60),ingreso,rendicionInmueble,Ars,null,inmuebleCaja2,null,null,null);
+            Movimiento mov91 = new Movimiento(91L,null,95000.0,LocalDateTime.now().minusDays(40),ingreso,rendicionInmueble,Ars,null,inmuebleCaja3,null,null,null);
+            Movimiento mov92 = new Movimiento(92L,null,200000.0,LocalDateTime.now().minusDays(20),ingreso,rendicionInmueble,Ars,null,inmuebleCaja4,null,null,null);
+            Movimiento mov93 = new Movimiento(93L,null,150000.0,LocalDateTime.now().minusDays(55),ingreso,rendicionInmueble,Ars,null,inmuebleCaja5,null,null,null);
+            Movimiento mov94 = new Movimiento(94L,null,110000.0,LocalDateTime.now().minusDays(35),ingreso,rendicionInmueble,Ars,null,inmuebleCaja6,null,null,null);
+            Movimiento mov95 = new Movimiento(95L,null,180000.0,LocalDateTime.now().minusDays(65),ingreso,rendicionInmueble,Ars,null,inmuebleCaja7,null,null,null);
+            Movimiento mov96 = new Movimiento(96L,null,140000.0,LocalDateTime.now().minusDays(75),ingreso,rendicionInmueble,Ars,null,inmuebleCaja8,null,null,null);
+            Movimiento mov97 = new Movimiento(97L,null,75000.0,LocalDateTime.now().minusDays(25),ingreso,rendicionInmueble,Ars,null,inmuebleCaja9,null,null,null);
+            Movimiento mov98 = new Movimiento(98L,null,165000.0,LocalDateTime.now().minusDays(70),ingreso,rendicionInmueble,Ars,null,inmuebleCaja10,null,null,null);
+            Movimiento mov99 = new Movimiento(99L,null,250000.0,LocalDateTime.now().minusDays(15),ingreso,rendicionInmueble,Ars,null,inmuebleCaja11,null,null,null);
+            Movimiento mov100 = new Movimiento(100L,null,130000.0,LocalDateTime.now().minusDays(50),ingreso,rendicionInmueble,Ars,null,inmuebleCaja12,null,null,null);
+            Movimiento mov101 = new Movimiento(101L,null,175000.0,LocalDateTime.now().minusDays(45),ingreso,rendicionInmueble,Ars,null,inmuebleCaja13,null,null,null);
+            Movimiento mov102 = new Movimiento(102L,null,145000.0,LocalDateTime.now().minusDays(85),ingreso,rendicionInmueble,Ars,null,inmuebleCaja14,null,null,null);
+            Movimiento mov103 = new Movimiento(103L,null,105000.0,LocalDateTime.now().minusDays(30),ingreso,rendicionInmueble,Ars,null,inmuebleCaja15,null,null,null);
+
+                movimientoRepository.saveAll(Arrays.asList(
+                    mov1, mov2, mov3, mov4, mov5, mov6, mov7, mov8, mov9, mov10,
+                    mov11, mov12, mov13, mov14, mov15, mov16, mov17, mov18, mov19, mov20,
+                    mov21, mov22, mov23, mov24, mov25,
+                    mov26, mov27, mov28, mov29, mov30, mov31, mov32, mov33, mov34,
+                    mov65, mov66, mov67, mov68, mov69, mov70, mov71, mov72, mov73,
+                    mov35, mov36, mov37, mov38, mov39, mov40, mov41, mov42, mov43, mov44,
+                    mov45, mov46, mov47, mov48, mov49,
+                    mov74, mov75, mov76, mov77, mov78, mov79, mov80, mov81, mov82, mov83,
+                    mov84, mov85, mov86, mov87, mov88,
+                    mov50, mov51, mov52, mov53, mov54, mov55, mov56, mov57, mov58, mov59,
+                    mov60, mov61, mov62, mov63, mov64,
+                    mov89, mov90, mov91, mov92, mov93, mov94, mov95, mov96, mov97, mov98,
+                    mov99, mov100, mov101, mov102, mov103
+                ));
+
+            // ACTUALIZAR BALANCES DE TODAS LAS CAJAS SEGÚN LOS MOVIMIENTOS
+            List<Movimiento> todosMovimientos = Arrays.asList(
+                mov1, mov2, mov3, mov4, mov5, mov6, mov7, mov8, mov9, mov10,
+                mov11, mov12, mov13, mov14, mov15, mov16, mov17, mov18, mov19, mov20,
+                mov21, mov22, mov23, mov24, mov25,
+                mov26, mov27, mov28, mov29, mov30, mov31, mov32, mov33, mov34,
+                mov65, mov66, mov67, mov68, mov69, mov70, mov71, mov72, mov73,
+                mov35, mov36, mov37, mov38, mov39, mov40, mov41, mov42, mov43, mov44,
+                mov45, mov46, mov47, mov48, mov49,
+                mov74, mov75, mov76, mov77, mov78, mov79, mov80, mov81, mov82, mov83,
+                mov84, mov85, mov86, mov87, mov88,
+                mov50, mov51, mov52, mov53, mov54, mov55, mov56, mov57, mov58, mov59,
+                mov60, mov61, mov62, mov63, mov64,
+                mov89, mov90, mov91, mov92, mov93, mov94, mov95, mov96, mov97, mov98,
+                mov99, mov100, mov101, mov102, mov103
+            );
+
+            // Obtener balance inicial de caja madre
+            BigDecimal cajaMadreARS = cajaMadre.getBalanceTotalARS();
+            BigDecimal cajaMadreUSD = cajaMadre.getBalanceTotalUSD();
+
+            // Maps para acumular balances de empleados e inmuebles
+            Map<Long, BigDecimal> balancesEmpleadosARS = new HashMap<>();
+            Map<Long, BigDecimal> balancesEmpleadosUSD = new HashMap<>();
+            Map<Long, BigDecimal> balancesInmueblesARS = new HashMap<>();
+            Map<Long, BigDecimal> balancesInmueblesUSD = new HashMap<>();
+
+            // Procesar cada movimiento
+            for (Movimiento mov : todosMovimientos) {
+                boolean esIngreso = mov.getTipoMovimiento().getCodTipoMovimiento().equals("TI001");
+                boolean esARS = mov.getMoneda().getNombreMoneda().equals("Peso Argentino");
+                BigDecimal monto = BigDecimal.valueOf(mov.getMontoMovimiento());
+
+                // Procesar según la caja asociada
+                if (mov.getCajaMadre() != null) {
+                    if (esARS) {
+                        cajaMadreARS = esIngreso ? cajaMadreARS.add(monto) : cajaMadreARS.subtract(monto);
+                    } else {
+                        cajaMadreUSD = esIngreso ? cajaMadreUSD.add(monto) : cajaMadreUSD.subtract(monto);
+                    }
+                } else if (mov.getEmpleadoCaja() != null) {
+                    Long nroCaja = mov.getEmpleadoCaja().getNroEmpleadoCaja();
+                    if (esARS) {
+                        BigDecimal balanceActual = balancesEmpleadosARS.getOrDefault(nroCaja, mov.getEmpleadoCaja().getBalanceARS());
+                        balancesEmpleadosARS.put(nroCaja, esIngreso ? balanceActual.add(monto) : balanceActual.subtract(monto));
+                    } else {
+                        BigDecimal balanceActual = balancesEmpleadosUSD.getOrDefault(nroCaja, mov.getEmpleadoCaja().getBalanceUSD());
+                        balancesEmpleadosUSD.put(nroCaja, esIngreso ? balanceActual.add(monto) : balanceActual.subtract(monto));
+                    }
+                } else if (mov.getInmuebleCaja() != null) {
+                    Long nroCaja = mov.getInmuebleCaja().getNroInmuebleCaja();
+                    if (esARS) {
+                        BigDecimal balanceActual = balancesInmueblesARS.getOrDefault(nroCaja, mov.getInmuebleCaja().getBalanceTotalARS());
+                        balancesInmueblesARS.put(nroCaja, esIngreso ? balanceActual.add(monto) : balanceActual.subtract(monto));
+                    } else {
+                        BigDecimal balanceActual = balancesInmueblesUSD.getOrDefault(nroCaja, mov.getInmuebleCaja().getBalanceTotalUSD());
+                        balancesInmueblesUSD.put(nroCaja, esIngreso ? balanceActual.add(monto) : balanceActual.subtract(monto));
+                    }
+                }
+            }
+
+            // Actualizar Caja Madre
+            cajaMadre.setBalanceTotalARS(cajaMadreARS);
+            cajaMadre.setBalanceTotalUSD(cajaMadreUSD);
+            cajaMadreRepository.save(cajaMadre);
+
+            // Actualizar Cajas de Empleados
+            for (Map.Entry<Long, BigDecimal> entry : balancesEmpleadosARS.entrySet()) {
+                EmpleadoCaja caja = empleadoCajaRepository.findById(entry.getKey()).orElseThrow();
+                caja.setBalanceARS(entry.getValue());
+                empleadoCajaRepository.save(caja);
+            }
+            for (Map.Entry<Long, BigDecimal> entry : balancesEmpleadosUSD.entrySet()) {
+                EmpleadoCaja caja = empleadoCajaRepository.findById(entry.getKey()).orElseThrow();
+                caja.setBalanceUSD(entry.getValue());
+                empleadoCajaRepository.save(caja);
+            }
+
+            // Actualizar Cajas de Inmuebles
+            for (Map.Entry<Long, BigDecimal> entry : balancesInmueblesARS.entrySet()) {
+                InmuebleCaja caja = inmuebleCajaRepository.findById(entry.getKey()).orElseThrow();
+                caja.setBalanceTotalARS(entry.getValue());
+                inmuebleCajaRepository.save(caja);
+            }
+            for (Map.Entry<Long, BigDecimal> entry : balancesInmueblesUSD.entrySet()) {
+                InmuebleCaja caja = inmuebleCajaRepository.findById(entry.getKey()).orElseThrow();
+                caja.setBalanceTotalUSD(entry.getValue());
+                inmuebleCajaRepository.save(caja);
+            }
+
+            System.out.println("✅ Balances actualizados correctamente:");
+            System.out.println("   Caja Madre - ARS: " + cajaMadreARS + " | USD: " + cajaMadreUSD);
             
 
         }
