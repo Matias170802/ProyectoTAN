@@ -1,5 +1,70 @@
 import type { Reserva, ReservaFormData, Inmueble, MedioReserva, DTOReserva } from './types';
 
+const ACCESS_KEY = 'access_token';
+const REFRESH_KEY = 'refresh_token';
+
+const getStoredToken = () => sessionStorage.getItem(ACCESS_KEY) || localStorage.getItem(ACCESS_KEY);
+const getStoredRefreshToken = () => sessionStorage.getItem(REFRESH_KEY) || localStorage.getItem(REFRESH_KEY);
+
+const setTokens = (accessToken: string, refreshToken: string) => {
+    if (localStorage.getItem(REFRESH_KEY)) {
+        localStorage.setItem(ACCESS_KEY, accessToken);
+        localStorage.setItem(REFRESH_KEY, refreshToken);
+    } else {
+        sessionStorage.setItem(ACCESS_KEY, accessToken);
+        sessionStorage.setItem(REFRESH_KEY, refreshToken);
+    }
+};
+
+const refreshAccessToken = async (): Promise<string | null> => {
+    const refreshToken = getStoredRefreshToken();
+    if (!refreshToken) return null;
+
+    const response = await fetch('/auth/refresh', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${refreshToken}`
+        }
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const data: { access_token: string; refresh_token: string } = await response.json();
+    if (data?.access_token && data?.refresh_token) {
+        setTokens(data.access_token, data.refresh_token);
+        return data.access_token;
+    }
+
+    return null;
+};
+
+const fetchWithAuth = async (input: RequestInfo, init: RequestInit = {}): Promise<Response> => {
+    const headers = new Headers(init.headers || {});
+    headers.set('Content-Type', headers.get('Content-Type') || 'application/json');
+
+    const token = getStoredToken();
+    if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    const response = await fetch(input, { ...init, headers });
+
+    if (response.status !== 401) {
+        return response;
+    }
+
+    const newAccessToken = await refreshAccessToken();
+    if (!newAccessToken) {
+        return response;
+    }
+
+    headers.set('Authorization', `Bearer ${newAccessToken}`);
+    return fetch(input, { ...init, headers });
+};
+
 // Función para generar código único de reserva
 const generateReservationCode = (): string => {
     const timestamp = Date.now().toString().substring(6,8);
@@ -30,15 +95,9 @@ const mapFormDataToDTO = (formData: ReservaFormData): DTOReserva => {
 // Funciones para manejar inmuebles
 export const getInmuebles = async (): Promise<Inmueble[]> => {
     try {
-        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-
-        const response = await fetch('/api/reservas/inmuebles', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-        })
+        const response = await fetchWithAuth('/api/reservas/inmuebles', {
+            method: 'GET'
+        });
 
         if (!response.ok) {
             throw new Error('Error al cargar inmuebles');
@@ -72,18 +131,19 @@ export const getMediosReserva = async (): Promise<MedioReserva[]> => {
 };
 
 // Funciones para manejar reservas
-export const getReservas = async (): Promise<Reserva[]> => {
+export const getReservas = async (anio?: string | number, mes?: string | number): Promise<Reserva[]> => {
     try {
+        const now = new Date();
+        const anioParam = anio ?? String(now.getFullYear());
+        const mesParam = mes ?? 'todos';
+        const params = new URLSearchParams({
+            anio: String(anioParam),
+            mes: String(mesParam)
+        });
 
-        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-
-        const response = await fetch(`/api/reservas/reservas`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-        })
+        const response = await fetchWithAuth(`/api/reservas/reservas?${params.toString()}`, {
+            method: 'GET'
+        });
 
         if (!response.ok) {
             throw new Error('Error al cargar reservas');
@@ -104,14 +164,11 @@ export const createReserva = async (reservaData: ReservaFormData): Promise<Reser
     try {
         // Convertir FormData a DTO
         const dtoReserva = mapFormDataToDTO(reservaData);
-        
-        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-        
-        const response = await fetch(`/api/reserva/altaReserva`, {
+
+        const response = await fetchWithAuth(`/api/reserva/altaReserva`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(dtoReserva)
         });
@@ -171,13 +228,10 @@ export const updateReserva = async (codReserva: string, reservaData: Partial<Res
         if (reservaData.plataformaOrigen) payload.plataformaOrigen = reservaData.plataformaOrigen;
         if (reservaData.descripcionReserva) payload.descripcionReserva = reservaData.descripcionReserva;
 
-        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-
-        const response = await fetch(`/api/reserva/reservas/${encodeURIComponent(codReserva)}`, {
+        const response = await fetchWithAuth(`/api/reserva/reservas/${encodeURIComponent(codReserva)}`, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(payload)
         });
@@ -223,13 +277,10 @@ export const cancelarReserva = async (codReserva: string): Promise<string> => {
     try {
         console.log('[serviceAMReservas] Cancelling reserva:', codReserva);
 
-        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-
-        const response = await fetch(`/api/reserva/cancelarReserva/${encodeURIComponent(codReserva)}`, {
+        const response = await fetchWithAuth(`/api/reserva/cancelarReserva/${encodeURIComponent(codReserva)}`, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                'Content-Type': 'application/json'
             }
         });
 
@@ -250,15 +301,12 @@ export const cancelarReserva = async (codReserva: string): Promise<string> => {
 export const getEstadosReserva = async (): Promise<{ codEstadoReserva: string; nombreEstadoReserva: string }[]> => {
     try {
         
-        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-
         // Endpoint moved to Reservas controller: GET /api/reservas/estados
-        const response = await fetch('/api/reservas/estados', {
+        const response = await fetchWithAuth('/api/reservas/estados', {
             method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
 
         if (!response.ok) {

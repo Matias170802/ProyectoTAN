@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import type { ReservaFormData, ReservaState } from '../types';
 import { 
     getReservas, 
@@ -11,6 +11,13 @@ import {
 } from '../serviceAMReservas';
 
 export const useReservas = () => {
+    const defaultAnio = String(new Date().getFullYear());
+    const defaultMes = 'todos';
+    const lastFiltersRef = useRef<{ anio: string; mes: string }>({
+        anio: defaultAnio,
+        mes: defaultMes
+    });
+
     const [state, setState] = useState<ReservaState>({
         reservas: [],
         inmuebles: [],
@@ -31,7 +38,7 @@ export const useReservas = () => {
         try {
             // Usar Promise.allSettled para que si una petición falla, las demás continúen
             const results = await Promise.allSettled([
-                getReservas(),
+                getReservas(lastFiltersRef.current.anio, lastFiltersRef.current.mes),
                 getInmuebles(),
                 getMediosReserva(),
                 getEstadosReserva()
@@ -70,7 +77,7 @@ export const useReservas = () => {
         try {
             await createReserva(reservaData);
             // Tras crear, recargar desde backend para tener la versión canónica
-            const reservasData = await getReservas();
+            const reservasData = await getReservas(lastFiltersRef.current.anio, lastFiltersRef.current.mes);
             setState(prev => ({
                 ...prev,
                 reservas: reservasData,
@@ -114,7 +121,7 @@ export const useReservas = () => {
         try {
             await cancelarReserva(codReserva);
             // Refrescar la lista desde backend para reflejar el nuevo estado
-            const reservasData = await getReservas();
+            const reservasData = await getReservas(lastFiltersRef.current.anio, lastFiltersRef.current.mes);
             setState(prev => ({
                 ...prev,
                 reservas: reservasData,
@@ -131,11 +138,14 @@ export const useReservas = () => {
         }
     };
 
-    const refreshReservas = async (): Promise<void> => {
+    const refreshReservas = useCallback(async (anio?: string, mes?: string): Promise<void> => {
         setState(prev => ({ ...prev, loading: true, error: null }));
 
         try {
-            const reservasData = await getReservas();
+            const nextAnio = anio ?? lastFiltersRef.current.anio;
+            const nextMes = mes ?? lastFiltersRef.current.mes;
+            lastFiltersRef.current = { anio: nextAnio, mes: nextMes };
+            const reservasData = await getReservas(nextAnio, nextMes);
             setState(prev => ({
                 ...prev,
                 reservas: reservasData,
@@ -149,7 +159,7 @@ export const useReservas = () => {
                 error: 'Error al actualizar las reservas'
             }));
         }
-    };
+    }, []);
 
     const clearError = () => {
         setState(prev => ({ ...prev, error: null }));
