@@ -269,7 +269,7 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
                                                 nameKey="nombreInmueble"
                                                 cx="50%"
                                                 cy="50%"
-                                                outerRadius={140}
+                                                outerRadius={120}
                                                 labelLine={false}
                                                 label={renderLabel}
                                             >

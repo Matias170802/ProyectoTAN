@@ -4,13 +4,14 @@ import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarCambioMoneda.DTO.
 import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarCambioMoneda.DTO.DTOCotizacionMonedaHoy;
 import com.tan.seminario.backend.Entity.CajaMadre;
 import com.tan.seminario.backend.Entity.CotizacionMonedaHoy;
-import com.tan.seminario.backend.Repository.CajaMadreRepository;
-import com.tan.seminario.backend.Repository.CotizacionMonedaHoyRepository;
+import com.tan.seminario.backend.Entity.Movimiento;
+import com.tan.seminario.backend.Repository.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,10 +19,18 @@ public class ExpertoRegistrarCambioMoneda {
 
     private final CotizacionMonedaHoyRepository cotizacionMonedaHoyRepository;
     private final CajaMadreRepository cajaMadreRepository;
+    private final MovimientoRepository movimientoRepository;
+    private final CategoriaMovimientoRepository categoriaMovimientoRepository;
+    private final TipoMovimientoRepository tipoMovimientoRepository;
+    private final MonedaRepository monedaRepository;
 
-    public ExpertoRegistrarCambioMoneda(CotizacionMonedaHoyRepository cotizacionMonedaHoyRepository, CajaMadreRepository cajaMadreRepository) {
+    public ExpertoRegistrarCambioMoneda(CotizacionMonedaHoyRepository cotizacionMonedaHoyRepository, CajaMadreRepository cajaMadreRepository, CategoriaMovimientoRepository categoriaMovimientoRepository, MovimientoRepository movimientoRepository, TipoMovimientoRepository tipoMovimientoRepository, MonedaRepository monedaRepository)  {
         this.cotizacionMonedaHoyRepository = cotizacionMonedaHoyRepository;
         this.cajaMadreRepository = cajaMadreRepository;
+        this.movimientoRepository = movimientoRepository;
+        this.categoriaMovimientoRepository = categoriaMovimientoRepository;
+        this.tipoMovimientoRepository = tipoMovimientoRepository;
+        this.monedaRepository = monedaRepository;
     }
 
     public DTOCotizacionMonedaHoy buscarCotizacionMonedaHoy(String tipoCambio) {
@@ -58,6 +67,34 @@ public class ExpertoRegistrarCambioMoneda {
 
                 cajaMadre.setBalanceTotalARS(nuevoBalanceARS);
                 cajaMadre.setBalanceTotalUSD(nuevoBalanceUSD);
+
+                //creo los movimientos en la caja madre
+
+                //MOVIMIENTO 1: egreso de dolares
+                Movimiento movimientoEgreso = Movimiento.builder()
+                        .tipoMovimiento(tipoMovimientoRepository.findBynombreTipoMovimiento("Egreso"))
+                        .fechaMovimiento(LocalDateTime.now())
+                        .categoriaMovimiento(categoriaMovimientoRepository.findBynombreCategoriaMovimientoAndFechaHoraBajaCategoriaMovimientoIsNull("Cambio Moneda"))
+                        .moneda(monedaRepository.findBynombreMoneda("Dolar"))
+                        .cajaMadre(cajaMadre)
+                        .nroMovimiento(Movimiento.generarProximoNumero(movimientoRepository))
+                        .montoMovimiento(cambioMoneda.getMontoAConvertir().doubleValue())
+                        .build();
+
+                movimientoRepository.save(movimientoEgreso);
+
+                //MOVIMIENTO 2: ingreso de pesos argentinos
+                Movimiento movimientoIngreso = Movimiento.builder()
+                        .tipoMovimiento(tipoMovimientoRepository.findBynombreTipoMovimiento("Ingreso"))
+                        .fechaMovimiento(LocalDateTime.now())
+                        .categoriaMovimiento(categoriaMovimientoRepository.findBynombreCategoriaMovimientoAndFechaHoraBajaCategoriaMovimientoIsNull("Cambio Moneda"))
+                        .moneda(monedaRepository.findBynombreMoneda("Peso Argentino"))
+                        .cajaMadre(cajaMadre)
+                        .nroMovimiento(Movimiento.generarProximoNumero(movimientoRepository))
+                        .montoMovimiento(cambioMoneda.getMontoAConvertir().multiply(cotizacionAUtilizar.getMontoVenta()).doubleValue())
+                        .build();
+
+                movimientoRepository.save(movimientoIngreso);
             }
         } else {
             //el valor que me viene en cambioMoneda.MontoAConvertir es en pesos
@@ -70,6 +107,33 @@ public class ExpertoRegistrarCambioMoneda {
                 cajaMadre.setBalanceTotalARS(nuevoBalanceARS);
                 cajaMadre.setBalanceTotalUSD(nuevoBalanceUSD);
 
+                //creo los movimientos en la caja madre
+
+                //MOVIMIENTO 1: egreso de pesos argentinos
+                Movimiento movimientoEgreso = Movimiento.builder()
+                        .tipoMovimiento(tipoMovimientoRepository.findBynombreTipoMovimiento("Egreso"))
+                        .fechaMovimiento(LocalDateTime.now())
+                        .categoriaMovimiento(categoriaMovimientoRepository.findBynombreCategoriaMovimientoAndFechaHoraBajaCategoriaMovimientoIsNull("Cambio Moneda"))
+                        .moneda(monedaRepository.findBynombreMoneda("Peso Argentino"))
+                        .cajaMadre(cajaMadre)
+                        .nroMovimiento(Movimiento.generarProximoNumero(movimientoRepository))
+                        .montoMovimiento(cambioMoneda.getMontoAConvertir().doubleValue())
+                        .build();
+
+                movimientoRepository.save(movimientoEgreso);
+
+                //MOVIMIENTO 2: ingreso de dolares
+                Movimiento movimientoIngreso = Movimiento.builder()
+                        .tipoMovimiento(tipoMovimientoRepository.findBynombreTipoMovimiento("Ingreso"))
+                        .fechaMovimiento(LocalDateTime.now())
+                        .categoriaMovimiento(categoriaMovimientoRepository.findBynombreCategoriaMovimientoAndFechaHoraBajaCategoriaMovimientoIsNull("Cambio Moneda"))
+                        .moneda(monedaRepository.findBynombreMoneda("Dolar"))
+                        .cajaMadre(cajaMadre)
+                        .nroMovimiento(Movimiento.generarProximoNumero(movimientoRepository))
+                        .montoMovimiento(cambioMoneda.getMontoAConvertir().divide(cotizacionAUtilizar.getMontoCompra(), 2,  RoundingMode.HALF_UP).doubleValue())
+                        .build();
+
+                movimientoRepository.save(movimientoIngreso);
             }
         }
 

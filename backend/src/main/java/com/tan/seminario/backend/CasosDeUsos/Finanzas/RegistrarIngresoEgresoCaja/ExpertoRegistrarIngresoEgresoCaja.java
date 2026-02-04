@@ -63,7 +63,7 @@ public class ExpertoRegistrarIngresoEgresoCaja {
 
         //solo mando las ctaegorias de seña, cancelacion reserva y otros
         for (CategoriaMovimiento categoriaMovimiento : categoriaMovimientoExistentes) {
-            if (categoriaMovimiento.getNombreCategoriaMovimiento().equals("Seña") || categoriaMovimiento.getNombreCategoriaMovimiento().equals("Otros") || categoriaMovimiento.getNombreCategoriaMovimiento().equals("Cancelacion Reserva")) {
+            if (categoriaMovimiento.getNombreCategoriaMovimiento().equals("Otros") || categoriaMovimiento.getNombreCategoriaMovimiento().equals("Cancelacion Reserva")) {
                 DTOCategoriaMovimiento dto = DTOCategoriaMovimiento.builder()
                         .nombreCategoria(categoriaMovimiento.getNombreCategoriaMovimiento())
                         .build();

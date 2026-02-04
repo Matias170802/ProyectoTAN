@@ -59,19 +59,17 @@ public class ExpertoRegistrarCotizacionMoneda {
     }
 
     public List<DTOMonedas> buscarMonedas () {
-        List<Moneda> monedas = monedaRepository.findByfechaHoraBajaMonedaIsNull();
+        Moneda moneda = monedaRepository.findBynombreMoneda("Dolar");
         List<DTOMonedas> monedasAEnviar = new ArrayList<>();
 
-        log.info("Estas son las monedas que se encuentran en la base de datos {}", monedas);
+        //creo el dto
+        DTOMonedas dto = new DTOMonedas();
 
-        for (Moneda moneda : monedas) {
-            DTOMonedas dto = new DTOMonedas();
-            dto.setNombreMoneda(moneda.getNombreMoneda());
-            log.info("Nombre de moneda DTO: {}", dto.getNombreMoneda());
-            monedasAEnviar.add(dto);
-        }
+        //seteo el dto
+        dto.setNombreMoneda(moneda.getNombreMoneda());
 
-        log.info("Estas son las monedas que se envian al front {}", monedasAEnviar);
+        monedasAEnviar.add(dto);
+
         return monedasAEnviar;
     }
 }

@@ -306,8 +306,9 @@ public class DataInitialazer {
             CategoriaMovimiento categoriaMovimiento4 = new CategoriaMovimiento( "CAT004", "Rendicion a Inmueble", LocalDateTime.now(), null);
             CategoriaMovimiento categoriaMovimiento5 = new CategoriaMovimiento( "CAT005", "Rendicion de Empleado", LocalDateTime.now(), null);
             CategoriaMovimiento categoriaMovimiento6 = new CategoriaMovimiento( "CAT006", "Otros", LocalDateTime.now(), null);
+            CategoriaMovimiento categoriaMovimiento7 = new CategoriaMovimiento( "CAT007", "Cambio Moneda", LocalDateTime.now(), null);
 
-            categoriaMovimientoRepository.saveAll(Arrays.asList(categoriaMovimiento1, categoriaMovimiento2, categoriaMovimiento3, categoriaMovimiento4, categoriaMovimiento5, categoriaMovimiento6));
+            categoriaMovimientoRepository.saveAll(Arrays.asList(categoriaMovimiento1, categoriaMovimiento2, categoriaMovimiento3, categoriaMovimiento4, categoriaMovimiento5, categoriaMovimiento6, categoriaMovimiento7));
             System.out.println("Datos iniciales de CategoriaMovimiento insertados correctamente.");
         } else {
             System.out.println("La base de datos ya contiene datos de CategoriaMovimiento, no se inicializaron nuevos datos.");

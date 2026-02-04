@@ -2,12 +2,8 @@ package com.tan.seminario.backend.CasosDeUsos.Reservas.AMReserva;
 
 import com.tan.seminario.backend.CasosDeUsos.Reservas.AMReserva.DTOsAMReserva.DTOModificarReserva;
 import com.tan.seminario.backend.CasosDeUsos.Reservas.DTOReserva;
-import com.tan.seminario.backend.Entity.EstadoReserva;
-import com.tan.seminario.backend.Entity.Inmueble;
-import com.tan.seminario.backend.Entity.Reserva;
-import com.tan.seminario.backend.Repository.EstadoReservaRepository;
-import com.tan.seminario.backend.Repository.InmuebleRepository;
-import com.tan.seminario.backend.Repository.ReservaRepository;
+import com.tan.seminario.backend.Entity.*;
+import com.tan.seminario.backend.Repository.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,11 +14,21 @@ public class ExpertoAMReserva {
     private final InmuebleRepository inmuebleRepository;
     private final EstadoReservaRepository estadoReservaRepository;
     private final ReservaRepository reservaRepository;
+    private final MovimientoRepository movimientoRepository;
+    private final CajaMadreRepository cajaMadreRepository;
+    private final TipoMovimientoRepository tipoMovimientoRepository;
+    private final MonedaRepository monedaRepository;
+    private final CategoriaMovimientoRepository categoriaMovimientoRepository;
 
-    public ExpertoAMReserva(InmuebleRepository inmuebleRepository, EstadoReservaRepository estadoReservaRepository, ReservaRepository reservaRepository) {
+    public ExpertoAMReserva(InmuebleRepository inmuebleRepository, EstadoReservaRepository estadoReservaRepository, ReservaRepository reservaRepository, MovimientoRepository movimientoRepository, CajaMadreRepository cajaMadreRepository, TipoMovimientoRepository tipoMovimientoRepository, MonedaRepository monedaRepository, CategoriaMovimientoRepository categoriaMovimientoRepository) {
         this.inmuebleRepository = inmuebleRepository;
         this.estadoReservaRepository = estadoReservaRepository;
         this.reservaRepository = reservaRepository;
+        this.movimientoRepository = movimientoRepository;
+        this.cajaMadreRepository = cajaMadreRepository;
+        this.tipoMovimientoRepository = tipoMovimientoRepository;
+        this.monedaRepository = monedaRepository;
+        this.categoriaMovimientoRepository = categoriaMovimientoRepository;
     }
     public String altaReserva(DTOReserva reserva) {
         System.out.println("Alta de reserva");
@@ -81,10 +87,27 @@ public class ExpertoAMReserva {
         Inmueble inmueble = inmuebleRepository.findByCodInmueble(codigoInmueble);
         reservaCreada.setInmueble(inmueble);
 
+        CajaMadre cajaMadre = cajaMadreRepository.findByNroCajaMadre(1l);
+        TipoMovimiento ingreso = tipoMovimientoRepository.findBynombreTipoMovimiento("Ingreso");
+        CategoriaMovimiento categoriaMovimiento = categoriaMovimientoRepository.findBynombreCategoriaMovimientoAndFechaHoraBajaCategoriaMovimientoIsNull("Seña");
+        Moneda moneda = monedaRepository.findBynombreMoneda("Dolar");
+
+        Movimiento movimiento = Movimiento.builder()
+                .nroMovimiento(movimientoRepository.count() + 1)
+                .fechaMovimiento(LocalDateTime.now())
+                .montoMovimiento(reservaCreada.getTotalMontoSenia())
+                .cajaMadre(cajaMadre)
+                .tipoMovimiento(ingreso)
+                .categoriaMovimiento(categoriaMovimiento)
+                .moneda(moneda)
+                .reserva(reservaCreada)
+                .build();
+
         EstadoReserva estadoReserva = estadoReservaRepository.findByNombreEstadoReserva("Señada");
         reservaCreada.setEstadoReserva(estadoReserva);
 
-        Reserva reservaGuardada = reservaRepository.save(reservaCreada);
+        reservaRepository.save(reservaCreada);
+        movimientoRepository.save(movimiento);
 
         return "Reserva Creada";
     }

@@ -242,6 +242,14 @@
     height: 320px;
 }
 
+.chartWrapper--reservas {
+    padding: 20px;
+}
+
+.chartInner--reservas {
+    height: 520px;
+}
+
 .noDataChart {
     color: #6b7280;
     font-weight: 500;
