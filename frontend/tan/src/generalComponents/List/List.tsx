@@ -1,7 +1,37 @@
 import './List.css'
 import {type Props} from './List.ts'
+import { useState } from 'react';
 
-const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete, onItemEdit, onItemInfo, emptyMessage, showActions = true, actionsPosition, columnas, idField = 'id', getVisibleActions, loadingItems, onItemSelect, selectedItem, selectableCondition}: Props<T>) => {
+const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete, onItemEdit, onItemInfo, emptyMessage, showActions = true, actionsPosition, columnas, idField = 'id', getVisibleActions, loadingItems, onItemSelect, selectedItem, selectableCondition, itemsPerPage = 10, showPagination}: Props<T>) => {
+    
+    //* Estado de paginación
+    const [currentPage, setCurrentPage] = useState(1);
+    
+    //* Calcular valores de paginación
+    const totalPages = Math.ceil(items.length / itemsPerPage);
+    const shouldShowPagination = showPagination !== undefined ? showPagination : items.length > itemsPerPage;
+    
+    //* Calcular items a mostrar en la página actual
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentItems = shouldShowPagination ? items.slice(startIndex, endIndex) : items;
+    
+    //* Funciones de navegación
+    const goToPage = (page: number) => {
+        setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+    };
+    
+    const goToFirstPage = () => goToPage(1);
+    const goToLastPage = () => goToPage(totalPages);
+    const goToPreviousPage = () => goToPage(currentPage - 1);
+    const goToNextPage = () => goToPage(currentPage + 1);
+    
+    //* Resetear página cuando cambian los items
+    useState(() => {
+        if (currentPage > totalPages && totalPages > 0) {
+            setCurrentPage(1);
+        }
+    });
     
     //* en el caso de que la lista este cargando
     if (loadingItems) {
@@ -25,6 +55,92 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
             </section>
         )
     }
+
+    //* Renderizar controles de paginación
+    const renderPagination = () => {
+        if (!shouldShowPagination || totalPages <= 1) return null;
+        
+        const pageNumbers = [];
+        const maxVisiblePages = 5;
+        
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+        
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(i);
+        }
+        
+        return (
+            <div className="pagination-container">
+                <div className="pagination-info">
+                    Mostrando {startIndex + 1}-{Math.min(endIndex, items.length)} de {items.length} items
+                </div>
+                <div className="pagination-controls">
+                    <button 
+                        className="pagination-btn" 
+                        onClick={goToFirstPage}
+                        disabled={currentPage === 1}
+                        title="Primera página"
+                    >
+                        «
+                    </button>
+                    <button 
+                        className="pagination-btn" 
+                        onClick={goToPreviousPage}
+                        disabled={currentPage === 1}
+                        title="Página anterior"
+                    >
+                        ‹
+                    </button>
+                    
+                    {startPage > 1 && (
+                        <>
+                            <button className="pagination-btn" onClick={() => goToPage(1)}>1</button>
+                            {startPage > 2 && <span className="pagination-ellipsis">...</span>}
+                        </>
+                    )}
+                    
+                    {pageNumbers.map(pageNum => (
+                        <button
+                            key={pageNum}
+                            className={`pagination-btn ${currentPage === pageNum ? 'active' : ''}`}
+                            onClick={() => goToPage(pageNum)}
+                        >
+                            {pageNum}
+                        </button>
+                    ))}
+                    
+                    {endPage < totalPages && (
+                        <>
+                            {endPage < totalPages - 1 && <span className="pagination-ellipsis">...</span>}
+                            <button className="pagination-btn" onClick={() => goToPage(totalPages)}>{totalPages}</button>
+                        </>
+                    )}
+                    
+                    <button 
+                        className="pagination-btn" 
+                        onClick={goToNextPage}
+                        disabled={currentPage === totalPages}
+                        title="Página siguiente"
+                    >
+                        ›
+                    </button>
+                    <button 
+                        className="pagination-btn" 
+                        onClick={goToLastPage}
+                        disabled={currentPage === totalPages}
+                        title="Última página"
+                    >
+                        »
+                    </button>
+                </div>
+            </div>
+        );
+    };
 
     //*funcion para obtener el id del item
     const getItemId = (item: T): string | number => {
@@ -160,8 +276,9 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
 };
 
     return (
-    <section className='contenedor-lista' style={{ overflowX: 'auto' }}>
-        <table className="lista-tabla">
+    <section className='contenedor-lista'>
+        <div style={{ overflowX: 'auto' }}>
+            <table className="lista-tabla">
             
             {/*encabezado tabla*/}
             <thead>
@@ -184,7 +301,7 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
 
             {/*cuerpo tabla*/}
             <tbody>
-                {items.map((item, index) => (
+                {currentItems.map((item, index) => (
                     <tr
                         key={getItemId(item) || index}
                         className={getRowClasses(item)}
@@ -205,8 +322,9 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                     </tr>
                 ))}
             </tbody>
-        </table>
-    </section>
+        </table>        </div>
+        
+        {renderPagination()}    </section>
 )
 }
 

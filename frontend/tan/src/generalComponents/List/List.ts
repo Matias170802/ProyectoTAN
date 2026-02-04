@@ -17,4 +17,7 @@ export interface Props <T = any> {
     onItemSelect?: (item: any) => void;
     selectedItem?: any;
     selectableCondition?: (item: any) => boolean;
+    //*para paginación
+    itemsPerPage?: number; //* Cantidad de items por página (default: 10)
+    showPagination?: boolean; //* Mostrar controles de paginación (default: true si items > itemsPerPage)
 }
