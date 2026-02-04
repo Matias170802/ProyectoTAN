@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, List, ModalAltaReserva } from "../../generalComponents/index";
 import { useReservas as useAMReservas } from "../../casosDeUso/AMReservas";
 import ModalConfirmarCancelar from '../../casosDeUso/CancelarReserva/components/ModalConfirmarCancelar';
@@ -25,8 +25,11 @@ const MainPageReservas: React.FC = () => {
     const [selectedReservaForCheckInOut, setSelectedReservaForCheckInOut] = useState<ReservaDetailsForModal | null>(null);
     const [onlyCheckoutMode, setOnlyCheckoutMode] = useState(false);
 
+    const now = new Date();
     const [filtroEstado, setFiltroEstado] = useState("Todos");
     const [filtroInmueble, setFiltroInmueble] = useState("Todos");
+    const [filtroAnio, setFiltroAnio] = useState(String(now.getFullYear()));
+    const [filtroMes, setFiltroMes] = useState("todos");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [editingReservaCod, setEditingReservaCod] = useState<string | null>(null);
@@ -81,13 +84,17 @@ const MainPageReservas: React.FC = () => {
             } else {
                 await createReserva(reservaData);
             }
-            await refreshReservas(); // Refresca la lista automáticamente
+            await refreshReservas(filtroAnio, filtroMes); // Refresca la lista automáticamente
             handleCloseModal(); // Cierra el modal solo si la reserva fue exitosa
         } catch (error) {
             console.error('Error al guardar la reserva:', error);
             throw error;
         }
     };
+
+    useEffect(() => {
+        refreshReservas(filtroAnio, filtroMes);
+    }, [filtroAnio, filtroMes, refreshReservas]);
 
     // Adaptar los datos del backend al formato esperado por la tabla
     const reservasAdaptadas = (reservas || []).map(r => ({
@@ -151,6 +158,24 @@ const MainPageReservas: React.FC = () => {
         ? inmuebles
         : Array.from(new Map((reservas || []).map(r => [r.nombreInmueble, { codInmueble: r.codInmueble || r.nombreInmueble, nombreInmueble: r.nombreInmueble }])).values());
 
+    const mesesOptions = [
+        { value: "todos", label: "Todos los meses" },
+        { value: "1", label: "Enero" },
+        { value: "2", label: "Febrero" },
+        { value: "3", label: "Marzo" },
+        { value: "4", label: "Abril" },
+        { value: "5", label: "Mayo" },
+        { value: "6", label: "Junio" },
+        { value: "7", label: "Julio" },
+        { value: "8", label: "Agosto" },
+        { value: "9", label: "Septiembre" },
+        { value: "10", label: "Octubre" },
+        { value: "11", label: "Noviembre" },
+        { value: "12", label: "Diciembre" }
+    ];
+
+    const aniosOptions = Array.from({ length: 6 }, (_, i) => String(now.getFullYear() - i));
+
     return (
         <div className="main-reservas-bg">
             <div className="main-reservas-header">
@@ -175,6 +200,30 @@ const MainPageReservas: React.FC = () => {
                             <option value="Todos">Todos los inmuebles</option>
                             {inmueblesOptions.map((inmueble) => (
                                 <option key={inmueble.codInmueble || inmueble.nombreInmueble} value={inmueble.nombreInmueble}>{inmueble.nombreInmueble}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="main-reservas-filtro-group">
+                        <label className="main-reservas-filtro-label">Seleccionar Año</label>
+                        <select
+                            className="main-reservas-select"
+                            value={filtroAnio}
+                            onChange={e => setFiltroAnio(e.target.value)}
+                        >
+                            {aniosOptions.map((anio) => (
+                                <option key={anio} value={anio}>{anio}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="main-reservas-filtro-group">
+                        <label className="main-reservas-filtro-label">Seleccionar Mes</label>
+                        <select
+                            className="main-reservas-select"
+                            value={filtroMes}
+                            onChange={e => setFiltroMes(e.target.value)}
+                        >
+                            {mesesOptions.map((mes) => (
+                                <option key={mes.value} value={mes.value}>{mes.label}</option>
                             ))}
                         </select>
                     </div>
@@ -258,7 +307,7 @@ const MainPageReservas: React.FC = () => {
                 onConfirm={async (cod) => {
                     try {
                         await am.cancelReserva(cod);
-                        await refreshReservas();
+                        await refreshReservas(filtroAnio, filtroMes);
                     } catch (error) {
                         console.error('Error al cancelar reserva desde UI:', error);
                         // El hook ya setea el error en su estado; aquí podemos mostrar algo adicional si hace falta
@@ -275,7 +324,7 @@ const MainPageReservas: React.FC = () => {
                 onSuccess={() => {
                     handleCloseAsignarCheckInOut();
                     // Opcionalmente, refrescar la lista si el backend actualiza datos
-                    refreshReservas();
+                    refreshReservas(filtroAnio, filtroMes);
                 }}
             />
         </div>

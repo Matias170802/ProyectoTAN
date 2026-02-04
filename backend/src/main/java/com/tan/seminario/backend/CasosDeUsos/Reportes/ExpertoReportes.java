@@ -2,10 +2,7 @@ package com.tan.seminario.backend.CasosDeUsos.Reportes;
 
 import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.*;
 import com.tan.seminario.backend.Entity.*;
-import com.tan.seminario.backend.Repository.EstadoReservaRepository;
-import com.tan.seminario.backend.Repository.InmuebleRepository;
-import com.tan.seminario.backend.Repository.ReservaRepository;
-import com.tan.seminario.backend.Repository.UsuarioRepository;
+import com.tan.seminario.backend.Repository.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,13 +20,19 @@ public class ExpertoReportes {
     private final ReservaRepository reservaRepository;
     private final EstadoReservaRepository estadoReservaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ClienteRepository clienteRepository;
+    private final MovimientoRepository movimientoRepository;
+    private final InmuebleCajaRepository inmuebleCajaRepository;
 
 
-    public ExpertoReportes(InmuebleRepository inmuebleRepository, ReservaRepository reservaRepository, EstadoReservaRepository estadoReservaRepository, UsuarioRepository usuarioRepository) {
+    public ExpertoReportes(InmuebleRepository inmuebleRepository, ReservaRepository reservaRepository, EstadoReservaRepository estadoReservaRepository, UsuarioRepository usuarioRepository, ClienteRepository clienteRepository, MovimientoRepository movimientoRepository, InmuebleCajaRepository inmuebleCajaRepository) {
         this.inmuebleRepository = inmuebleRepository;
         this.reservaRepository = reservaRepository;
         this.estadoReservaRepository = estadoReservaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.clienteRepository = clienteRepository;
+        this.movimientoRepository = movimientoRepository;
+        this.inmuebleCajaRepository = inmuebleCajaRepository;
     }
 
     //obtener roles
@@ -401,5 +405,124 @@ public class ExpertoReportes {
 
     }
     // reportes financieros
+
+    //Reportes del Cliente
+
+    public List<DTOInmueblesFiltro> obtenerInmueblesCliente(String codCliente) {
+
+        Cliente cliente = clienteRepository.findByCodCliente(codCliente)
+                .orElseThrow(() ->new RuntimeException("No existe el Cliente con ese codigo ") );
+
+        List<Inmueble> inmueblesCliente = inmuebleRepository.findByClienteAndFechaHoraBajaInmuebleIsNull(cliente);
+        if (inmueblesCliente.isEmpty()) { throw new RuntimeException("El cliente no tiene inmuebles asignados");}
+
+        List<DTOInmueblesFiltro> dtosInmuebles = new ArrayList<>();
+
+        for (Inmueble inmueble: inmueblesCliente) {
+            DTOInmueblesFiltro dtoInmueble = DTOInmueblesFiltro.builder()
+                    .codInmueble(inmueble.getCodInmueble())
+                    .nombreInmueble(inmueble.getNombreInmueble())
+                    .build();
+            dtosInmuebles.add(dtoInmueble);
+        }
+
+        return dtosInmuebles;
+    }
+
+    public List<DTOFinanzasCliente> obtenerMovimientosInmueble(String anio, String mes,String codInmueble) {
+
+        Inmueble inmueble = inmuebleRepository.findByCodInmueble(codInmueble);
+        InmuebleCaja inmuebleCaja = inmuebleCajaRepository.findByInmueble(inmueble);
+
+        //defino las fechas limites para buscar en la bd como condiciones
+        LocalDateTime fechaInicio;
+        LocalDateTime fechaFin;
+
+        //analizo si mes es igual o no a "todos" para definir como hacer la consulta al repository de reservas
+        int year = Integer.parseInt(anio);
+
+        if (mes.equalsIgnoreCase("todos")) {
+
+            fechaInicio = LocalDateTime.of(year, 1, 1, 0, 0);
+            fechaFin = LocalDateTime.of(year, 12, 31, 23, 59, 59);
+
+        } else {
+
+            int month = Integer.parseInt(mes);
+
+            YearMonth yearMonth = YearMonth.of(year, month);
+
+            fechaInicio = yearMonth.atDay(1).atStartOfDay();
+            fechaFin = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+        }
+
+        List<Movimiento> movimientosInmueble = movimientoRepository.findByFechaMovimientoBetweenAndInmuebleCaja(fechaInicio, fechaFin, inmuebleCaja);
+
+        List<DTOFinanzasCliente> dtosMovimientos = new ArrayList<>();
+
+        for (Movimiento movimiento: movimientosInmueble) {
+            CategoriaMovimiento categoriaMovimiento = movimiento.getCategoriaMovimiento();
+            Moneda monedaMovimiento = movimiento.getMoneda();
+
+            DTOFinanzasCliente dtoFinanzasCliente = DTOFinanzasCliente.builder()
+                    .fechaMovimiento(movimiento.getFechaMovimiento())
+                    .descripcionMovimiento(movimiento.getDescripcionMovimiento())
+                    .montoMovimiento(movimiento.getMontoMovimiento())
+                    .monedaMovimiento(monedaMovimiento.getNombreMoneda())
+                    .nombreCategoriaMovimiento(categoriaMovimiento.getNombreCategoriaMovimiento())
+                    .build();
+
+            dtosMovimientos.add(dtoFinanzasCliente);
+        }
+
+        return dtosMovimientos;
+    }
+
+    public List<DTOReservasCliente> obtenerReservasCliente(String anio, String mes,String codInmueble) {
+
+        Inmueble inmueble = inmuebleRepository.findByCodInmueble(codInmueble);
+
+        //defino las fechas limites para buscar en la bd como condiciones
+        LocalDateTime fechaInicio;
+        LocalDateTime fechaFin;
+
+        //analizo si mes es igual o no a "todos" para definir como hacer la consulta al repository de reservas
+        int year = Integer.parseInt(anio);
+
+        if (mes.equalsIgnoreCase("todos")) {
+
+            fechaInicio = LocalDateTime.of(year, 1, 1, 0, 0);
+            fechaFin = LocalDateTime.of(year, 12, 31, 23, 59, 59);
+
+        } else {
+
+            int month = Integer.parseInt(mes);
+
+            YearMonth yearMonth = YearMonth.of(year, month);
+
+            fechaInicio = yearMonth.atDay(1).atStartOfDay();
+            fechaFin = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+        }
+
+        List<Reserva> reservasCliente = reservaRepository.findByFechaHoraInicioReservaBetweenAndInmueble(fechaInicio,fechaFin,inmueble);
+        List<DTOReservasCliente> dtosReservas = new ArrayList<>();
+
+        for (Reserva reserva: reservasCliente) {
+
+            EstadoReserva estadoReserva = reserva.getEstadoReserva();
+
+            Double montoACobrarCliente = reserva.getTotalMonto() - (reserva.getTotalMonto() * 0.1);
+
+            DTOReservasCliente dtoReservasCliente = DTOReservasCliente.builder()
+                    .fechaInicioReserva(reserva.getFechaHoraInicioReserva())
+                    .fechaFinReserva(reserva.getFechaHoraFinReserva())
+                    .estadoReserva(estadoReserva.getNombreEstadoReserva())
+                    .nombreHuesped(reserva.getNombreHuesped())
+                    .montoTotalReserva(montoACobrarCliente)
+                    .build();
+            dtosReservas.add(dtoReservasCliente);
+        }
+        return dtosReservas;
+    }
 
 }

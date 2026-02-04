@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,12 +24,31 @@ public class ExpertoReserva {
     private InmuebleRepository inmuebleRepository;
 
 
-    public List<DTOReserva> obtenerReservas(){
-        LocalDateTime hasta = LocalDateTime.now();
-        LocalDateTime desde = hasta.minusDays(30);
+    public List<DTOReserva> obtenerReservas(String anio, String mes){
 
-        //Busca las reservas creadas en los ultimos 30 dias
-        List<Reserva> reservas = reservaRepository.findByFechaHoraAltaReservaBetweenOrderByFechaHoraAltaReserva(desde, hasta);
+        //defino las fechas limites para buscar en la bd como condiciones
+        LocalDateTime fechaInicio;
+        LocalDateTime fechaFin;
+
+        //analizo si mes es igual o no a "todos" para definir como hacer la consulta al repository de reservas
+        int year = Integer.parseInt(anio);
+
+        if (mes.equalsIgnoreCase("todos")) {
+
+            fechaInicio = LocalDateTime.of(year, 1, 1, 0, 0);
+            fechaFin = LocalDateTime.of(year, 12, 31, 23, 59, 59);
+
+        } else {
+
+            int month = Integer.parseInt(mes);
+
+            YearMonth yearMonth = YearMonth.of(year, month);
+
+            fechaInicio = yearMonth.atDay(1).atStartOfDay();
+            fechaFin = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+        }
+
+        List<Reserva> reservas = reservaRepository.findByFechaHoraInicioReservaBetween(fechaInicio, fechaFin);
 
         List<DTOReserva> DTOReservasEnviar = new ArrayList<>();
         for (Reserva reserva : reservas) {

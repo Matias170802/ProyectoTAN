@@ -10,4 +10,6 @@ public interface TipoMovimientoRepository extends JpaRepository<TipoMovimiento, 
     TipoMovimiento findBynombreTipoMovimiento(String nombreTipoMovimiento);
     List<TipoMovimiento> findByfechaHoraBajaTipoMovimientoIsNull();
     TipoMovimiento findBynombreTipoMovimientoAndFechaHoraBajaTipoMovimientoIsNull(String nombreTipoMovimiento);
+
+    TipoMovimiento findByCodTipoMovimiento(String codTipoMovimiento);
 }

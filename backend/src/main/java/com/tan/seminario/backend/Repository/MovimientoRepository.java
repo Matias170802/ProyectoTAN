@@ -7,6 +7,7 @@ import com.tan.seminario.backend.Entity.Movimiento;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +16,14 @@ public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
     Optional<Movimiento> findTopByCajaMadreOrderByFechaMovimientoDesc(CajaMadre cajaMadre);
     Optional<Movimiento> findTopByEmpleadoCajaOrderByFechaMovimientoDesc(EmpleadoCaja empleadoCaja);
     Optional<Movimiento> findTopByInmuebleCajaOrderByFechaMovimientoDesc(InmuebleCaja inmuebleCaja);
+    Optional<List<Movimiento>> findByInmuebleCajaOrderByFechaMovimientoDesc(InmuebleCaja inmuebleCaja);
     Movimiento findByNroMovimiento(Long nroMovimiento);
     Optional<List<Movimiento>> findByEmpleadoCajaOrderByFechaMovimientoDesc(EmpleadoCaja empleadoCaja);
     Optional<List<Movimiento>> findByCajaMadreOrderByFechaMovimientoDesc(CajaMadre cajaMadre);
     @Query("SELECT MAX(m.nroMovimiento) FROM Movimiento m")
     Long findMaxNroMovimiento();
+
+    List<Movimiento> findByFechaMovimientoBetween(LocalDateTime fechaMovimientoAfter, LocalDateTime fechaMovimientoBefore);
+
+    List<Movimiento> findByFechaMovimientoBetweenAndInmuebleCaja(LocalDateTime fechaMovimientoAfter, LocalDateTime fechaMovimientoBefore, InmuebleCaja inmuebleCaja);
 }

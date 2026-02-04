@@ -144,9 +144,16 @@ const LoginPage: React.FC = () => {
       // Refrescar contexto de usuario y usar el resultado devuelto para evitar condiciones de carrera
       try {
         const fetchedUser = await userCtx.refresh();
+        console.log('Usuario obtenido tras login:', fetchedUser);
         if (fetchedUser) {
           setSuccessMessage('¡Inicio de sesión exitoso! Redirigiendo...');
-          navigate('/');
+          if (fetchedUser.esCliente && !fetchedUser.esEmpleado) {
+            navigate('/cliente');
+            console.log('Redirigiendo a /cliente');
+          } else{
+            navigate('/');
+            console.log('Redirigiendo a /');
+          }
         } else {
           // Si por alguna razón no se pudo obtener el usuario, limpiar tokens y mostrar error
           clearTokens();

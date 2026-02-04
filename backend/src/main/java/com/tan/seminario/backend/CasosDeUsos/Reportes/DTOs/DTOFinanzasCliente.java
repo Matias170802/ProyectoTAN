@@ -1,0 +1,19 @@
+package com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs;
+
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+
+public class DTOFinanzasCliente {
+    private LocalDateTime fechaMovimiento;
+    private Double montoMovimiento;
+    private String monedaMovimiento;
+    private String descripcionMovimiento;
+    private String nombreCategoriaMovimiento;
+}

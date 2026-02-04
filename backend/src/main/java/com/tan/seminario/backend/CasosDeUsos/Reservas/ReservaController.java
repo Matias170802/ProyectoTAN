@@ -15,9 +15,9 @@ public class ReservaController {
     private ExpertoReserva experto;
 
     @GetMapping("/reservas")
-    public ResponseEntity<List<DTOReserva>> obtenerReservas(){
+    public ResponseEntity<List<DTOReserva>> obtenerReservas(@RequestParam String anio,@RequestParam String mes){
         try{
-            List<DTOReserva> reservas = experto.obtenerReservas();
+            List<DTOReserva> reservas = experto.obtenerReservas(anio, mes);
             return ResponseEntity.ok(reservas);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

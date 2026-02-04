@@ -3,10 +3,7 @@ package com.tan.seminario.backend.CasosDeUsos.Reportes;
 import com.tan.seminario.backend.CasosDeUsos.Reportes.DTOs.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -52,6 +49,23 @@ public class ReportesController {
         return ResponseEntity.ok(expertoReportes.obtenerEstadisticasFinancieras(anio, mes));
     }
     //reportes de finanzas
+
+    //Reportes del Cliente
+
+    @GetMapping("/inmueblesCliente/{codCliente}")
+    public ResponseEntity<List<DTOInmueblesFiltro>> obtenerInmueblesCliente(@PathVariable String codCliente) {
+        return ResponseEntity.ok(expertoReportes.obtenerInmueblesCliente(codCliente));
+    }
+
+    @GetMapping("/estadisticasFinancierasCliente")
+    public ResponseEntity<List<DTOFinanzasCliente>> obtenerMovimientosInmueble(@RequestParam String anio,@RequestParam String mes,@RequestParam String codInmueble) {
+        return ResponseEntity.ok(expertoReportes.obtenerMovimientosInmueble(anio,mes,codInmueble));
+    }
+
+    @GetMapping("/estadisticasReservasCliente")
+    public ResponseEntity<List<DTOReservasCliente>> obtenerReservasCliente(@RequestParam String anio,@RequestParam String mes,@RequestParam String codInmueble) {
+        return ResponseEntity.ok(expertoReportes.obtenerReservasCliente(anio,mes,codInmueble));
+    }
 
 
 }

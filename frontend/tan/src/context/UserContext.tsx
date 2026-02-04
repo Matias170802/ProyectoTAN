@@ -6,7 +6,7 @@ interface UserContextType {
   user: CurrentUser | null;
   loading: boolean;
   error: string | null;
-  refresh: () => Promise<void>;
+  refresh: () => Promise<CurrentUser | null>;
   logout: () => void;
 }
 

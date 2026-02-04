@@ -56,15 +56,25 @@ export const ModalFinalizarTarea: React.FC<PropsFinalizarTarea> = ({isOpen, onCl
     }, []);
 
     const handleAgregarIE = () => {
+        console.log('handleAgregarIE - tarea:', tarea);
+        
+        if (!tarea) {
+            setMensajeError('Error: No se encontró la tarea');
+            setMostrarError(true);
+            return;
+        }
+        
         // Guarda la tarea en sessionStorage para pasarla a la siguiente pantalla
         sessionStorage.setItem('tareaActual', JSON.stringify(tarea));
+        console.log('Tarea guardada en sessionStorage:', JSON.stringify(tarea));
         
         // Guarda el estado de que el modal estaba abierto
         sessionStorage.setItem('modalFinalizarAbierto', 'true');
         
-        // Navega a la nueva pantalla
-        navigate('/finalizar-tarea/agregar-ie/1');
-        
+        // Navega a la nueva pantalla con el nroTarea como parámetro
+        console.log('Navegando a:', `/finalizar-tarea/agregar-ie/${tarea.nroTarea}`);
+        navigate(`/finalizar-tarea/agregar-ie/${tarea.nroTarea}`);
+
     };
 
     const handleFinalizarTarea = async () => {

@@ -10,4 +10,6 @@ public interface EmpleadoCajaRepository extends JpaRepository<EmpleadoCaja, Long
 
     List<EmpleadoCaja> findEmpleadoCajaByFechaHoraBajaEmpleadoCajaIsNull();
     EmpleadoCaja findByEmpleadoAndFechaHoraBajaEmpleadoCajaIsNull(Empleado empleado);
+
+    EmpleadoCaja findByEmpleado(Empleado empleado);
 }
