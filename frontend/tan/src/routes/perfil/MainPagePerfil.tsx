@@ -225,11 +225,19 @@ const MainPagePerfil: React.FC = () => {
             <div className="roles-section">
               <label className="roles-label">Roles</label>
               <div className="roles-container">
-                {user.roles.map((role) => (
-                  <span key={role} className="role-badge">
-                    {ROLE_DESCRIPTIONS[role] || role}
-                  </span>
-                ))}
+                {user.esCliente && user.roles.length === 0 &&(
+                  <span className="role-badge">Cliente</span>
+                )}
+
+                {user.roles.length > 0 && user.esEmpleado && (
+                  user.roles.map((role) => (
+                    <span key={role} className="role-badge">
+                      {ROLE_DESCRIPTIONS[role] || role}
+                    </span>
+                  ))
+                )}
+                
+                
               </div>
             </div>
           </div>
