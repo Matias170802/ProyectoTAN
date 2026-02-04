@@ -4,31 +4,44 @@ nav {
     padding: 1rem 2rem;
     background: #fff;
     border-bottom: 1px solid #eee;
-    font-family: 'Inter', Arial, sans-serif;
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
 }
 
 nav p {
-    font-size: 1.6rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    margin: 0 2rem 0 0;
-    white-space: nowrap;
+    margin: 0 1.5rem 0 0;
+    white-space: normal;
+    line-height: 1.2;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Ensure navbar stays above modal overlays so links remain clickable */
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 1101; /* higher than modal overlay z-index (999) */
 }
 
 nav ul {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
     list-style: none;
     margin: 0;
     padding: 0;
     flex: 1;
+    flex-wrap: wrap;
 }
 
 nav li {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 1.1rem;
+    font-size: 1rem;
     position: relative;
     background: none;
     border: none;
@@ -89,4 +102,36 @@ nav li:hover {
 
 .boton-agregar:hover {
     background: #444;
+}
+
+/* Responsive navbar */
+@media (max-width: 768px) {
+    nav {
+        padding: 0.8rem 1rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem;
+    }
+    
+    .boton-agregar {
+        margin: 0;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    nav {
+        padding: 0.5rem;
+    }
+    
+    nav p {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
 }

@@ -1,0 +1,29 @@
+#mainPageFinanzasContent {
+    padding: 2rem;
+}
+
+#mainPageFinanzasContent p {
+    font-size: 30px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 20px;
+}
+
+#formRegistrarIngresoEgreso {
+    max-width: 600px;
+    width: 90%;
+    margin: 0 auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+#formRegistrarIngresoEgresoCajaContainer {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    min-height: calc(100vh - 200px);
+    align-items: flex-start;
+    
+}

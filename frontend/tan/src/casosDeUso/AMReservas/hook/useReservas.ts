@@ -1,16 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import type { ReservaFormData, ReservaState } from '../types';
 import { 
     getReservas, 
     createReserva, 
     updateReserva, 
-    deleteReserva,
     getInmuebles,
     getMediosReserva,
-    getEstadosReserva
+    getEstadosReserva,
+    cancelarReserva
 } from '../serviceAMReservas';
 
 export const useReservas = () => {
+    const defaultAnio = String(new Date().getFullYear());
+    const defaultMes = 'todos';
+    const lastFiltersRef = useRef<{ anio: string; mes: string }>({
+        anio: defaultAnio,
+        mes: defaultMes
+    });
+
     const [state, setState] = useState<ReservaState>({
         reservas: [],
         inmuebles: [],
@@ -29,8 +36,9 @@ export const useReservas = () => {
         setState(prev => ({ ...prev, loading: true, error: null }));
         
         try {
-            const [reservasData, inmueblesData, mediosData, estadosData] = await Promise.all([
-                getReservas(),
+            // Usar Promise.allSettled para que si una petición falla, las demás continúen
+            const results = await Promise.allSettled([
+                getReservas(lastFiltersRef.current.anio, lastFiltersRef.current.mes),
                 getInmuebles(),
                 getMediosReserva(),
                 getEstadosReserva()
@@ -38,12 +46,21 @@ export const useReservas = () => {
 
             setState(prev => ({
                 ...prev,
-                reservas: reservasData,
-                inmuebles: inmueblesData,
-                mediosReserva: mediosData,
-                estados: estadosData,
-                loading: false
+                reservas: results[0].status === 'fulfilled' ? results[0].value : [],
+                inmuebles: results[1].status === 'fulfilled' ? results[1].value : [],
+                mediosReserva: results[2].status === 'fulfilled' ? results[2].value : [],
+                estados: results[3].status === 'fulfilled' ? results[3].value : [],
+                loading: false,
+                error: results[0].status === 'rejected' ? 'Error al cargar reservas' : null
             }));
+
+            // Advertir sobre peticiones fallidas no críticas
+            if (results[1].status === 'rejected') {
+                console.warn('No se pudieron cargar inmuebles:', results[1].reason);
+            }
+            if (results[3].status === 'rejected') {
+                console.warn('No se pudieron cargar estados:', results[3].reason);
+            }
         } catch (error) {
             console.error('Error loading initial data:', error);
             setState(prev => ({
@@ -60,7 +77,7 @@ export const useReservas = () => {
         try {
             await createReserva(reservaData);
             // Tras crear, recargar desde backend para tener la versión canónica
-            const reservasData = await getReservas();
+            const reservasData = await getReservas(lastFiltersRef.current.anio, lastFiltersRef.current.mes);
             setState(prev => ({
                 ...prev,
                 reservas: reservasData,
@@ -98,32 +115,37 @@ export const useReservas = () => {
         }
     };
 
-    const deleteExistingReserva = async (codReserva: string): Promise<void> => {
+    const cancelExistingReserva = async (codReserva: string): Promise<void> => {
         setState(prev => ({ ...prev, loading: true, error: null }));
 
         try {
-            await deleteReserva(codReserva);
+            await cancelarReserva(codReserva);
+            // Refrescar la lista desde backend para reflejar el nuevo estado
+            const reservasData = await getReservas(lastFiltersRef.current.anio, lastFiltersRef.current.mes);
             setState(prev => ({
                 ...prev,
-                reservas: prev.reservas.filter(r => r.codReserva !== codReserva),
+                reservas: reservasData,
                 loading: false
             }));
         } catch (error) {
-            console.error('Error deleting reservation:', error);
+            console.error('Error cancelling reservation:', error);
             setState(prev => ({
                 ...prev,
                 loading: false,
-                error: 'Error al eliminar la reserva'
+                error: 'Error al cancelar la reserva'
             }));
             throw error;
         }
     };
 
-    const refreshReservas = async (): Promise<void> => {
+    const refreshReservas = useCallback(async (anio?: string, mes?: string): Promise<void> => {
         setState(prev => ({ ...prev, loading: true, error: null }));
 
         try {
-            const reservasData = await getReservas();
+            const nextAnio = anio ?? lastFiltersRef.current.anio;
+            const nextMes = mes ?? lastFiltersRef.current.mes;
+            lastFiltersRef.current = { anio: nextAnio, mes: nextMes };
+            const reservasData = await getReservas(nextAnio, nextMes);
             setState(prev => ({
                 ...prev,
                 reservas: reservasData,
@@ -137,7 +159,7 @@ export const useReservas = () => {
                 error: 'Error al actualizar las reservas'
             }));
         }
-    };
+    }, []);
 
     const clearError = () => {
         setState(prev => ({ ...prev, error: null }));
@@ -182,7 +204,7 @@ export const useReservas = () => {
         // Actions
         createReserva: createNewReserva,
         updateReserva: updateExistingReserva,
-        deleteReserva: deleteExistingReserva,
+        cancelReserva: cancelExistingReserva,
         refreshReservas,
         clearError,
 
@@ -194,4 +216,5 @@ export const useReservas = () => {
         // Reload initial data
         reloadData: loadInitialData
     };
+    
 };

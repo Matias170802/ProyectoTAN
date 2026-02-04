@@ -8,7 +8,12 @@ import java.util.Optional;
 
 
 public interface RolRepository extends JpaRepository<Rol, Long> {
+    Optional<Rol> findByCodRolAndFechaHoraBajaRolIsNull(String codRol);
+
     List<Rol> findByCodRol(String codRol);
     List<Rol> findByNombreRol(String nombre);
+    List<Rol> findByFechaHoraBajaRolIsNull();
+
+    List<Rol> findAllByCodRolInAndFechaHoraBajaRolIsNull(List<String> codRoles);
 }
 

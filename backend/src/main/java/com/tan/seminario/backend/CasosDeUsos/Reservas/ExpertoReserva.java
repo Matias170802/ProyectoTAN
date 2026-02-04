@@ -4,11 +4,13 @@ import com.tan.seminario.backend.Entity.EstadoReserva;
 import com.tan.seminario.backend.Entity.Inmueble;
 import com.tan.seminario.backend.Entity.Reserva;
 import com.tan.seminario.backend.Repository.EstadoReservaRepository;
+import com.tan.seminario.backend.Repository.InmuebleRepository;
 import com.tan.seminario.backend.Repository.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,15 +18,37 @@ import java.util.List;
 public class ExpertoReserva {
     @Autowired
     private ReservaRepository reservaRepository;
+    @Autowired
     private EstadoReservaRepository estadoReservaRepository;
+    @Autowired
+    private InmuebleRepository inmuebleRepository;
 
 
-    public List<DTOReserva> obtenerReservas(){
-        LocalDateTime hasta = LocalDateTime.now();
-        LocalDateTime desde = hasta.minusDays(30);
+    public List<DTOReserva> obtenerReservas(String anio, String mes){
 
-        //Busca las reservas creadas en los ultimos 30 dias
-        List<Reserva> reservas = reservaRepository.findByFechaHoraAltaReservaBetweenOrderByFechaHoraAltaReserva(desde, hasta);
+        //defino las fechas limites para buscar en la bd como condiciones
+        LocalDateTime fechaInicio;
+        LocalDateTime fechaFin;
+
+        //analizo si mes es igual o no a "todos" para definir como hacer la consulta al repository de reservas
+        int year = Integer.parseInt(anio);
+
+        if (mes.equalsIgnoreCase("todos")) {
+
+            fechaInicio = LocalDateTime.of(year, 1, 1, 0, 0);
+            fechaFin = LocalDateTime.of(year, 12, 31, 23, 59, 59);
+
+        } else {
+
+            int month = Integer.parseInt(mes);
+
+            YearMonth yearMonth = YearMonth.of(year, month);
+
+            fechaInicio = yearMonth.atDay(1).atStartOfDay();
+            fechaFin = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+        }
+
+        List<Reserva> reservas = reservaRepository.findByFechaHoraInicioReservaBetween(fechaInicio, fechaFin);
 
         List<DTOReserva> DTOReservasEnviar = new ArrayList<>();
         for (Reserva reserva : reservas) {
@@ -67,6 +91,31 @@ public class ExpertoReserva {
             DTOEstadoReserva dto = new DTOEstadoReserva();
             dto.setCodEstadoReserva(e.getCodEstadoReserva());
             dto.setNombreEstadoReserva(e.getNombreEstadoReserva());
+            dtos.add(dto);
+        }
+        return dtos;
+    }
+
+    public List<DTOEstadoReserva> obtenerTipoTarea() {
+        List<EstadoReserva> estados = estadoReservaRepository.findAll();
+        List<DTOEstadoReserva> dtos = new ArrayList<>();
+        for (EstadoReserva e : estados) {
+            DTOEstadoReserva dto = new DTOEstadoReserva();
+            dto.setCodEstadoReserva(e.getCodEstadoReserva());
+            dto.setNombreEstadoReserva(e.getNombreEstadoReserva());
+        }
+        return dtos;
+    }
+
+    public List<DTOInmueble> obtenerInmuebles() {
+        List<Inmueble> inmuebles = inmuebleRepository.findByFechaHoraBajaInmuebleIsNull();
+        List<DTOInmueble> dtos = new ArrayList<>();
+        for (Inmueble in : inmuebles) {
+            DTOInmueble dto = new DTOInmueble();
+            dto.setCodInmueble(in.getCodInmueble());
+            dto.setNombreInmueble(in.getNombreInmueble());
+            dto.setCapacidad(in.getCapacidad());
+            dto.setPrecioPorNocheUSD(in.getPrecioPorNocheUSD());
             dtos.add(dto);
         }
         return dtos;

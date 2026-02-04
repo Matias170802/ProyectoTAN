@@ -47,8 +47,10 @@
 }
 
 .main-reservas-title {
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 30px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 20px;
 }
 
 .main-reservas-card {
@@ -114,4 +116,82 @@
 
 .main-reservas-estado-senada {
   background: #fdf3c4;
+}
+
+/* Estilo local para mostrar una cruz roja en lugar del icono de basura de la List component */
+.main-reservas-table-container .btn-delete {
+  /* ocultamos el texto/emoji original y preparamos el contenedor para el pseudo-elemento */
+  color: transparent;
+  position: relative;
+  width: 28px; /* espacio para que el icono no mueva la tabla */
+  height: 28px;
+  display: inline-block;
+}
+.main-reservas-table-container .btn-delete::after {
+  content: '✖';
+  color: #c92b2b; /* rojo */
+  font-weight: 800;
+  font-size: 1.25rem; /* aumentamos el tamaño */
+  line-height: 1;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none; /* que el click lo reciba el botón */
+}
+
+.main-reservas-table-container .btn-delete:hover::after {
+  color: #a71d1d;
+}
+
+/* Centrar y ajustar el lápiz de editar para que quede alineado con la cruz */
+.main-reservas-table-container .actions-container {
+  display: flex;
+  flex-direction: column; /* apilar botones uno encima del otro */
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.main-reservas-table-container .btn-edit {
+  /* Mantener el icono centrado y del mismo tamaño que la cruz */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+  background: transparent;
+  border: none;
+}
+
+.main-reservas-table-container .btn-edit span,
+.main-reservas-table-container .btn-edit .material-icons {
+  font-size: 1.25rem;
+}
+
+/* Fondo y sombra al pasar/activar sobre el boton (aplica a delete y edit) */
+.main-reservas-table-container .btn-delete,
+.main-reservas-table-container .btn-edit {
+  background: transparent;
+  border-radius: 8px;
+  transition: background-color 160ms ease, box-shadow 160ms ease, transform 120ms ease;
+}
+
+.main-reservas-table-container .btn-delete:hover,
+.main-reservas-table-container .btn-delete:focus,
+.main-reservas-table-container .btn-delete:active {
+  background-color: rgba(201, 43, 43, 0.08);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+  transform: translateY(-1px);
+}
+
+.main-reservas-table-container .btn-edit:hover,
+.main-reservas-table-container .btn-edit:focus,
+.main-reservas-table-container .btn-edit:active {
+  background-color: rgba(201, 43, 43, 0.06); /* sutil para el lápiz */
+  box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+  transform: translateY(-1px);
 }

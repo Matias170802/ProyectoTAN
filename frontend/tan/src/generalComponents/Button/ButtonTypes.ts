@@ -5,7 +5,9 @@ export interface Props {
     onClick?: () => void;
     id?: string;
     type?: "button" | "submit" | "reset"; 
-    disabled?: boolean;
+    hidden?: boolean;
+    disabled?: boolean | null;
     icon?: ReactNode;
-    form?: string; // Permite asociar el botón a un formulario específico
+    className?: string; //* Permite pasar clases CSS personalizadas
+    form?: string; //* Permite asociar el botón a un formulario específico
 }

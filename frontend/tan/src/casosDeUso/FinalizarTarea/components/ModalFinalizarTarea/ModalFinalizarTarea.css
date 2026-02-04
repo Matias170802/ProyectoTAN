@@ -1,0 +1,213 @@
+#contenedorContenidoModal {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Estilos de éxito */
+#seccionExito {
+    margin-bottom: 1rem;
+}
+
+.contenedor-alerta-exito {
+    background-color: #d4edda;
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.titulo-exito {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #155724;
+}
+
+.mensaje-exito {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #155724;
+    line-height: 1.5;
+}
+
+.subtitulo-exito {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #155724;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* Estilos de error */
+#seccionError {
+    margin-bottom: 1rem;
+}
+
+.contenedor-alerta-error {
+    background-color: #fee;
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.titulo-error {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #dc3545;
+}
+
+.mensaje-error {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #721c24;
+    line-height: 1.5;
+}
+
+.boton-cerrar-error {
+    align-self: flex-end;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.boton-cerrar-error:hover {
+    background-color: #c82333;
+}
+
+#seccionDetallesTarea {
+    margin-bottom: 1rem;
+    padding-bottom: 1.5rem;
+}
+
+#tituloDetallesTarea {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.detallesTareaTexto {
+    margin: 0.8rem 0;
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+#contenedorBotones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+/* Botón Agregar Ingreso */
+#botonAgregarIngreso {
+    background-color: #fff !important;
+    color: #333 !important;
+    border: 2px solid #ddd !important;
+    padding: 0.8rem 1.2rem !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+}
+
+#botonAgregarIngreso:hover {
+    background-color: #f8f9fa !important;
+    border-color: #bbb !important;
+}
+
+/* Botón Finalizar Tarea */
+#botonFinalizarTarea {
+    background-color: #333 !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.8rem 1.2rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+}
+
+#botonFinalizarTarea:hover {
+    background-color: #555 !important;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    #contenedorBotones {
+        gap: 0.6rem;
+    }
+    
+    #botonAgregarIngreso,
+    #botonFinalizarTarea {
+        padding: 0.7rem 1rem !important;
+        font-size: 0.9rem !important;
+    }
+}
+
+/* ModalFinalizarTarea.css */
+#seccionTransaccionesTemporales {
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+#seccionTransaccionesTemporales h4 {
+    margin: 0 0 0.8rem 0;
+    color: #495057;
+    font-size: 1rem;
+}
+
+.lista-transacciones-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.transaccion-item-modal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: white;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.transaccion-item-modal .tipo-monto {
+    font-weight: 500;
+    color: #333;
+}
+
+.transaccion-item-modal .categoria {
+    background-color: #e9ecef;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: #495057;
+}

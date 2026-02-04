@@ -1,7 +1,8 @@
 export interface Props {
     isOpen: boolean;
-    onClose: () => void;
+    onClose?: () => void;
     children: React.ReactNode;
-    title?: React.ReactNode;
+    title?: string;
+    description?: string;
     showCloseButton?: boolean;
 }

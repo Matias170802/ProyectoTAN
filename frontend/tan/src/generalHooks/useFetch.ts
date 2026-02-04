@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 
 //*definimos los tipos que vamos a recibir
 type Data <T> = T | null;
@@ -19,42 +19,98 @@ interface Params <T> {
 }
 
 //*custom hook
-export const useFetch = <T> (url:string, options: FetchOptions = {}): Params <T> => {
-	const [data, setData] = useState<Data<T>> (null)
-	const [loading, setLoading] = useState(true)
-	const [error, setError] = useState<ErrorType> (null)
-	
-	useEffect( () => {
-		setLoading(true)
+export function useFetch<T>(url: string | null, options?: FetchOptions) {
+    const [data, setData] = useState<T | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<Error | null>(null);
 
-        //*defino la funcion que me hace la peticion al back
-		const fetchData = async () => {
-			try {
-				const response = await fetch(url, {
-                    method: options.method || 'GET',
-                    headers: options.headers,
-                    body: options.body ? JSON.stringify(options.body) : null,
-                });
-				
-				if (!response.ok) {
-					throw new Error("Error en la peticion")
-				}
-				
-				//*paso la respuesta que me devolvio la api a formato json
-				const jsonData: T = await response.json();
-				setData(jsonData)
-				setError(null)
+    const fetchData = useCallback(async () => {
+        if (!url) {
+            setData(null);
+            setLoading(false);
+            setError(null);
+            return;
+        }
 
-			} catch (err) {
-				setError(err as Error)
-			} finally { 
-				setLoading(false)
-			}
-		}
-		
-		//*llamo a la funcion que me realiza la peticion
-		fetchData();
-	}, [url])
-	
-	return {data, loading, error}
+        setLoading(true);
+        setError(null);
+        
+        try {
+            // Obtener el token del localStorage
+            const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+            
+            // Configurar headers por defecto
+            const defaultHeaders: Record<string, string> = {
+                'Content-Type': 'application/json',
+            };
+
+            // Agregar token si existe
+            if (token) {
+                defaultHeaders['Authorization'] = `Bearer ${token}`;
+            }
+
+            // Combinar headers por defecto con los proporcionados en options
+            const finalHeaders = {
+                ...defaultHeaders,
+                ...options?.headers,
+            };
+
+            // Configurar opciones del fetch
+            const fetchOptions: RequestInit = {
+                method: options?.method || 'GET',
+                headers: finalHeaders,
+            };
+
+            // Agregar body si existe y el método lo permite
+            if (options?.body && (options.method === 'POST' || options.method === 'PUT' || options.method === 'PATCH')) {
+                fetchOptions.body = JSON.stringify(options.body);
+            }
+
+            const response = await fetch(url, fetchOptions);
+            
+            if (!response.ok) {
+                let errorMessage = `HTTP error! status: ${response.status} - ${response.statusText}`;
+                
+                try {
+                    const errorResult = await response.json();
+                    console.log("Error del backend en useFetch:", errorResult);
+                    console.log("Status del response:", response.status);
+                    console.log("Mensaje del error:", errorResult.mensaje || errorResult.message);
+                    
+                    // Usar el mensaje del backend si está disponible
+                    errorMessage = errorResult.mensaje || errorResult.message || errorMessage;
+                } catch (jsonError) {
+                    // Si no puede parsear el JSON, usar error genérico
+                    console.log("Error al parsear JSON del error:", jsonError);
+                }
+                
+                throw new Error(errorMessage);
+            }
+            
+            const result = await response.json();
+            console.log("Resultado exitoso en useFetch:", result); // ← AGREGAR para debug
+            setData(result);
+        } catch (err) {
+            setError(err instanceof Error ? err : new Error('Unknown error'));
+            setData(null);
+        } finally {
+            setLoading(false);
+        }
+    }, [url, options]);
+
+    // Ejecutar fetchData cuando url cambie
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    
+
+    // Función refetch para llamar manualmente
+    const refetch = useCallback(() => {
+        if (url) {
+            fetchData();
+        }
+    }, [fetchData, url]);
+
+    return { data, loading, error, refetch };
 }

@@ -1,8 +1,137 @@
-const MainPageMiCaja = () => {
+import { useEffect, useMemo, useState } from 'react';
+import {List, Button} from '../../generalComponents/index';
+import { useMainPageMiCaja, type Movimiento } from './useMainPageMiCaja';
+import './MainPageMiCaja.css'
+import type { Rol } from './TypesMainPageMiCaja';
+import { useUserContext } from '@/context/UserContext';
+
+
+const MainPageMiCaja: React.FC = () => {
+
+    const [filter, setFilter] = useState<'todas' | 'ingresos' | 'egresos'>('todas');
+    const [esGerencia, setEsGerencia] = useState<boolean>(false);
+    const [reporteSeleccionado, setReporteSeleccionado] = useState<'cajaMadre' | 'miCaja'>('miCaja');
+    const { user} = useUserContext();
+
+    const columnas = ["Fecha", "Tipo", "Monto", "Descripcion", "Categoria"];
+    const {movimientos, loadingMovimientos, errorMovimientos, refetchMovimientos, balance, errorBalance, loadingBalance, refetchBalance, roles, errorRoles, loadingRoles} = useMainPageMiCaja(esGerencia, reporteSeleccionado, user?.esCliente || false);
+
+
+    const definirReportesAMostrar = (roles: Rol[] | null) => {
+        if (roles && roles.some((rol) => rol.nombreRol.includes('Gerencia'))) {
+            setEsGerencia(true);
+        } else {
+            setEsGerencia(false);
+        }
+    }
+    
+    useEffect(() => {
+        definirReportesAMostrar(roles? roles : null);
+    }, [roles]);
+    
+    console.log(balance)
+    const filteredMovimientos = useMemo(() => {
+        const items = movimientos ?? [];
+        
+        // Formatear las fechas antes de filtrar
+        const itemsWithFormattedDates = items.map((item: Movimiento) => ({
+            ...item,
+            Fecha: item.fechaMovimiento 
+                ? new Date(item.fechaMovimiento).toLocaleDateString('es-AR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                })
+                : '-',
+            Tipo: item.tipoMovimiento,
+            Monto: item.monedaMovimiento == "Dolar" ? `$USD${item.montoMovimiento}` : `$${item.montoMovimiento}`,
+            Descripcion: item.descripcionMovimiento ? item.descripcionMovimiento : '-',
+            Categoria: item.categoriaMovimiento
+        }));
+        
+        if (filter === 'todas') return itemsWithFormattedDates;
+        if (filter === 'ingresos') return itemsWithFormattedDates.filter((m: Movimiento) => m.tipoMovimiento?.toString().toLowerCase().includes('ingres'));
+        return itemsWithFormattedDates.filter((m: Movimiento) => m.tipoMovimiento?.toString().toLowerCase().includes('egres'));
+    }, [movimientos, filter]);
+
 
     return(
-        <div>
-            Main page de mi caja
+        <div id='mainPageMiCaja'>
+            <h2>Mi Caja</h2>
+
+            {esGerencia && roles && !loadingRoles && !errorRoles && (
+                <div id='contenedorElegirReportesMiCaja'>
+                    <div className="reporteToggle">
+                        <Button
+                            label="Mi Caja"
+                            id="botonMiCaja"
+                            type="button"
+                            onClick={() => setReporteSeleccionado('miCaja')}
+                            className={reporteSeleccionado === 'miCaja' ? 'toggle-active' : 'toggle-inactive'}
+                        />
+                        <Button
+                            label="Caja Madre"
+                            id="botonCajaMadre"
+                            type="button"
+                            onClick={() => setReporteSeleccionado('cajaMadre')}
+                            className={reporteSeleccionado === 'cajaMadre' ? 'toggle-active' : 'toggle-inactive'}
+                        />
+                    </div>
+                </div>
+            )}
+
+            <section id="contenedorBalances">
+                <div id="balanceARS" className={balance?.balanceARS && balance.balanceARS < 0 ? 'negative' : 'positive'}>
+                    <h3>Balance en Pesos</h3>
+                    <p>Tu saldo actual en ARS</p>
+                    <p>${balance?.balanceARS ? balance.balanceARS : '0'}</p>
+
+                </div>
+
+                <div id="balanceUSD" className={balance?.balanceUSD && balance.balanceUSD < 0 ? 'negative' : 'positive'}>
+                    <h3>Balance en Dólares</h3>
+                    <p>Tu saldo actual en USD</p>
+                    <p>$USD{balance?.balanceUSD ? balance.balanceUSD : '0'}</p>
+                </div>
+            </section>
+
+            <section id="contenedorDeMovimientos">
+                <header>
+                    <h2>Historial de Movimientos</h2>
+                </header>
+
+                <div id='contenedorDeFiltros'>
+                    <div className="filterSeg">
+                        <button
+                            className={`filterBtn ${filter === 'todas' ? 'active' : ''}`}
+                            onClick={() => setFilter('todas')}
+                            type="button"
+                        >
+                            Todas
+                        </button>
+                        <button
+                            className={`filterBtn ${filter === 'ingresos' ? 'active' : ''}`}
+                            onClick={() => setFilter('ingresos')}
+                            type="button"
+                        >
+                            Ingresos
+                        </button>
+                        <button
+                            className={`filterBtn ${filter === 'egresos' ? 'active' : ''}`}
+                            onClick={() => setFilter('egresos')}
+                            type="button"
+                        >
+                            Egresos
+                        </button>
+                    </div>
+                </div>
+                
+                <List
+                columnas={columnas}
+                items={filteredMovimientos}
+                loadingItems={loadingMovimientos}
+                />
+            </section>
         </div>
     )
 }

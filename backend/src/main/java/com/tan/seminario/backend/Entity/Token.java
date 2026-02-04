@@ -21,7 +21,9 @@ public class Token {
     @GeneratedValue
     public Long id;
 
-    @Column(unique = true)
+    // SOLUCIÓN: Aumentar el tamaño del campo token a 1000 caracteres
+    // Los JWT pueden ser largos cuando incluyen muchos roles y claims
+    @Column(unique = true, length = 1000)
     public String token;
 
     @Enumerated(EnumType.STRING)

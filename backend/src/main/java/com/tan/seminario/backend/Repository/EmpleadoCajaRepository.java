@@ -1,0 +1,15 @@
+package com.tan.seminario.backend.Repository;
+
+import com.tan.seminario.backend.Entity.Empleado;
+import com.tan.seminario.backend.Entity.EmpleadoCaja;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface EmpleadoCajaRepository extends JpaRepository<EmpleadoCaja, Long> {
+
+    List<EmpleadoCaja> findEmpleadoCajaByFechaHoraBajaEmpleadoCajaIsNull();
+    EmpleadoCaja findByEmpleadoAndFechaHoraBajaEmpleadoCajaIsNull(Empleado empleado);
+
+    EmpleadoCaja findByEmpleado(Empleado empleado);
+}

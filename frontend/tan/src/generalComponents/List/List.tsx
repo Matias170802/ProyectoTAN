@@ -1,8 +1,20 @@
 import './List.css'
 import {type Props} from './List.ts'
 
-const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete, onItemEdit, onItemInfo, emptyMessage, showActions = true, columnas, idField = 'id', getVisibleActions}: Props<T>) => {
+const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete, onItemEdit, onItemInfo, emptyMessage, showActions = true, actionsPosition, columnas, idField = 'id', getVisibleActions, loadingItems, onItemSelect, selectedItem, selectableCondition}: Props<T>) => {
     
+    //* en el caso de que la lista este cargando
+    if (loadingItems) {
+        return (
+            <section className='contenedor-lista'>
+                <div className="lista-cargando">
+                    <div className="spinner"></div>
+                    Cargando items...
+                </div>
+            </section>
+        );
+    }
+
     //* en el caso de que la lista de items sea vacia
     if (items.length === 0) {
         return (
@@ -21,7 +33,7 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
 
     //*FUNCIÓN PARA OBTENER EL VALOR DE UNA COLUMNA
     const getColumnValue = (item: T, columnKey: string) => {
-        const value = columnKey.split('.').reduce((obj, key) => obj?.[key], item);
+        const value = columnKey.split('.').reduce((obj, key) => obj?.[key], item);    
         return value !== undefined && value !== null ? String(value) : '-';
     };
 
@@ -32,6 +44,62 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
         
         return nuevaColumnaConMayusculaPrimeraLetra;
     }
+
+    //* Función para determinar si un item está seleccionado
+    const isItemSelected = (item: T): boolean => {
+        if (!selectedItem) return false;
+        return getItemId(item) === getItemId(selectedItem);
+    };
+
+    //* Función para determinar si un item es seleccionable
+    const isItemSelectable = (item: T): boolean => {
+        return selectableCondition ? selectableCondition(item) : true;
+    };
+
+    //* Función para generar las clases CSS del row
+    const getRowClasses = (item: T): string => {
+        let classes = 'tabla-row';
+        
+        if (isItemSelectable(item)) {
+            classes += ' list-item-selectable';
+            if (isItemSelected(item)) {
+                classes += ' list-item-selected';
+            }
+        } else {
+            classes += ' list-item-not-selectable';
+        }
+        
+        // Añadir clase según estado para colorear la fila (señada=amarillo, preparada=verde, en curso/cancelada/finalizada=rojo)
+        try {
+            const rawEstado = (item as any).estado || '';
+            const estado = String(rawEstado).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            if (estado === 'señada' || estado === 'senada') {
+                classes += ' status-yellow';
+            } else if (estado === 'preparada') {
+                classes += ' status-green';
+            } else if (estado === 'en curso' || estado === 'encurso' || estado === 'cancelada' || estado === 'finalizada') {
+                classes += ' status-red';
+            }
+        } catch (e) {
+            // ignore
+        }
+
+        return classes;
+    };
+
+    //* Función para manejar el click en un row
+    const handleRowClick = (item: T) => {
+        // Si hay función de selección y el item es seleccionable
+        if (onItemSelect && isItemSelectable(item)) {
+            onItemSelect(item);
+        }
+        
+        // También llamar a onItemClick si existe (para mantener compatibilidad)
+        if (onItemClick) {
+            onItemClick(item);
+        }
+    };
+    
     //*funcion para renderizar los botones de accion
     const renderActionButtons = (item: T) => {
     if (!showActions) return null;
@@ -65,7 +133,7 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                             e.stopPropagation(); // ⬅️ MANTENER stopPropagation
                             onItemEdit(item);
                         }}
-                        title="Modificar configuración"
+                        title="Modificar"
                         aria-label="Editar"
                     >
                         ✏️
@@ -78,9 +146,9 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                         className="btn-action btn-delete"
                         onClick={(e) => {
                             e.stopPropagation(); // ⬅️ MANTENER stopPropagation
-                            onItemDelete(getItemId(item)); // ⬅️ USAR getItemId como en tu código original
+                            onItemDelete(getItemId(item));
                         }}
-                        title="Eliminar configuración"
+                        title="Cancelar"
                         aria-label="Eliminar"
                     >
                         🗑️
@@ -92,21 +160,24 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
 };
 
     return (
-    <section className='contenedor-lista'>
+    <section className='contenedor-lista' style={{ overflowX: 'auto' }}>
         <table className="lista-tabla">
             
             {/*encabezado tabla*/}
             <thead>
                 <tr className="tabla-header">
+                    {actionsPosition === 'left' && showActions && (
+                        <th className="header-cell actions-header">Acciones</th>
+                    )}
+
                     {columnas.map((columna) => (
                         <th key={columna} className="header-cell">
                             {formatoColumna(columna)}
                         </th>
                     ))}
-                    {showActions && (
-                        <th className="header-cell actions-header">
-                            Acciones
-                        </th>
+
+                    {actionsPosition === 'right' && showActions && (
+                        <th className="header-cell actions-header">Acciones</th>
                     )}
                 </tr>
             </thead>
@@ -116,9 +187,13 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                 {items.map((item, index) => (
                     <tr
                         key={getItemId(item) || index}
-                        className='tabla-row'
-                        onClick={() => onItemClick?.(item)}
+                        className={getRowClasses(item)}
+                        onClick={() => handleRowClick(item)}
+                        style={{
+                            cursor: isItemSelectable(item) ? 'pointer' : 'default'
+                        }}
                     >
+                        {actionsPosition === 'left' && renderActionButtons(item)}
                         {/* celdas de datos*/}
                         {columnas.map((columna) => (
                             <td key={columna} className="tabla-cell">
@@ -126,7 +201,7 @@ const List = <T extends Record<string, any>> ({items, onItemClick, onItemDelete,
                             </td>
                         ))}
 
-                        {renderActionButtons(item)}
+                        {actionsPosition === 'right' && renderActionButtons(item)}
                     </tr>
                 ))}
             </tbody>

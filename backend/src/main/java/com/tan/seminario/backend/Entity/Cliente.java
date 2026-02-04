@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 
 public class Cliente extends Base {
 
-
     @Column (unique = true)
     private String dniCliente;
 

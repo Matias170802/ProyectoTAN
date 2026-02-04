@@ -6,8 +6,15 @@ export interface Props <T = any> {
     onItemEdit?: (item: T) => void;
     onItemInfo?: (item: T) => void;
     emptyMessage?: string;
+    loadingItems?: boolean;
     showActions?: boolean;
+    /** Position of the actions column. 'right' (default) or 'left' */
+    actionsPosition?: 'left' | 'right';
     columnas: string[];
     idField?: string; //* Nombre del campo que actúa como ID único en los items
     getVisibleActions?: (item: T) => ('info' | 'edit' | 'delete')[];
+    //*para seleccionar items de la lista
+    onItemSelect?: (item: any) => void;
+    selectedItem?: any;
+    selectableCondition?: (item: any) => boolean;
 }

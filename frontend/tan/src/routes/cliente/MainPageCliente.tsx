@@ -1,10 +1,16 @@
-const MainPageCliente = () => {
+import './MainPageCliente.css';
+import { ModalConsultarEstadisticasCliente } from '@/casosDeUso/ConsultarEstadisticas/components/ModalConsultarEstadisticasCliente/ModalConsultarEstadisticasCliente';
 
-    return(
-        <div>
-            Main page del cliente
+const MainPageCliente: React.FC = () => {
+    return (
+        <div className="App">
+            <div id="mainPageClienteContent">
+                <h1 className="titulo">Mis Propiedades</h1>
+                <ModalConsultarEstadisticasCliente />
+            </div>
         </div>
-    )
-}
+    );
+};
 
-export default MainPageCliente
+export default MainPageCliente;
+

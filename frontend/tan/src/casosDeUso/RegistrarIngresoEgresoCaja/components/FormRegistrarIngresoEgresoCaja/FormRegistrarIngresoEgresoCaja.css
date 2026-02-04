@@ -1,0 +1,153 @@
+/* Contenedor de los botones toggle */
+#contenedorBotonesModalRegistrarIngresoEgresoCaja {
+    display: flex;
+    background: #f1f1f1;
+    border-radius: 8px;
+    padding: 4px;
+    width: fit-content;
+    margin: 1.5rem 0;
+}
+
+/* Botón activo */
+.toggle-active {
+    background: #fff;
+    color: #222;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+/* Botón inactivo */
+.toggle-inactive {
+    background: transparent;
+    color: #666;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+/* Estilos para los campos del formulario */
+#datosTransaccion {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+#datosTransaccion > div {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+select {
+    padding: 0.8rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fafafa;
+    color: #222;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+}
+
+select:focus {
+    border-color: #888;
+}
+
+input {
+    padding: 0.8rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fafafa;
+    color: #222;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+}
+
+input:focus {
+    border-color: #888;
+}
+
+#botonRegistrarTransaccion {
+    background-color: #1f2937;
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#botonRegistrarTransaccion:hover {
+    background-color: #111827;
+}
+
+#contenedorBotonesAccionModalRegistrarIngresoEgresoCaja {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+#formRegistrarIngresoEgreso #tituloForm {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    color: #1f2937 !important;
+    margin-bottom: 0.5rem !important;
+    line-height: 1.3 !important;
+}
+
+#formRegistrarIngresoEgreso #descripcionForm {
+    color: #6b7280 !important;
+    font-size: 0.95rem !important;
+    font-weight: 400 !important;
+    line-height: 1.4 !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.mensajeErrorValidacion {
+
+    color: rgb(241, 44, 44);
+    padding: 5px;
+    border-radius: 8px;
+
+}
+
+#contenedorDatosComprobante {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem 2rem;
+    min-height: 200px;
+}
+
+#formRegistrarIngresoEgreso #contenedorDatosComprobante p {
+    color: #6b7280;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-align: center;
+    background: #f9fafb;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    border: 2px dashed #d1d5db;
+    max-width: 500px;
+}
