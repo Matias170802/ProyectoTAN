@@ -61,12 +61,15 @@ public class ExpertoRegistrarIngresoEgresoCaja {
         List<CategoriaMovimiento> categoriaMovimientoExistentes = categoriaMovimientoRepository.findByFechaHoraBajaCategoriaMovimientoIsNull();
         List<DTOCategoriaMovimiento> categoriaMovimientoAEnviar = new java.util.ArrayList<>();
 
+        //solo mando las ctaegorias de seña, cancelacion reserva y otros
         for (CategoriaMovimiento categoriaMovimiento : categoriaMovimientoExistentes) {
-            DTOCategoriaMovimiento dto = DTOCategoriaMovimiento.builder()
-                    .nombreCategoria(categoriaMovimiento.getNombreCategoriaMovimiento())
-                    .build();
+            if (categoriaMovimiento.getNombreCategoriaMovimiento().equals("Seña") || categoriaMovimiento.getNombreCategoriaMovimiento().equals("Otros") || categoriaMovimiento.getNombreCategoriaMovimiento().equals("Cancelacion Reserva")) {
+                DTOCategoriaMovimiento dto = DTOCategoriaMovimiento.builder()
+                        .nombreCategoria(categoriaMovimiento.getNombreCategoriaMovimiento())
+                        .build();
 
-            categoriaMovimientoAEnviar.add(dto);
+                categoriaMovimientoAEnviar.add(dto);
+            }
         }
 
         return categoriaMovimientoAEnviar;
