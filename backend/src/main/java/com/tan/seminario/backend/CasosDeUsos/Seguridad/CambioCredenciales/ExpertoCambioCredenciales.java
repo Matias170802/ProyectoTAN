@@ -3,6 +3,7 @@ package com.tan.seminario.backend.CasosDeUsos.Seguridad.CambioCredenciales;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.JwtService;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.CambioCredenciales.DTOs.*;
 import com.tan.seminario.backend.CasosDeUsos.Seguridad.ABMUsuarios.DTOs.TokenResponse;
+import com.tan.seminario.backend.CasosDeUsos.Seguridad.Email.EmailService;
 import com.tan.seminario.backend.Entity.*;
 import com.tan.seminario.backend.Repository.*;
 import jakarta.transaction.Transactional;
@@ -28,6 +29,7 @@ public class ExpertoCambioCredenciales {
     private final TokenRepository tokenJwtRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final EmailService emailService;
 
     private static final int HORAS_EXPIRACION_TOKEN = 1;
     private static final int MAX_INTENTOS_RECUPERACION_POR_HORA = 3;
@@ -200,19 +202,27 @@ public class ExpertoCambioCredenciales {
 
         tokenRecuperacionRepository.save(tokenRecuperacion);
 
-        // TODO: Aquí se enviaría el email con el link
-        // String linkRecuperacion = "http://tudominio.com/reset-password?token=" + token;
-        // emailService.enviarEmailRecuperacion(email, linkRecuperacion);
+        // ⬇️ ⬇️ ⬇️ NUEVA FUNCIONALIDAD: ENVIAR EMAIL ⬇️ ⬇️ ⬇️
+        try {
+            String nombreUsuario = usuario.getName() != null ? usuario.getName() : "Usuario";
+            emailService.enviarEmailRecuperacionPassword(email, nombreUsuario, token);
+            log.info("✅ Token de recuperación generado y email enviado para: {}", email);
+        } catch (Exception e) {
+            log.error("❌ Error al enviar email de recuperación: {}", e.getMessage());
+            // Continuamos aunque falle el email - el token ya está creado
+            // En producción, podrías querer hacer rollback o intentar reenviar
+        }
+        // ⬆️ ⬆️ ⬆️ FIN NUEVA FUNCIONALIDAD ⬆️ ⬆️ ⬆️
 
-        log.info("Token de recuperación generado para: {}", email);
-
-        // CAMBIO IMPORTANTE: Usar log.warn() en lugar de log.debug() para que se vea siempre
-        log.warn("========================================");
-        log.warn("TOKEN DE RECUPERACIÓN (SOLO DESARROLLO)");
-        log.warn("Email: {}", email);
-        log.warn("Token: {}", token);
-        log.warn("Expira: {}", LocalDateTime.now().plusHours(HORAS_EXPIRACION_TOKEN));
-        log.warn("========================================");
+        // Solo en desarrollo: imprimir token en logs
+        if (log.isDebugEnabled()) {
+            log.debug("========================================");
+            log.debug("TOKEN DE RECUPERACIÓN (SOLO DESARROLLO)");
+            log.debug("Email: {}", email);
+            log.debug("Token: {}", token);
+            log.debug("Expira: {}", tokenRecuperacion.getFechaExpiracion());
+            log.debug("========================================");
+        }
 
         return DTOResponseGenerico.builder()
                 .mensaje("Si el email está registrado, recibirás un enlace de recuperación.")
@@ -220,7 +230,6 @@ public class ExpertoCambioCredenciales {
                 .tokens(null)
                 .build();
     }
-
     /**
      * Reestablecer contraseña usando el token recibido por email
      * NO GENERA TOKENS (el usuario debe iniciar sesión manualmente)
@@ -262,6 +271,17 @@ public class ExpertoCambioCredenciales {
 
         // 7. Invalidar todos los tokens JWT
         revocarTodosLosTokensJWT(usuario);
+
+        // ⬇️ ⬇️ ⬇️ NUEVA FUNCIONALIDAD: ENVIAR EMAIL DE CONFIRMACIÓN ⬇️ ⬇️ ⬇️
+        try {
+            String nombreUsuario = usuario.getName() != null ? usuario.getName() : "Usuario";
+            emailService.enviarEmailConfirmacionCambioPassword(usuario.getEmail(), nombreUsuario);
+            log.info("✅ Email de confirmación enviado a: {}", usuario.getEmail());
+        } catch (Exception e) {
+            log.error("❌ Error al enviar email de confirmación: {}", e.getMessage());
+            // No afecta el resultado - la contraseña ya fue cambiada
+        }
+        // ⬆️ ⬆️ ⬆️ FIN NUEVA FUNCIONALIDAD ⬆️ ⬆️ ⬆️
 
         log.info("Contraseña reestablecida exitosamente para: {}", usuario.getEmail());
 

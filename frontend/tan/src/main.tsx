@@ -8,6 +8,7 @@ import AdministrarRolesDeUsuarioPage from './casosDeUso/AdministrarRolesDeUsuari
 import { Navbar } from './generalComponents/index.ts';
 import { FormFinalizarTareaAgregarIE } from './casosDeUso/FinalizarTarea/components/FormFinalizarTareaAgregarIE/FormFinalizarTareaAgregarIE.tsx';
 import LoginPage from './routes/login/LoginPage.tsx';
+import ResetPasswordPage from './routes/login/ResetPasswordPage.tsx';
 import { UserProvider } from './context/UserContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -28,6 +29,7 @@ createRoot(document.getElementById('root')!).render(
         <Routes>
           {/* Ruta pública de login */}
           <Route path="/login" element={<LoginPage/>}/>
+          <Route path="/reset-password" element={<ResetPasswordPage/>}/>
 
           {/* Todas las demás rutas están protegidas */}
           <Route path="/" element={<ProtectedRoute><Inicio/></ProtectedRoute>}/>

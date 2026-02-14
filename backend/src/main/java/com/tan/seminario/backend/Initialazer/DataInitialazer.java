@@ -353,7 +353,7 @@ public class DataInitialazer {
                     .nroTelefonoEmpleado("2615199115")
                     .salarioEmpleado(500000L)
                     .codRoles(Arrays.asList("ROL001", "ROL002", "ROL003", "ROL004", "ROL005"))
-                    .email("mauricio@gmail.com")
+                    .email("mirandamauri242@gmail.com")
                     .password("Passw0rd!")
                     .build();
             expertoABMEmpleado.altaEmpleado(mauricio);

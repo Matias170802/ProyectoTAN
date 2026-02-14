@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido al Sistema</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #3498db;
+            margin: 0;
+        }
+        .content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+        }
+        .credentials {
+            background-color: #f8f9fa;
+            border: 2px solid #3498db;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .credentials p {
+            margin: 10px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #3498db;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>👋 ¡Bienvenido al Sistema!</h1>
+    </div>
+
+    <div class="content">
+        <p>Hola <strong th:text="${nombreEmpleado}">Empleado</strong>,</p>
+
+        <p>Tu cuenta ha sido creada exitosamente en el Sistema de Gestión TAN.</p>
+
+        <div class="credentials">
+            <h3 style="margin-top: 0; color: #3498db;">🔑 Tus credenciales de acceso:</h3>
+            <p><strong>Código de Empleado:</strong> <span th:text="${codEmpleado}">EMPL-001</span></p>
+            <p><strong>Email:</strong> <span th:text="${email}">email@empresa.com</span></p>
+            <p><strong>Contraseña temporal:</strong> <code th:text="${passwordTemporal}">********</code></p>
+        </div>
+
+        <div style="text-align: center;">
+            <a th:href="${loginUrl}" class="button">
+                Iniciar Sesión
+            </a>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Importante:</strong>
+            <ul style="margin: 10px 0;">
+                <li>Cambia tu contraseña después del primer inicio de sesión</li>
+                <li>Nunca compartas tus credenciales con nadie</li>
+                <li>Guarda esta información en un lugar seguro</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Si tienes alguna pregunta, contacta al administrador del sistema.</p>
+        <p>&copy; <span th:text="${currentYear}">2026</span> Sistema de Gestión TAN. Todos los derechos reservados.</p>
+    </div>
+</div>
+</body>
+</html>
