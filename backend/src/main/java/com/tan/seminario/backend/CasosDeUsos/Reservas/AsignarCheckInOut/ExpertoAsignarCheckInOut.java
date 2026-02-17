@@ -54,10 +54,11 @@ public class ExpertoAsignarCheckInOut {
             for (Tarea tarea: tareasAsignadas) {
                 if (tarea.getTipoTarea().getCodTipoTarea().equals("TT001")) {
                 //ES DE TIPO CHECK IN
-                    dto.setNombreEmpleadoAsignadoCheckIn(tarea.getEmpleado().getNombreEmpleado());
+                    dto.setEmpleadoAsignadoCheckIn(tarea.getEmpleado().getCodEmpleado());
                 }else {
                     //ES DE TIPO CHECK OUT
-                    dto.setNombreEmpleadoAsignadoCheckOut(tarea.getEmpleado().getNombreEmpleado());
+
+                    dto.setEmpleadoAsignadoCheckOut(tarea.getEmpleado().getCodEmpleado());
                 }
             }
 

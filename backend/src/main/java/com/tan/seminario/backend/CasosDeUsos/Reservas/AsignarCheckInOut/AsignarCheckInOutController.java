@@ -9,19 +9,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reserva/asignarCheckInOut")
+@RequestMapping("/api/reserva")
 public class AsignarCheckInOutController {
 
     @Autowired
     ExpertoAsignarCheckInOut experto;
 
-    @GetMapping("/{codReserva}")
+    @GetMapping("/asignarCheckInOut/{codReserva}")
     public ResponseEntity<DTOEmpleadosAsignados> obtenerEmpleadosYaAsignados(@PathVariable("codReserva") String codReserva){
         DTOEmpleadosAsignados dto = experto.obtenerEmpleadosYaAsignados(codReserva);
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping()
+    @PostMapping("/asignarCheckInOut")
     public ResponseEntity<?> asignarCheckInOut(@RequestBody DTOTarea dtoTarea){
         try{
             String respuesta = experto.asignarCheckInOut(dtoTarea);

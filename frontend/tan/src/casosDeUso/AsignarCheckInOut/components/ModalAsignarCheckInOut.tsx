@@ -31,18 +31,18 @@ const ModalAsignarCheckInOut: React.FC<ModalAsignarCheckInOutPropsExtended> = ({
 
     // Resetear formulario cuando se abre el modal o cambia la reserva
     useEffect(() => {
-        if (isOpen) {
-            // Si es modo onlyCheckout, limpiamos solo el checkOut y dejamos checkIn vacío
+        if (isOpen) {            
+            // Establecer valores por defecto si ya hay empleados asignados
             if (onlyCheckout) {
                 setEmpleadoCheckIn('');
-                setEmpleadoCheckOut('');
+                setEmpleadoCheckOut(empleadoAsignadoCheckOut || '');
             } else {
-                setEmpleadoCheckIn('');
-                setEmpleadoCheckOut('');
+                setEmpleadoCheckIn(empleadoAsignadoCheckIn || '');
+                setEmpleadoCheckOut(empleadoAsignadoCheckOut || '');
             }
             setError(null);
         }
-    }, [isOpen, reserva?.codReserva, onlyCheckout]);
+    }, [isOpen, reserva?.codReserva, onlyCheckout, empleadoAsignadoCheckIn, empleadoAsignadoCheckOut]);
 
     const handleAssign = async () => {
         if (!reserva) return;

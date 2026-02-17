@@ -9,6 +9,6 @@ import lombok.*;
 @Builder
 
 public class DTOEmpleadosAsignados {
-    private String nombreEmpleadoAsignadoCheckIn;
-    private String nombreEmpleadoAsignadoCheckOut;
+    private String empleadoAsignadoCheckIn;
+    private String empleadoAsignadoCheckOut;
 }

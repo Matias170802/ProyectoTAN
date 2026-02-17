@@ -1,8 +1,11 @@
 package com.tan.seminario.backend.CasosDeUsos.Reservas.AMTarea;
 
+import com.tan.seminario.backend.CasosDeUsos.Finanzas.RegistrarCotizacionMoneda.ExpertoRegistrarCotizacionMoneda;
 import com.tan.seminario.backend.CasosDeUsos.Reservas.AsignarCheckInOut.DTOsAsignarCheckInOut.DTOTarea;
 import com.tan.seminario.backend.Entity.*;
 import com.tan.seminario.backend.Repository.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,17 +28,27 @@ public class ExpertoAMTarea {
     @Autowired
     private EstadoReservaRepository estadoReservaRepository;
 
+    private static final Logger log = LoggerFactory.getLogger(ExpertoRegistrarCotizacionMoneda.class);
+
 
 
     public String altaModificacionTarea(DTOTarea dtoTarea){
         //busco la reserva para analizar si ya posee tareas
         String codReserva = dtoTarea.getCodReserva();
-        Reserva reservaEncontrada = reservaRepository.findByCodReserva(codReserva).get(0);
+        List<Reserva> reservasInicial = reservaRepository.findByCodReserva(codReserva);
+
+        if (reservasInicial.isEmpty()) {
+            throw new RuntimeException("No se encuentra la Reserva con el Codigo: " + codReserva);
+        }
+        Reserva reservaEncontrada = reservasInicial.get(0);
 
         //busco las tareas relacionadas a la reserva
         List<Tarea> tareasExistentes = tareaRepository.findByReserva(reservaEncontrada);
 
-        if (tareasExistentes.isEmpty()) {
+        //si no hay tareas o hay SOLO una tarea pero es de tipo check-in, significa que quiero hacer la tarea check out
+        if (tareasExistentes.isEmpty() || (tareasExistentes.get(0).getTipoTarea().getCodTipoTarea().equals("TT001") && tareasExistentes.size() == 1 )) {
+            log.warn("NO HAY TAREAS ASOCIADAS, ESTOY EN ALTA");
+
             //Alta Tarea
             String nombreTarea = dtoTarea.getNombreTarea();
             String descripcionTarea = dtoTarea.getDescripcionTarea();
@@ -60,7 +73,6 @@ public class ExpertoAMTarea {
             } else {
                 fechaInicioTarea = reservas.get(0).getFechaHoraFinReserva();
             }
-
 
             if (nombreTarea == null){
                 nombreTarea = tipoTareas.get(0).getNombreTipoTarea();
@@ -105,6 +117,7 @@ public class ExpertoAMTarea {
                 throw new RuntimeException("Fallo al crear la Tarea");
             }
         }else{
+            log.warn("HAY TAREAS ASOCIADAS, ESTOY EN MODIFICACION");
             //Modificacion
 
             String nombreTarea = dtoTarea.getNombreTarea();
@@ -126,17 +139,24 @@ public class ExpertoAMTarea {
 
             //analizo si la tarea a modificar es de tipo check in o out para saber cual modificar
 
-            if (dtoTarea.getCodTipoTarea().equals("TI001")){
+            if (dtoTarea.getCodTipoTarea().equals("TT001")){
                 //es de tipo check-in
+                log.warn("ES DE TIPO CHECK IN");
 
                 Tarea tareaCheckIn = null;
 
                 //busco la tarea de tipo checkin existente para modificarla
                 for (Tarea tarea : tareasExistentes) {
-                    if (tarea.getTipoTarea().getCodTipoTarea().equals("TI001")){
+                    if (tarea.getTipoTarea().getCodTipoTarea().equals("TT001")){
                         tareaCheckIn = tarea;
                     }
                 }
+
+                if (tareaCheckIn == null) {
+                    throw new RuntimeException("No existe tarea Check-In para modificar");
+                }
+
+                log.warn("ASIGNE LA TAREA");
 
                 try {
                     if (nombreTarea == null) {
@@ -145,12 +165,18 @@ public class ExpertoAMTarea {
 
                     tareaCheckIn.setNombreTarea(nombreTarea);
                     tareaCheckIn.setDescripcionTarea(descripcionTarea);
-                    tareaCheckIn.setEmpleado(empleados.get(0));
                     tareaCheckIn.setReserva(reservas.get(0));
                     tareaCheckIn.setTipoTarea(tipoTareas.get(0));
                     tareaCheckIn.setFechaHoraAsignacionTarea(LocalDateTime.now());
                     tareaCheckIn.setEstadoTarea(estadoTipoTarea);
                     tareaCheckIn.setFechaHoraInicioTarea(reservas.get(0).getFechaHoraInicioReserva());
+
+                    //analizo si el empleado a asignar NO es el mismo, ya que significa que debo cambiar el empleado de la tarea
+                    if (!tareaCheckIn.getEmpleado().getCodEmpleado().equals(empleados.get(0).getCodEmpleado())){
+
+                        log.warn("LA TAREA CAMBIA DE EMPLEADO");
+                        tareaCheckIn.setEmpleado(empleados.get(0));
+                    }
 
                     //Setear Estado Reserva
                     if (estadoReserva.getNombreEstadoReserva().equals("Señada")) {
@@ -161,21 +187,30 @@ public class ExpertoAMTarea {
 
                     tareaRepository.save(tareaCheckIn);
                     return "Tarea modificada";
+
                 }catch (Exception e){
                     throw new RuntimeException("Fallo al modificar la Tarea");
                 }
             }
             else {
                 //la tarea es de tipo check.out
+                log.warn("ES DE TIPO CHECK OUT");
 
                 Tarea tareaCheckOut = null;
 
                 //busco la tarea de tipo checkin existente para modificarla
                 for (Tarea tarea : tareasExistentes) {
-                    if (tarea.getTipoTarea().getCodTipoTarea().equals("TI002")){
+                    if (tarea.getTipoTarea().getCodTipoTarea().equals("TT002")){
                         tareaCheckOut = tarea;
                     }
                 }
+
+                if (tareaCheckOut == null) {
+                    throw new RuntimeException("No existe tarea Check-Out para modificar");
+                }
+
+                log.warn("ASIGNE LA TAREA");
+
                 try {
                     if (nombreTarea == null) {
                         nombreTarea = tipoTareas.get(0).getNombreTipoTarea();
@@ -183,12 +218,18 @@ public class ExpertoAMTarea {
 
                     tareaCheckOut.setNombreTarea(nombreTarea);
                     tareaCheckOut.setDescripcionTarea(descripcionTarea);
-                    tareaCheckOut.setEmpleado(empleados.get(0));
                     tareaCheckOut.setReserva(reservas.get(0));
                     tareaCheckOut.setTipoTarea(tipoTareas.get(0));
                     tareaCheckOut.setFechaHoraAsignacionTarea(LocalDateTime.now());
                     tareaCheckOut.setEstadoTarea(estadoTipoTarea);
-                    tareaCheckOut.setFechaHoraInicioTarea(reservas.get(0).getFechaHoraInicioReserva());
+                    tareaCheckOut.setFechaHoraInicioTarea(reservas.get(0).getFechaHoraFinReserva());
+
+                    //analizo si el empleado a asignar NO es el mismo, ya que significa que debo cambiar el empleado de la tarea
+                    if (!tareaCheckOut.getEmpleado().getCodEmpleado().equals(empleados.get(0).getCodEmpleado())){
+
+                        log.warn("LA TAREA CAMBIA DE EMPLEADO");
+                        tareaCheckOut.setEmpleado(empleados.get(0));
+                    }
 
                     //Setear Estado Reserva
                     if (estadoReserva.getNombreEstadoReserva().equals("Señada")) {

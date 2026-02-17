@@ -9,17 +9,22 @@ interface UseEmpleadosState {
     error: string | null;
 }
 
-export const useEmpleados = (codReserva: String | undefined) => {
+interface EmpleadosAsignados {
+    empleadoAsignadoCheckIn?: string | null;
+    empleadoAsignadoCheckOut?: string | null;
+}
+
+export const useEmpleados = (codReserva: string | undefined) => {
     const [state, setState] = useState<UseEmpleadosState>({
         empleados: [],
         loading: false,
         error: null,
     });
 
-    if (codReserva != undefined) {
-        const {data: empleadosAsignados} = useFetch(`/api/reserva/asignarCheckInOut/${codReserva}`)
-    }
-    
+    // Hook debe estar en el nivel superior, no dentro de condicionales
+    const { data: empleadosAsignados } = useFetch<EmpleadosAsignados>(
+        codReserva ? `/api/reserva/asignarCheckInOut/${codReserva}` : null
+    );
 
     useEffect(() => {
         loadEmpleados();
@@ -45,8 +50,8 @@ export const useEmpleados = (codReserva: String | undefined) => {
         loading: state.loading,
         error: state.error,
         refreshEmpleados: loadEmpleados,
-        empleadoAsignadoCheckIn: empleadosAsignados.empleadoAsignadoCheckIn ? empleadosAsignados.empleadoAsignadoCheckIn : null,
-        empleadoAsignadoCheckOut: empleadosAsignados.empleadoAsignadoCheckOut ? empleadosAsignados.empleadoAsignadoCheckOut : null,
+        empleadoAsignadoCheckIn: empleadosAsignados?.empleadoAsignadoCheckIn ?? null,
+        empleadoAsignadoCheckOut: empleadosAsignados?.empleadoAsignadoCheckOut ?? null,
 
     };
 };
