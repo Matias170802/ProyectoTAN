@@ -23,7 +23,7 @@ const ModalAsignarCheckInOut: React.FC<ModalAsignarCheckInOutPropsExtended> = ({
     onSuccess,
     onlyCheckout = false,
 }) => {
-    const { empleados, loading: empleadosLoading } = useEmpleados();
+    const { empleados, loading: empleadosLoading, empleadoAsignadoCheckIn, empleadoAsignadoCheckOut } = useEmpleados(reserva?.codReserva);
     const [empleadoCheckIn, setEmpleadoCheckIn] = useState<string>('');
     const [empleadoCheckOut, setEmpleadoCheckOut] = useState<string>('');
     const [error, setError] = useState<string | null>(null);

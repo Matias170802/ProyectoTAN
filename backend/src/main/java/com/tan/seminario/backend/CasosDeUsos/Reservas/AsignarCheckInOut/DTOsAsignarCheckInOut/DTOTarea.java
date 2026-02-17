@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 
 public class DTOTarea {
     private String nombreTarea;
-    private Long nroTarea;
     private String descripcionTarea;
 
 

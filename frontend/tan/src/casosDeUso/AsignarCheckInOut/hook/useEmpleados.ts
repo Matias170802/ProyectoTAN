@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Empleado } from '../types';
 import { getEmpleados } from '../serviceAsignarCheckInOut';
+import { useFetch } from '@/generalHooks/useFetch';
 
 interface UseEmpleadosState {
     empleados: Empleado[];
@@ -8,12 +9,17 @@ interface UseEmpleadosState {
     error: string | null;
 }
 
-export const useEmpleados = () => {
+export const useEmpleados = (codReserva: String | undefined) => {
     const [state, setState] = useState<UseEmpleadosState>({
         empleados: [],
         loading: false,
         error: null,
     });
+
+    if (codReserva != undefined) {
+        const {data: empleadosAsignados} = useFetch(`/api/reserva/asignarCheckInOut/${codReserva}`)
+    }
+    
 
     useEffect(() => {
         loadEmpleados();
@@ -39,5 +45,8 @@ export const useEmpleados = () => {
         loading: state.loading,
         error: state.error,
         refreshEmpleados: loadEmpleados,
+        empleadoAsignadoCheckIn: empleadosAsignados.empleadoAsignadoCheckIn ? empleadosAsignados.empleadoAsignadoCheckIn : null,
+        empleadoAsignadoCheckOut: empleadosAsignados.empleadoAsignadoCheckOut ? empleadosAsignados.empleadoAsignadoCheckOut : null,
+
     };
 };

@@ -28,17 +28,19 @@ public class ExpertoAMTarea {
 
 
     public String altaModificacionTarea(DTOTarea dtoTarea){
-        Long nroTarea = dtoTarea.getNroTarea();
+        //busco la reserva para analizar si ya posee tareas
+        String codReserva = dtoTarea.getCodReserva();
+        Reserva reservaEncontrada = reservaRepository.findByCodReserva(codReserva).get(0);
 
-        List<Tarea> tareasModificacion = tareaRepository.findByNroTarea(nroTarea);
+        //busco las tareas relacionadas a la reserva
+        List<Tarea> tareasExistentes = tareaRepository.findByReserva(reservaEncontrada);
 
-        if (tareasModificacion.isEmpty()) {
+        if (tareasExistentes.isEmpty()) {
             //Alta Tarea
             String nombreTarea = dtoTarea.getNombreTarea();
             String descripcionTarea = dtoTarea.getDescripcionTarea();
 
             String codEmpleado = dtoTarea.getCodEmpleado();
-            String codReserva = dtoTarea.getCodReserva();
             String codTipoTarea = dtoTarea.getCodTipoTarea();
 
             //Busquedas
@@ -104,11 +106,11 @@ public class ExpertoAMTarea {
             }
         }else{
             //Modificacion
+
             String nombreTarea = dtoTarea.getNombreTarea();
             String descripcionTarea = dtoTarea.getDescripcionTarea();
 
             String codEmpleado = dtoTarea.getCodEmpleado();
-            String codReserva = dtoTarea.getCodReserva();
             String codTipoTarea = dtoTarea.getCodTipoTarea();
 
             //Busquedas
@@ -122,31 +124,84 @@ public class ExpertoAMTarea {
             EstadoTarea estadoTipoTarea = estadoTareaRepository.findByNombreEstadoTarea("Asignada");
             EstadoReserva estadoReserva = reservas.get(0).getEstadoReserva();
 
-            try {
-                if (nombreTarea == null) {
-                    nombreTarea = tipoTareas.get(0).getNombreTipoTarea();
+            //analizo si la tarea a modificar es de tipo check in o out para saber cual modificar
+
+            if (dtoTarea.getCodTipoTarea().equals("TI001")){
+                //es de tipo check-in
+
+                Tarea tareaCheckIn = null;
+
+                //busco la tarea de tipo checkin existente para modificarla
+                for (Tarea tarea : tareasExistentes) {
+                    if (tarea.getTipoTarea().getCodTipoTarea().equals("TI001")){
+                        tareaCheckIn = tarea;
+                    }
                 }
 
-                tareasModificacion.get(0).setNombreTarea(nombreTarea);
-                tareasModificacion.get(0).setDescripcionTarea(descripcionTarea);
-                tareasModificacion.get(0).setEmpleado(empleados.get(0));
-                tareasModificacion.get(0).setReserva(reservas.get(0));
-                tareasModificacion.get(0).setTipoTarea(tipoTareas.get(0));
-                tareasModificacion.get(0).setFechaHoraAsignacionTarea(LocalDateTime.now());
-                tareasModificacion.get(0).setEstadoTarea(estadoTipoTarea);
-                tareasModificacion.get(0).setFechaHoraInicioTarea(reservas.get(0).getFechaHoraInicioReserva());
+                try {
+                    if (nombreTarea == null) {
+                        nombreTarea = tipoTareas.get(0).getNombreTipoTarea();
+                    }
 
-                //Setear Estado Reserva
-                if (estadoReserva.getNombreEstadoReserva().equals("Señada")) {
-                    EstadoReserva estPreparada = estadoReservaRepository.findByNombreEstadoReserva("Preparada");
-                    Reserva reserva = reservas.get(0);
-                    reserva.setEstadoReserva(estPreparada);
+                    tareaCheckIn.setNombreTarea(nombreTarea);
+                    tareaCheckIn.setDescripcionTarea(descripcionTarea);
+                    tareaCheckIn.setEmpleado(empleados.get(0));
+                    tareaCheckIn.setReserva(reservas.get(0));
+                    tareaCheckIn.setTipoTarea(tipoTareas.get(0));
+                    tareaCheckIn.setFechaHoraAsignacionTarea(LocalDateTime.now());
+                    tareaCheckIn.setEstadoTarea(estadoTipoTarea);
+                    tareaCheckIn.setFechaHoraInicioTarea(reservas.get(0).getFechaHoraInicioReserva());
+
+                    //Setear Estado Reserva
+                    if (estadoReserva.getNombreEstadoReserva().equals("Señada")) {
+                        EstadoReserva estPreparada = estadoReservaRepository.findByNombreEstadoReserva("Preparada");
+                        Reserva reserva = reservas.get(0);
+                        reserva.setEstadoReserva(estPreparada);
+                    }
+
+                    tareaRepository.save(tareaCheckIn);
+                    return "Tarea modificada";
+                }catch (Exception e){
+                    throw new RuntimeException("Fallo al modificar la Tarea");
                 }
+            }
+            else {
+                //la tarea es de tipo check.out
 
-                tareaRepository.save(tareasModificacion.get(0));
-                return "Tarea modificada";
-            }catch (Exception e){
-                throw new RuntimeException("Fallo al modificar la Tarea");
+                Tarea tareaCheckOut = null;
+
+                //busco la tarea de tipo checkin existente para modificarla
+                for (Tarea tarea : tareasExistentes) {
+                    if (tarea.getTipoTarea().getCodTipoTarea().equals("TI002")){
+                        tareaCheckOut = tarea;
+                    }
+                }
+                try {
+                    if (nombreTarea == null) {
+                        nombreTarea = tipoTareas.get(0).getNombreTipoTarea();
+                    }
+
+                    tareaCheckOut.setNombreTarea(nombreTarea);
+                    tareaCheckOut.setDescripcionTarea(descripcionTarea);
+                    tareaCheckOut.setEmpleado(empleados.get(0));
+                    tareaCheckOut.setReserva(reservas.get(0));
+                    tareaCheckOut.setTipoTarea(tipoTareas.get(0));
+                    tareaCheckOut.setFechaHoraAsignacionTarea(LocalDateTime.now());
+                    tareaCheckOut.setEstadoTarea(estadoTipoTarea);
+                    tareaCheckOut.setFechaHoraInicioTarea(reservas.get(0).getFechaHoraInicioReserva());
+
+                    //Setear Estado Reserva
+                    if (estadoReserva.getNombreEstadoReserva().equals("Señada")) {
+                        EstadoReserva estPreparada = estadoReservaRepository.findByNombreEstadoReserva("Preparada");
+                        Reserva reserva = reservas.get(0);
+                        reserva.setEstadoReserva(estPreparada);
+                    }
+
+                    tareaRepository.save(tareaCheckOut);
+                    return "Tarea modificada";
+                }catch (Exception e){
+                    throw new RuntimeException("Fallo al modificar la Tarea");
+                }
             }
         }
     }

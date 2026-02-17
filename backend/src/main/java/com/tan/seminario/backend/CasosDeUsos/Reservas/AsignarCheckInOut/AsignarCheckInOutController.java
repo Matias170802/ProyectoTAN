@@ -1,23 +1,27 @@
 package com.tan.seminario.backend.CasosDeUsos.Reservas.AsignarCheckInOut;
+import com.tan.seminario.backend.CasosDeUsos.Reservas.AsignarCheckInOut.DTOsAsignarCheckInOut.DTOEmpleadosAsignados;
 import com.tan.seminario.backend.CasosDeUsos.Reservas.AsignarCheckInOut.DTOsAsignarCheckInOut.DTOTarea;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reserva")
+@RequestMapping("/api/reserva/asignarCheckInOut")
 public class AsignarCheckInOutController {
 
     @Autowired
     ExpertoAsignarCheckInOut experto;
 
-    @PostMapping("/asignarCheckInOut")
+    @GetMapping("/{codReserva}")
+    public ResponseEntity<DTOEmpleadosAsignados> obtenerEmpleadosYaAsignados(@PathVariable("codReserva") String codReserva){
+        DTOEmpleadosAsignados dto = experto.obtenerEmpleadosYaAsignados(codReserva);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PostMapping()
     public ResponseEntity<?> asignarCheckInOut(@RequestBody DTOTarea dtoTarea){
         try{
             String respuesta = experto.asignarCheckInOut(dtoTarea);
