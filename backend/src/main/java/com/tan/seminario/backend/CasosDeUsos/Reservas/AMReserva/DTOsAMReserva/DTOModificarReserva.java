@@ -20,9 +20,6 @@ public class DTOModificarReserva {
     private String nombreHuesped;
     private String numeroTelefonoHuesped;
     private String emailHuesped;
-    private Double totalMonto;
-    private Double totalMontoCheckIn;
-    private Double totalMontoSenia;
     private String plataformaOrigen;//Airbnb Booking etc
     private String descripcionReserva;
 }

@@ -23,14 +23,14 @@ export interface ReservaFormData {
     fechaHoraCheckin: string; // ISO string
     fechaHoraCheckout: string; // ISO string
     cantHuespedes: number;
-    totalMonto: number;
-    totalMontoSenia: number;
     plataformaOrigen: string;
     nombreHuesped: string;
     emailHuesped: string;
     descripcionReserva: string;
     numeroTelefonoHuesped: string;
-    totalDias: number;
+    totalDias?: number;
+    totalMonto?: number;
+    totalMontoSenia?: number;
     // detalles?: string; // Si ya no se usa, se puede eliminar
 }
 

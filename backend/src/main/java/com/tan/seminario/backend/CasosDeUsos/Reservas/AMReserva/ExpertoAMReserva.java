@@ -69,6 +69,10 @@ public class ExpertoAMReserva {
         if (plataformaOrigen == null)
             throw new IllegalArgumentException("La plataforma de origen no puede ser null");
 
+        Inmueble inmueble = inmuebleRepository.findByCodInmueble(codigoInmueble);
+        Double precioPorNoche = inmueble.getPrecioPorNocheUSD();
+        Double montoTotalReserva = (fechaHoraCheckout.getDayOfYear() - fechaHoraCheckin.getDayOfYear()) * precioPorNoche;
+
         Reserva reservaCreada = new Reserva();
         reservaCreada.setCodReserva(codigoReserva);
         reservaCreada.setFechaHoraInicioReserva(fechaHoraCheckin);
@@ -76,15 +80,14 @@ public class ExpertoAMReserva {
         reservaCreada.setFechaHoraAltaReserva(LocalDateTime.now());
         reservaCreada.setTotalDias(fechaHoraCheckout.getDayOfYear() - fechaHoraCheckin.getDayOfYear());
         reservaCreada.setCantidadHuespedes(reserva.getCantHuespedes());
-        reservaCreada.setTotalMonto(reserva.getTotalMonto());
-        reservaCreada.setTotalMontoSenia(reserva.getTotalMontoSenia());
+        reservaCreada.setTotalMonto(montoTotalReserva);
+        reservaCreada.setTotalMontoSenia(montoTotalReserva * 0.10);
         reservaCreada.setPlataformaOrigen(plataformaOrigen);
         reservaCreada.setDescripcionReserva(reserva.getDescripcionReserva());
         reservaCreada.setNombreHuesped(reserva.getNombreHuesped());
         reservaCreada.setNumeroTelefonoHuesped(reserva.getNumeroTelefonoHuesped());
         reservaCreada.setEmailHuesped(reserva.getEmailHuesped());
 
-        Inmueble inmueble = inmuebleRepository.findByCodInmueble(codigoInmueble);
         reservaCreada.setInmueble(inmueble);
 
         CajaMadre cajaMadre = cajaMadreRepository.findByNroCajaMadre(1l);
@@ -129,9 +132,8 @@ public class ExpertoAMReserva {
         String descripcionReserva = dtoModificarReserva.getDescripcionReserva();
         Integer totalDias = dtoModificarReserva.getTotalDias();
         Integer cantidadHuespedes = dtoModificarReserva.getCantidadHuespedes();
-        Double totalMonto = dtoModificarReserva.getTotalMonto();
-        Double totalMontoSenia = dtoModificarReserva.getTotalMontoSenia();
-        Double totalMontoCheckIn = dtoModificarReserva.getTotalMontoCheckIn();
+        Double totalMonto = (fechaHoraFinReserva.getDayOfYear() - fechaHoraInicioReserva.getDayOfYear())*reservaModificada.getInmueble().getPrecioPorNocheUSD();
+        Double totalMontoSenia = totalMonto * 0.10;
         String plataformaOrigen = dtoModificarReserva.getPlataformaOrigen();
 
         if (fechaHoraInicioReserva != null) {
@@ -163,9 +165,6 @@ public class ExpertoAMReserva {
         }
         if (totalMontoSenia != null) {
             reservaModificada.setTotalMontoSenia(totalMontoSenia);
-        }
-        if (totalMontoCheckIn != null) {
-            reservaModificada.setTotalMontoCheckIn(totalMontoCheckIn);
         }
         if (plataformaOrigen != null) {
             reservaModificada.setPlataformaOrigen(plataformaOrigen);

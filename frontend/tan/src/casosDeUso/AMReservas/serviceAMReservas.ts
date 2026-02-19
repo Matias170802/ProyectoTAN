@@ -79,8 +79,8 @@ const mapFormDataToDTO = (formData: ReservaFormData): DTOReserva => {
         fechaHoraCheckin: formData.fechaHoraCheckin,
         fechaHoraCheckout: formData.fechaHoraCheckout,
         cantHuespedes: formData.cantHuespedes,
-        totalMonto: formData.totalMonto,
-        totalMontoSenia: formData.totalMontoSenia,
+        totalMonto: formData.totalMonto ?? 0,
+        totalMontoSenia: formData.totalMontoSenia ?? 0,
         plataformaOrigen: formData.plataformaOrigen,
         codInmueble: formData.codInmueble,
         nombreInmueble: (formData as any).nombreInmueble || '',
@@ -222,9 +222,6 @@ export const updateReserva = async (codReserva: string, reservaData: Partial<Res
         if (reservaData.nombreHuesped) payload.nombreHuesped = reservaData.nombreHuesped;
         if (reservaData.numeroTelefonoHuesped) payload.numeroTelefonoHuesped = reservaData.numeroTelefonoHuesped;
         if (reservaData.emailHuesped) payload.emailHuesped = reservaData.emailHuesped;
-        if (typeof reservaData.totalMonto !== 'undefined') payload.totalMonto = reservaData.totalMonto;
-        if (typeof reservaData.totalMontoCheckIn !== 'undefined') payload.totalMontoCheckIn = reservaData.totalMontoCheckIn;
-        if (typeof reservaData.totalMontoSenia !== 'undefined') payload.totalMontoSenia = reservaData.totalMontoSenia;
         if (reservaData.plataformaOrigen) payload.plataformaOrigen = reservaData.plataformaOrigen;
         if (reservaData.descripcionReserva) payload.descripcionReserva = reservaData.descripcionReserva;
 

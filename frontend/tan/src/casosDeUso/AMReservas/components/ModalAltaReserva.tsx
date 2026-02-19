@@ -32,8 +32,6 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
         fechaHoraAltaReserva: '',
         totalDias: 0,
         cantHuespedes: 1,
-        totalMonto: 0,
-        totalMontoSenia: 0,
         plataformaOrigen: '',
         codInmueble: '',
         nombreInmueble: '',
@@ -67,8 +65,6 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
             fechaHoraAltaReserva: '',
             totalDias: 0,
             cantHuespedes: 1,
-            totalMonto: 0,
-            totalMontoSenia: 0,
             plataformaOrigen: '',
             codInmueble: '',
             nombreInmueble: '',
@@ -99,8 +95,6 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
                 fechaHoraAltaReserva: '',
                 totalDias: 0,
                 cantHuespedes: 1,
-                totalMonto: 0,
-                totalMontoSenia: 0,
                 plataformaOrigen: '',
                 codInmueble: '',
                 nombreInmueble: '',
@@ -131,8 +125,6 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
                     fechaHoraAltaReserva: initialData.fechaHoraAltaReserva || '',
                     totalDias: initialData.totalDias || 0,
                     cantHuespedes: initialData.cantHuespedes || 1,
-                    totalMonto: initialData.totalMonto || 0,
-                    totalMontoSenia: initialData.totalMontoSenia || 0,
                     plataformaOrigen: initialData.plataformaOrigen || '',
                     codInmueble: initialData.codInmueble || '',
                     nombreInmueble: initialData.nombreInmueble || '',
@@ -161,7 +153,7 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
         }
     setFormData((prev: any) => ({
             ...prev,
-            [name]: ['cantHuespedes', 'totalMonto', 'totalMontoSenia', 'totalDias'].includes(name)
+            [name]: ['cantHuespedes', 'totalDias'].includes(name)
                 ? Number(value) || 0
                 : value
         }));
@@ -202,15 +194,6 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
         if (!formData.plataformaOrigen) {
             newErrors.plataformaOrigen = 'Debe seleccionar un medio de reserva';
         }
-        if (formData.totalMonto < 0) {
-            newErrors.totalMonto = 'El monto total debe ser mayor o igual a 0';
-        }
-        if (formData.totalMontoSenia < 0) {
-            newErrors.totalMontoSenia = 'El monto de seña debe ser mayor o igual a 0';
-        }
-        if (formData.totalMontoSenia > formData.totalMonto) {
-            newErrors.totalMontoSenia = 'El monto de seña no puede ser mayor al monto total';
-        }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -232,8 +215,8 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
                 fechaHoraAltaReserva: new Date().toISOString(),
                 totalDias,
                 cantHuespedes: formData.cantHuespedes,
-                totalMonto: formData.totalMonto,
-                totalMontoSenia: formData.totalMontoSenia,
+                totalMonto: 0,
+                totalMontoSenia: 0,
                 plataformaOrigen: formData.plataformaOrigen,
                 codInmueble: formData.codInmueble,
                 nombreInmueble: inmuebles.find(i => i.codInmueble === formData.codInmueble)?.nombreInmueble || '',
@@ -378,42 +361,6 @@ const ModalAltaReserva: React.FC<ModalAltaReservaProps> = ({
                                 ))}
                             </select>
                             {errors.plataformaOrigen && <span className="error-message">{errors.plataformaOrigen}</span>}
-                        </div>
-                    </div>
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="totalMonto" className="form-label">
-                                Monto Total en USD
-                            </label>
-                            <input
-                                type="number"
-                                id="totalMonto"
-                                name="totalMonto"
-                                value={formData.totalMonto}
-                                onChange={handleInputChange}
-                                className={`form-input ${errors.totalMonto ? 'error' : ''}`}
-                                min="0"
-                                step="0.01"
-                                placeholder="0.00"
-                            />
-                            {errors.totalMonto && <span className="error-message">{errors.totalMonto}</span>}
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="totalMontoSenia" className="form-label">
-                                Monto de Seña en USD
-                            </label>
-                            <input
-                                type="number"
-                                id="totalMontoSenia"
-                                name="totalMontoSenia"
-                                value={formData.totalMontoSenia}
-                                onChange={handleInputChange}
-                                className={`form-input ${errors.totalMontoSenia ? 'error' : ''}`}
-                                min="0"
-                                step="0.01"
-                                placeholder="0.00"
-                            />
-                            {errors.totalMontoSenia && <span className="error-message">{errors.totalMontoSenia}</span>}
                         </div>
                     </div>
                     {/* Campos adicionales */}
