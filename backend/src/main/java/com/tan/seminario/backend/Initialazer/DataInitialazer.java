@@ -335,7 +335,7 @@ public class DataInitialazer {
             CajaMadre cajaMadre = CajaMadre.builder()
                     .nroCajaMadre(1L)
                     .nombreCajaMadre("Caja Madre")
-                    .balanceTotalARS(BigDecimal.valueOf(1530250.0))
+                    .balanceTotalARS(BigDecimal.valueOf(10000000.0))
                     .balanceTotalUSD(BigDecimal.valueOf(8250.0))
                     .fechaHoraAltaCajaMadre(LocalDateTime.now())
                     .build();
