@@ -361,3 +361,9 @@
     color: #991b1b;
     margin: 0;
 }
+
+.contenedorBotonExportarPdf {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}

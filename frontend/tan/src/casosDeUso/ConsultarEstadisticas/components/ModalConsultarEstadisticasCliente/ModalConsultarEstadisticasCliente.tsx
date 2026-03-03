@@ -1,12 +1,13 @@
 import './ModalConsultarEstadisticasCliente.css';
 import { type PropsConsultarEstadisticasCliente } from './ModalConsultarEstadisticasClienteTypes';
-import { List } from '../../../../generalComponents/index';
-import { useState } from 'react';
+import { ButtonExportarAPdf, List } from '../../../../generalComponents/index';
+import { useRef, useState } from 'react';
 import { type FiltrosClienteReportes, useInmueblesCliente, useFinanzasCliente, useReservasCliente } from '../../hooks/useClienteReportes';
 import { useUserContext } from '../../../../context/UserContext';
 import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Bar } from 'recharts';
 
 export const ModalConsultarEstadisticasCliente: React.FC<PropsConsultarEstadisticasCliente> = () => {
+    const reportePdfRef = useRef<HTMLDivElement>(null);
     const { user } = useUserContext();
     const codCliente = user?.codigo;
 
@@ -105,6 +106,7 @@ export const ModalConsultarEstadisticasCliente: React.FC<PropsConsultarEstadisti
 
     const datosGraficosFinanzas = procesarFinanzasPorMes();
     const datosGraficosReservas = procesarReservasPorMes();
+    const nombreArchivoReporte = `reporte-cliente-${inmuebleSeleccionado || 'sin-inmueble'}-${filtros.anio || 'anio'}-${filtros.mes || 'mes'}`;
 
     // Convertir datos de finanzas para la tabla
     const columnasFinanzas = ['Fecha', 'Descripción', 'Categoría', 'Moneda', 'Monto'];
@@ -128,6 +130,15 @@ export const ModalConsultarEstadisticasCliente: React.FC<PropsConsultarEstadisti
 
     return (
         <div className='modalConsultarEstadisticasClienteContent'>
+            <section className='contenedorBotonExportarPdf'>
+                <ButtonExportarAPdf
+                    targetRef={reportePdfRef}
+                    fileName={nombreArchivoReporte}
+                    disabled={!inmuebleSeleccionado}
+                />
+            </section>
+
+            <div ref={reportePdfRef}>
             {/* Seleccionar Inmueble */}
             {loadingInmuebles && (
                 <section id='contenedorCargando'>
@@ -288,6 +299,7 @@ export const ModalConsultarEstadisticasCliente: React.FC<PropsConsultarEstadisti
                     <p>No tienes propiedades registradas</p>
                 </section>
             )}
+            </div>
         </div>
     );
 };

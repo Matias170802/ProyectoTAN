@@ -1,11 +1,12 @@
 import {type PropsConsultarEstadisticas, type EstadisticasGerenciaReservas, type EstadisticasGerenciaInmuebles, type InmuebleOption} from './ModalConsultarEstadisticasGerenciaTypes';
 import './ModalConsultarEstadisticasGerencia.css';
-import {Button, List} from '../../../../generalComponents/index';
-import { useState } from 'react';
+import {Button, ButtonExportarAPdf, List} from '../../../../generalComponents/index';
+import { useRef, useState } from 'react';
 import { useReportesGerencia, type FiltrosEstadisticasGerencia } from '../../hooks/useReportesGerencia';
 import { useFetch } from '@/generalHooks/useFetch';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend, type PieLabelRenderProps, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadisticas> = () => {
+    const reportePdfRef = useRef<HTMLDivElement>(null);
     
     const columnasReservas = ["Inmueble", "Huesped", "Check in", "Check out", "Dias", "Estado", "Monto Total"];
     const columnasInmuebles = ["Huesped", "Check in", "Check out", "Dias", "Estado", "Monto Total"];
@@ -71,6 +72,9 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
         'todos': 'todos los meses'
     };
     const nombreMes = MESES_ES[filtros.mes ?? ''] ?? (filtros.mes ?? '');
+    const nombreArchivoReporte = activo === 'reservas'
+        ? `reporte-gerencia-reservas-${filtros.anio ?? 'anio'}-${filtros.mes ?? 'mes'}`
+        : `reporte-gerencia-inmueble-${filtros.inmueble ?? 'seleccion'}-${filtros.anio ?? 'anio'}-${filtros.mes ?? 'mes'}`;
 
 
     //* items para el componente list ya transformados al formato esperado RESERVAS
@@ -97,6 +101,16 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
 
     return (
         <div id='modalConsultarEstadisticasGerenciaContent'>
+
+            <section className='contenedorBotonExportarPdf'>
+                <ButtonExportarAPdf
+                    targetRef={reportePdfRef}
+                    fileName={nombreArchivoReporte}
+                    disabled={activo === 'inmuebles' && (!inmuebleSeleccionado || inmuebleSeleccionado === 'seleccionarInmueble')}
+                />
+            </section>
+
+            <div ref={reportePdfRef}>
 
             <section id='contenedorSelectInmuebeOReservas'>
                 
@@ -400,6 +414,7 @@ export const ModalConsultarEstadisticasGerencia: React.FC<PropsConsultarEstadist
                     </section>
                 )}
 
+            </div>
                 
         </div>
     )

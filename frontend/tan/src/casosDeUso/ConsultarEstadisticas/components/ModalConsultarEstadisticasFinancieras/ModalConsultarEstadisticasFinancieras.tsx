@@ -1,12 +1,13 @@
 import './ModalConsultarEstadisticasFinancieras.css';
 import {type PropsConsultarEstadisticas} from './ModalConsultarEstadisticasFinancierasTypes'
-import {List} from '../../../../generalComponents/index';
-import { useState } from 'react';
+import {ButtonExportarAPdf, List} from '../../../../generalComponents/index';
+import { useRef, useState } from 'react';
 import {type FiltrosEstadisticasFinancieras, useReportesFinanzas} from '../../hooks/useReportesFinanzas';
 import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar } from 'recharts';
 
 
 export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstadisticas> = () => {
+    const reportePdfRef = useRef<HTMLDivElement>(null);
 
     const columnas = ["Inmueble", "Huesped", "Check in", "Dias", "Total", "Ganancia Cliente", "Ganancia Empresa"];
     const currentDate = new Date();
@@ -48,6 +49,14 @@ export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstad
     return (
 
         <div className='modalConsultarEstadisticasFinancierasContent'>
+                <section className='contenedorBotonExportarPdf'>
+                    <ButtonExportarAPdf
+                        targetRef={reportePdfRef}
+                        fileName={`reporte-finanzas-${filtros.anio || 'anio'}-${filtros.mes || 'mes'}`}
+                    />
+                </section>
+
+                <div ref={reportePdfRef}>
                 
                 <section id='contenedorFiltrosModalEstadisticasFinancieras'>
                     <p>Filtros</p>
@@ -153,6 +162,8 @@ export const ModalConsultarEstadisticasFinancieras: React.FC<PropsConsultarEstad
                     </div>
                 )}
                 
+
+                </div>
 
 
         </div>

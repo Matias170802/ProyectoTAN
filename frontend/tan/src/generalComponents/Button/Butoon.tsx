@@ -16,7 +16,11 @@ const Button: React.FC<Props> = ({label, onClick, id, type, hidden, disabled, ic
         form={form}
         className={className}
         >
-            {icon && <span className="material-icons">{icon}</span>}
+            {typeof icon === 'string' ? (
+                <span className="material-icons">{icon}</span>
+            ) : (
+                icon
+            )}
             {label && <span className="button-text">{label}</span>}
         </button>
     )
